@@ -1,30 +1,9 @@
 from dataclasses import dataclass, field
 
-class Guess:
-    """
-    Only contains two values: content and confidence
-    """
-    def get_content(self):
-        raise NotImplementedError
-    
-    def get_confidence(self) -> float:
-        raise NotImplementedError
-
-class Guesser:
-    """
-    Basically an interface that has only one method: guess.
-    """
-    def guess(self) -> Guess:
-        raise NotImplementedError
-
 @dataclass
 class QuestionAnswer:
     question: str
     answer: bool
-
-class QAGuesser(Guesser):
-    def update(self, qa: QuestionAnswer) -> None:
-        raise NotImplementedError
 
 @dataclass
 class ObjectSpecification:
@@ -32,22 +11,11 @@ class ObjectSpecification:
     positive_questions: list[str] = field(default_factory=lambda: [])
     negative_questions: list[str] = field(default_factory=lambda: [])
 
-@dataclass
-class SimpleGuess(Guess):
-    content: str
-    confidence: float
-
-    def get_content(self):
-        return self.content
-    
-    def get_confidence(self):
-        return self.confidence
-
 def ds_confidence(lower_bound: float, upper_bound: float):
     return (lower_bound + upper_bound) / 2
 
 @dataclass
-class DempsterShaferGuess(Guess):
+class DempsterShaferGuess:
     content: str
     lower_bound: float
     upper_bound: float
@@ -110,31 +78,7 @@ class SinglePositiveDempsterShaferDomain(DempsterShaferDomain):
 
         return False
 
-# class DempsterShaferMass:
-#     def __init__(self, key: DempsterShaferDomain, mass: float):
-#         self.key = key
-#         self.mass = mass
-
-#     def __mul__(self, other: "DempsterShaferMass"):
-#         new_domain = self.key & other.key
-#         if isinstance(new_domain, EmptyDempsterShaferDomain):
-#             return DempsterShaferMass(
-#                 key=new_domain,
-#                 mass=0.0
-#             )
-        
-#         return DempsterShaferMass(
-#             key=new_domain,
-#             mass=self.mass * other.mass
-#         )
-    
-#     def __truediv__(self, other: float):
-#         return DempsterShaferMass(
-#             key=self.key,
-#             mass=self.mass / other
-#         )
-
-class DempsterShaferQAGuesser(QAGuesser):
+class DempsterShaferQAGuesser:
     ALL_KEY = "[all]"
 
     def __init__(
