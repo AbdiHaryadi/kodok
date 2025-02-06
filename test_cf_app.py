@@ -1,166 +1,116 @@
 import unittest
 from unittest.mock import MagicMock
 
-from cf_app import CertaintyFactorBasedApp, Question
+from cf_app import CertaintyFactorBasedApp
 from cf_guesser import Guess
+from cf_interviewer import Question
 from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 
+OSL_SAMPLE = ObjectSpecificationList([
+    ObjectSpecification(
+        name="Demam Berdarah Dengue (DBD)",
+        positive_questions=[
+            "Demam?",
+            "Demam mendadak yang tinggi?",
+            "Suhu demam hingga 39 derajat Celcius?",
+            "Nyeri kepala?",
+            "Menggigil?",
+        ]
+    ),
+    ObjectSpecification(
+        name="Tipus",
+        positive_questions=[
+            "Demam?",
+            "Demam berlangsung lebih dari seminggu?",
+            "Kelelahan yang berlebihan?",
+            "Nyeri kepala?",
+        ]
+    ),
+])
+
 class TestCertaintyFactorBasedApp(unittest.TestCase):
-    def test_no_result_for_the_first_time(self):
-        object_spec_list = ObjectSpecificationList([
-            ObjectSpecification(
-                name="Demam Berdarah Dengue (DBD)",
-                positive_questions=[
-                    "Demam?",
-                    "Demam mendadak yang tinggi?",
-                    "Suhu demam hingga 39 derajat Celcius?",
-                    "Nyeri kepala?",
-                    "Menggigil?",
-                ]
-            ),
-            ObjectSpecification(
-                name="Tipus",
-                positive_questions=[
-                    "Demam?",
-                    "Demam berlangsung lebih dari seminggu?",
-                    "Kelelahan yang berlebihan?",
-                    "Nyeri kepala?",
-                ]
-            ),
-        ])
+    def test_empty_belief_case(self):
+        object_spec_list = OSL_SAMPLE
         app = CertaintyFactorBasedApp(object_spec_list)
+        app.guesser.get_all_believed_guesses = MagicMock(return_value=[])
+
+        app.interviewer.get_question = MagicMock(return_value=Question(
+            value="(terserah)"
+        ))
+        app.guesser.update = MagicMock()
+
         result = app.get_final_result()
         self.assertIsNone(result)
 
         question = app.get_question()
-        self.assertIsNotNone(question)
+        self.assertEqual(question.value, "(terserah)")
 
-    def test_result_exists(self):
-        object_spec_list = ObjectSpecificationList([
-            ObjectSpecification(
-                name="Demam Berdarah Dengue (DBD)",
-                positive_questions=[
-                    "Demam?",
-                    "Demam mendadak yang tinggi?",
-                    "Suhu demam hingga 39 derajat Celcius?",
-                    "Nyeri kepala?",
-                    "Menggigil?",
-                ]
-            ),
-            ObjectSpecification(
-                name="Tipus",
-                positive_questions=[
-                    "Demam?",
-                    "Demam berlangsung lebih dari seminggu?",
-                    "Kelelahan yang berlebihan?",
-                    "Nyeri kepala?",
-                ]
-            ),
-        ])
+        app.guesser.get_all_believed_guesses.assert_called()
+        app.interviewer.get_question.assert_called_once()
+
+        question.answer(True)
+        app.guesser.update.assert_called_once_with(QuestionAnswer(
+            question="(terserah)",
+            answer=True
+        ))
+
+    def test_one_belief_case(self):
+        object_spec_list = OSL_SAMPLE
         app = CertaintyFactorBasedApp(object_spec_list)
         app.guesser.get_all_believed_guesses = MagicMock(return_value=[
             Guess(
-                value="Tipus",
+                value="(bebas)",
                 confidence=0.1
             )
         ])
+        app.guesser.update = MagicMock()
+
+        interviewer_question = Question(
+            value="(terserah)"
+        )
+        app.interviewer.get_question = MagicMock(return_value=interviewer_question)
 
         result = app.get_final_result()
-        self.assertEqual(result, "Tipus")
+        self.assertEqual(result, "(bebas)")
 
         question = app.get_question()
         self.assertIsNone(question)
 
         app.guesser.get_all_believed_guesses.assert_called()
+        app.interviewer.get_question.assert_not_called()
 
-    def test_handle_question_with_no_believed_guesses(self):
-        object_spec_list = ObjectSpecificationList([
-            ObjectSpecification(
-                name="a",
-                positive_questions=[
-                    "ap1",
-                    "ap2",
-                ]
-            ),
-            ObjectSpecification(
-                name="b",
-                positive_questions=[
-                    "bp1",
-                ]
-            )
-        ])
+        app.guesser.update.assert_not_called()
 
-        app = CertaintyFactorBasedApp(object_spec_list)
-        app.guesser.get_all_believed_guesses = MagicMock(return_value=[])
-        app.guesser.update = MagicMock()
-
-        question = app.get_question()
-        if question is None:
-            self.fail()
-            return
-
-        self.assertIn(question.value, ["ap1", "ap2", "bp1"])
-
-        question.answer(True)
-        app.guesser.update.assert_called_once_with(QuestionAnswer(question=question.value, answer=True))
-
-    def test_handle_question_with_believed_guesses(self):
-        object_spec_list = ObjectSpecificationList([
-            ObjectSpecification(
-                name="a",
-                positive_questions=[
-                    "ap1",
-                    "ap2",
-                ]
-            ),
-            ObjectSpecification(
-                name="b",
-                positive_questions=[
-                    "same question",
-                    "bp1",
-                ]
-            ),
-            ObjectSpecification(
-                name="c",
-                positive_questions=[
-                    "same question",
-                    "cp1",
-                ]
-            ),
-        ])
-
+    def test_multiple_belief_case(self):
+        object_spec_list = OSL_SAMPLE
         app = CertaintyFactorBasedApp(object_spec_list)
         app.guesser.get_all_believed_guesses = MagicMock(return_value=[
             Guess(
-                value="b",
-                confidence=0.2
+                value="(bebas 1)",
+                confidence=0.1
             ),
             Guess(
-                value="c",
-                confidence=0.2
-            ),
+                value="(bebas 2)",
+                confidence=0.1
+            )
         ])
         app.guesser.update = MagicMock()
+
+        app.interviewer.get_question = MagicMock(return_value=Question(
+            value="(terserah)"
+        ))
 
         result = app.get_final_result()
         self.assertIsNone(result)
 
         question = app.get_question()
-        if question is None:
-            self.fail()
-            return
-        
-        self.assertIn(question.value, ["b", "c"])
+        self.assertEqual(question.value, "(terserah)")
+
+        app.guesser.get_all_believed_guesses.assert_called()
+        app.interviewer.get_question.assert_called_once()
 
         question.answer(False)
-        app.guesser.update.assert_called_once_with(QuestionAnswer(question=question.value, answer=False))
-
-class TestQuestion(unittest.TestCase):
-    def test_callback(self):
-        q = Question(value="q1")
-        callback = MagicMock()
-
-        q.set_callback(callback=callback)
-        q.answer(True)
-
-        callback.assert_called_once_with(True)
+        app.guesser.update.assert_called_once_with(QuestionAnswer(
+            question="(terserah)",
+            answer=False
+        ))

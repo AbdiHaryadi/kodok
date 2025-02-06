@@ -1,44 +1,6 @@
-from dataclasses import dataclass
-from typing import Callable
-from cf_guesser import CertaintyFactorBasedGuesser, Guess
+from cf_guesser import CertaintyFactorBasedGuesser
+from cf_interviewer import CertaintyFactorBasedInterviewer, Question
 from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
-
-@dataclass
-class Question:
-    value: str
-    callback: Callable[[bool], None] | None = None
-
-    def set_callback(self, callback: Callable[[bool], None]):
-        self.callback = callback
-
-    def answer(self, value: bool):
-        if self.callback is not None:
-            self.callback(value)
-
-class CertaintyFactorBasedInterviewer:
-    def __init__(
-            self,
-            object_spec_list: ObjectSpecificationList,
-            guesser: CertaintyFactorBasedGuesser
-    ):
-        self.object_spec_list = object_spec_list
-        self.guesser = guesser
-        
-        self.all_guesses: list[Guess] = []
-        self._latest_all_guesses: bool = False
-
-    def get_question(self) -> Question:
-        all_guesses = self.guesser.get_all_believed_guesses()
-        n_guess = len(all_guesses)
-        if n_guess == 0:
-            question_value = self.object_spec_list[0].positive_questions[0]
-        else:
-            # TODO: This.
-            question_value = all_guesses[0].value
-        
-        question = Question(value=question_value)
-        question.set_callback(lambda a: self.guesser.update(QuestionAnswer(question=question_value, answer=a)))
-        return question
 
 class CertaintyFactorBasedApp:
     def __init__(
@@ -72,7 +34,12 @@ class CertaintyFactorBasedApp:
         if len(all_guesses) == 1:
             return None
         
-        return self.interviewer.get_question()
+        question = self.interviewer.get_question()
+        question.set_callback(lambda a: self.guesser.update(QuestionAnswer(
+            question=question.value,
+            answer=a
+        )))
+        return question
     
     def get_final_result(self) -> str | None:
         all_guesses = self.guesser.get_all_believed_guesses()
