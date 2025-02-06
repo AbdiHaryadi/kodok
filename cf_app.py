@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Callable
 from cf_guesser import CertaintyFactorBasedGuesser, Guess
-from entities import ObjectSpecification, QuestionAnswer
+from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 
 @dataclass
 class Question:
@@ -18,35 +18,19 @@ class Question:
 class CertaintyFactorBasedInterviewer:
     def __init__(
             self,
-            object_spec_list: list[ObjectSpecification],
+            object_spec_list: ObjectSpecificationList,
             guesser: CertaintyFactorBasedGuesser
     ):
         self.object_spec_list = object_spec_list
-        self._validate_object_specificaton_list()
         self.guesser = guesser
         
         self.all_guesses: list[Guess] = []
         self._latest_all_guesses: bool = False
 
-    def _validate_object_specificaton_list(self):
-        object_spec_list = self.object_spec_list
-        n_object_spec = len(object_spec_list)
-        if n_object_spec == 0:
-            raise ValueError("Object specification list is empty")
-        
-        object_name_set: set[str] = set()
-        for obj_spec in object_spec_list:
-            obj_name = obj_spec.name
-            if obj_name in object_name_set:
-                raise ValueError(f"Duplicate object specification with name \"{obj_name}\"")
-            
-            object_name_set.add(obj_name)
-
     def get_question(self) -> Question:
         all_guesses = self.guesser.get_all_believed_guesses()
         n_guess = len(all_guesses)
         if n_guess == 0:
-            assert len(self.object_spec_list[0].positive_questions) > 0, "All objects are assumed to have a non-empty positive question list."
             question_value = self.object_spec_list[0].positive_questions[0]
         else:
             # TODO: This.
@@ -98,7 +82,7 @@ class CertaintyFactorBasedApp:
         return None
     
 if __name__ == "__main__":
-    object_spec_list = [
+    object_spec_list = ObjectSpecificationList([
         ObjectSpecification(
             name="Demam Berdarah Dengue (DBD)",
             positive_questions=[
@@ -118,7 +102,7 @@ if __name__ == "__main__":
                 "Nyeri kepala?",
             ]
         ),
-    ]
+    ])
     app = CertaintyFactorBasedApp(object_spec_list)
     while (question := app.get_question()) is not None:
         while (answer := input(f"{question.value} (y/n)").lower()) not in ["y", "n"]:

@@ -3,11 +3,11 @@ from unittest.mock import MagicMock
 
 from cf_app import CertaintyFactorBasedApp, Question
 from cf_guesser import Guess
-from entities import ObjectSpecification, QuestionAnswer
+from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 
 class TestCertaintyFactorBasedApp(unittest.TestCase):
     def test_no_result_for_the_first_time(self):
-        object_spec_list = [
+        object_spec_list = ObjectSpecificationList([
             ObjectSpecification(
                 name="Demam Berdarah Dengue (DBD)",
                 positive_questions=[
@@ -27,7 +27,7 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
                     "Nyeri kepala?",
                 ]
             ),
-        ]
+        ])
         app = CertaintyFactorBasedApp(object_spec_list)
         result = app.get_final_result()
         self.assertIsNone(result)
@@ -36,7 +36,7 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
         self.assertIsNotNone(question)
 
     def test_result_exists(self):
-        object_spec_list = [
+        object_spec_list = ObjectSpecificationList([
             ObjectSpecification(
                 name="Demam Berdarah Dengue (DBD)",
                 positive_questions=[
@@ -56,7 +56,7 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
                     "Nyeri kepala?",
                 ]
             ),
-        ]
+        ])
         app = CertaintyFactorBasedApp(object_spec_list)
         app.guesser.get_all_believed_guesses = MagicMock(return_value=[
             Guess(
@@ -74,7 +74,7 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
         app.guesser.get_all_believed_guesses.assert_called()
 
     def test_handle_question_with_no_believed_guesses(self):
-        object_spec_list = [
+        object_spec_list = ObjectSpecificationList([
             ObjectSpecification(
                 name="a",
                 positive_questions=[
@@ -88,7 +88,7 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
                     "bp1",
                 ]
             )
-        ]
+        ])
 
         app = CertaintyFactorBasedApp(object_spec_list)
         app.guesser.get_all_believed_guesses = MagicMock(return_value=[])
@@ -105,7 +105,7 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
         app.guesser.update.assert_called_once_with(QuestionAnswer(question=question.value, answer=True))
 
     def test_handle_question_with_believed_guesses(self):
-        object_spec_list = [
+        object_spec_list = ObjectSpecificationList([
             ObjectSpecification(
                 name="a",
                 positive_questions=[
@@ -127,7 +127,7 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
                     "cp1",
                 ]
             ),
-        ]
+        ])
 
         app = CertaintyFactorBasedApp(object_spec_list)
         app.guesser.get_all_believed_guesses = MagicMock(return_value=[
