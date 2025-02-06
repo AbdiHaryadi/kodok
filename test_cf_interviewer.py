@@ -68,12 +68,126 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         self.assertEqual(question.value, "bp1")
         guesser.get_all_believed_guesses.assert_called_once()
 
-class TestQuestion(unittest.TestCase):
-    def test_callback(self):
-        q = Question(value="q1")
-        callback = MagicMock()
+    def test_second_question_empty_belief(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="b",
+                positive_questions=[
+                    "bp1",
+                    "bp2",
+                ]
+            )
+        ])
 
-        q.set_callback(callback=callback)
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        guesser.get_all_believed_guesses = MagicMock(return_value=[])
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
+        question_1 = interviewer.get_question()
+        question_1.answer(False)
+
+        question_2 = interviewer.get_question()
+        self.assertNotEqual(question_1.value, question_2.value)
+
+    def test_answered_twice(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="b",
+                positive_questions=[
+                    "bp1",
+                    "bp2",
+                    "bp3",
+                ]
+            )
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        guesser.get_all_believed_guesses = MagicMock(return_value=[])
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
+        question_1 = interviewer.get_question()
+        question_1.answer(False)
+
+        first_question_2 = interviewer.get_question()
+        question_1.answer(False) # This is wrong.
+
+        second_question_2 = interviewer.get_question()
+        self.assertEqual(first_question_2, second_question_2)
+
+    def test_second_question_one_belief(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="b",
+                positive_questions=[
+                    "bp1",
+                    "bp2",
+                ]
+            )
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        guesser.get_all_believed_guesses = MagicMock(return_value=[
+            Guess(value="b", confidence=0.1)
+        ])
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
+        question_1 = interviewer.get_question()
+        question_1.answer(True)
+
+        question_2 = interviewer.get_question()
+        self.assertNotEqual(question_1.value, question_2.value)
+
+    def test_second_question_multiple_belief(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="b",
+                positive_questions=[
+                    "bp1",
+                ]
+            ),
+            ObjectSpecification(
+                name="c",
+                positive_questions=[
+                    "cp1",
+                ]
+            )
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        guesser.get_all_believed_guesses = MagicMock(return_value=[
+            Guess(value="b", confidence=0.1),
+            Guess(value="c", confidence=0.1),
+        ])
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
+        question_1 = interviewer.get_question()
+        question_1.answer(False)
+
+        question_2 = interviewer.get_question()
+        self.assertNotEqual(question_1.value, question_2.value)
+        self.assertIn(question_2.value, ["bp1", "cp1"])
+
+class TestQuestion(unittest.TestCase):
+    def test_add_callback(self):
+        q = Question(value="q1")
+        callback_1 = MagicMock()
+        callback_2 = MagicMock()
+
+        q.add_callback(callback=callback_1)
+        q.add_callback(callback=callback_2)
         q.answer(True)
 
-        callback.assert_called_once_with(True)
+        callback_1.assert_called_once_with(True)
+        callback_2.assert_called_once_with(True)

@@ -35,7 +35,7 @@ class CertaintyFactorBasedApp:
             return None
         
         question = self.interviewer.get_question()
-        question.set_callback(lambda a: self.guesser.update(QuestionAnswer(
+        question.add_callback(lambda a: self.guesser.update(QuestionAnswer(
             question=question.value,
             answer=a
         )))

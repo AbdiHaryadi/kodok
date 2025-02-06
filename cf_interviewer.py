@@ -1,20 +1,19 @@
-from dataclasses import dataclass
 from typing import Callable
 
 from cf_guesser import CertaintyFactorBasedGuesser, Guess
-from entities import ObjectSpecificationList, QuestionAnswer
+from entities import ObjectSpecificationList
 
-@dataclass
 class Question:
-    value: str
-    callback: Callable[[bool], None] | None = None
+    def __init__(self, value: str):
+        self.value = value
+        self.callbacks: list[Callable[[bool], None]] = []
 
-    def set_callback(self, callback: Callable[[bool], None]):
-        self.callback = callback
+    def add_callback(self, callback: Callable[[bool], None]):
+        self.callbacks.append(callback)
 
     def answer(self, value: bool):
-        if self.callback is not None:
-            self.callback(value)
+        for callback in self.callbacks:
+            callback(value)
 
 class CertaintyFactorBasedInterviewer:
     def __init__(
@@ -28,15 +27,39 @@ class CertaintyFactorBasedInterviewer:
         self.all_guesses: list[Guess] = []
         self._latest_all_guesses: bool = False
 
+        self.asked_questions: set[str] = set()
+        self.current_question: Question | None = None
+
     def get_question(self) -> Question:
-        all_guesses = self.guesser.get_all_believed_guesses()
-        n_guess = len(all_guesses)
-        if n_guess == 0:
-            question_value = self.object_spec_list[0].positive_questions[0]
-        else:
+        if self.current_question is None:
+            all_guesses = self.guesser.get_all_believed_guesses()
+            n_guess = len(all_guesses)
             question_value = None
             for object_spec in self.object_spec_list:
-                if object_spec.name == all_guesses[0].value:
-                    question_value = object_spec.positive_questions[0]
+                if n_guess > 0 and all(object_spec.name != x.value for x in all_guesses):
+                    continue
+
+                for potential_question_value in object_spec.positive_questions:
+                    if potential_question_value not in self.asked_questions:
+                        question_value = potential_question_value
+                        break
+
+            assert question_value is not None
+
+            question = Question(value=question_value)
+            callback = lambda _: self._on_answer(question)
+            question.add_callback(callback)
+            self.current_question = question
         
-        return Question(value=question_value)
+        return self.current_question
+    
+    def _on_answer(self, question: Question):
+        if self.current_question is None:
+            raise NotImplementedError
+        
+        if question != self.current_question:
+            return  # Ignore
+        
+        self.asked_questions.add(self.current_question.value)
+        self.current_question = None
+    
