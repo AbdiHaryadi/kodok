@@ -15,6 +15,8 @@ class CertaintyFactorBasedGuesser:
         self._validate_object_specificaton_list()
 
         self.qa_evidence_map: dict[str, bool] = {}
+        self._all_believed_guesses: list[Guess] = []
+        self.latest_all_believed_guesses: bool = False
 
     def _validate_object_specificaton_list(self):
         object_spec_list = self.object_spec_list
@@ -30,19 +32,12 @@ class CertaintyFactorBasedGuesser:
             
             object_name_set.add(obj_name)
 
-    def guess(self):
-        best_guess_value = ""
-        best_belief = -1.0
-        for obj_spec in self.object_spec_list:
-            belief = self._get_belief(obj_spec)
-            if belief > best_belief:
-                best_guess_value = obj_spec.name
-                best_belief = belief
-
-        return Guess(
-            value=best_guess_value,
-            confidence=best_belief
-        )
+    def guess(self) -> Guess:
+        all_believed_guesses = self.get_all_believed_guesses()
+        if len(all_believed_guesses) == 0:
+            return Guess(value=self.object_spec_list[0].name, confidence=0.0)
+        
+        return max(all_believed_guesses, key=lambda x: x.confidence)
 
     def _get_belief(self, obj_spec: ObjectSpecification):
         expected_positive_answers = 0
@@ -54,7 +49,7 @@ class CertaintyFactorBasedGuesser:
 
         if total_positive_questions == 0:
             raise ValueError(f"No positive questions in \"{obj_spec.name}\"")
-            
+
         belief = expected_positive_answers / total_positive_questions
         return belief
     
@@ -63,6 +58,22 @@ class CertaintyFactorBasedGuesser:
             return False
         
         return self.qa_evidence_map[question] == True
+    
+    def get_all_believed_guesses(self) -> list[Guess]:
+        if not self.latest_all_believed_guesses:
+            self._all_believed_guesses = self._get_all_believed_guesses()
+            self.latest_all_believed_guesses = True
+    
+        return self._all_believed_guesses
+
+    def _get_all_believed_guesses(self):
+        result: list[Guess] = []
+        for obj_spec in self.object_spec_list:
+            belief = self._get_belief(obj_spec)
+            if belief > 0.0:
+                result.append(Guess(value=obj_spec.name, confidence=belief))
+            
+        return result
     
     def update(self, qa: QuestionAnswer):
         question = qa.question
