@@ -85,6 +85,3 @@ class TestCertaintyFactorBasedGuesser(unittest.TestCase):
         guesser.get_all_believed_guesses()
         guesser.get_all_believed_guesses()
         guesser._get_all_believed_guesses.assert_called_once()
-
-if __name__ == "__main__":
-    unittest.main()
