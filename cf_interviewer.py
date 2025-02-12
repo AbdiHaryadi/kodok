@@ -1,7 +1,7 @@
 from typing import Callable
 
 from cf_guesser import CertaintyFactorBasedGuesser, Guess
-from entities import ObjectSpecificationList
+from entities import ObjectSpecification, ObjectSpecificationList
 
 class Question:
     def __init__(self, value: str):
@@ -36,25 +36,97 @@ class CertaintyFactorBasedInterviewer:
     def _reset_current_question(self):
         all_guesses = self.guesser.get_all_believed_guesses()
         n_guess = len(all_guesses)
-        question_value = None
+
+        best_question_value = None
+        best_cost = 0.0
         for object_spec in self.object_spec_list:
             if n_guess > 0 and all(object_spec.name != x.value for x in all_guesses):
                 continue
 
             for potential_question_value in object_spec.positive_questions:
                 if potential_question_value not in self.asked_questions:
-                    question_value = potential_question_value
-                    break
+                    cost = self._get_question_cost(potential_question_value)
+                    if best_question_value is None or best_cost > cost:
+                        best_question_value = potential_question_value
+                        best_cost = cost
+                    # else: ignore
 
-        if question_value is None:
+        if best_question_value is None:
             self.current_question = None
             self._all_questions_asked = True
             return
 
-        question = Question(value=question_value)
+        question = Question(value=best_question_value)
         callback = lambda _: self._on_answer(question)
         question.add_callback(callback)
         self.current_question = question
+
+    def _get_question_cost(self, question: str) -> float:
+        all_guesses = self.guesser.get_all_believed_guesses()
+        n_all_guesses = len(all_guesses)
+        if n_all_guesses == 0:
+            possible_choice_count = len(self.object_spec_list)
+        else:
+            possible_choice_count = n_all_guesses
+        
+        target = possible_choice_count / 2
+
+        # What if the question is answered
+        k_true = 0
+        k_false = 0
+        for object_spec in self.object_spec_list:
+            if n_all_guesses > 0 and all(object_spec.name != x.value for x in all_guesses):
+                continue
+
+            belief = self._get_belief_after_answering_specific_question(object_spec, question, True)
+            if belief > 0.0:
+                k_true += 1
+
+            belief = self._get_belief_after_answering_specific_question(object_spec, question, False)
+            if belief > 0.0:
+                k_false += 1
+
+        cost = abs(target - k_true) + abs(target - k_false)
+        return cost 
+    
+    def _get_belief_after_answering_specific_question(self, obj_spec: ObjectSpecification, specific_question: str, answer: bool):
+        match_answers = 0
+        total_questions = 0
+        for question in obj_spec.positive_questions:
+            total_questions += 1
+            if question == specific_question:
+                if answer == True:
+                    match_answers += 1
+            elif self._is_positive_answer_confirmed(question):
+                match_answers += 1
+
+        for question in obj_spec.negative_questions:
+            total_questions += 1
+            if question == specific_question:
+                if answer == False:
+                    match_answers += 1
+            elif self._is_negative_answer_confirmed(question):
+                match_answers += 1
+
+        if total_questions == 0:
+            raise ValueError(f"No questions in \"{obj_spec.name}\"")
+
+        belief = match_answers / total_questions
+        return belief
+    
+    def _is_positive_answer_confirmed(self, question: str):
+        qa_evidence_map = self.guesser.get_qa_evidence_map()
+        if question not in qa_evidence_map:
+            return False
+        
+        return qa_evidence_map[question] == True
+    
+    def _is_negative_answer_confirmed(self, question: str):
+        qa_evidence_map = self.guesser.get_qa_evidence_map()
+        if question not in qa_evidence_map:
+            return False
+        
+        return qa_evidence_map[question] == False
 
     def has_question(self) -> bool:
         return not self._all_questions_asked

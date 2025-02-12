@@ -33,7 +33,7 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         )
         question = interviewer.get_question()
         self.assertIn(question.value, ["ap1", "ap2", "bp1"])
-        guesser.get_all_believed_guesses.assert_called_once()
+        guesser.get_all_believed_guesses.assert_called()
 
     def test_one_belief_case(self):
         object_spec_list = ObjectSpecificationList([
@@ -66,7 +66,7 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         )
         question = interviewer.get_question()
         self.assertEqual(question.value, "bp1")
-        guesser.get_all_believed_guesses.assert_called_once()
+        guesser.get_all_believed_guesses.assert_called()
 
     def test_second_question_empty_belief(self):
         object_spec_list = ObjectSpecificationList([
@@ -257,6 +257,36 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         self.assertTrue(interviewer.has_question())
         question_2.answer(True)
         self.assertFalse(interviewer.has_question())
+
+    def test_smart_question(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="a",
+                positive_questions=[
+                    "ap1",
+                    "x"
+                ]
+            ),
+            ObjectSpecification(
+                name="b",
+                positive_questions=[
+                    "bp1",
+                ],
+                negative_questions=[
+                    "x"
+                ]
+            ),
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        guesser.get_all_believed_guesses = MagicMock(return_value=[])
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
+        question_1 = interviewer.get_question()
+        self.assertEqual(question_1.value, "x")
 
 class TestQuestion(unittest.TestCase):
     def test_add_callback(self):

@@ -69,3 +69,6 @@ class CertaintyFactorBasedGuesser:
         
         self.qa_evidence_map[question] = qa.answer
         self.reset_all_believed_guesses()
+
+    def get_qa_evidence_map(self):
+        return self.qa_evidence_map
