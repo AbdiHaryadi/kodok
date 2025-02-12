@@ -31,26 +31,50 @@ class CertaintyFactorBasedInterviewer:
         self.current_question: Question | None = None
         self._all_questions_asked = False
 
+        question_list: list[str] = []
+        for object_spec in self.object_spec_list:
+            for question in object_spec.positive_questions:
+                if question not in question_list:
+                    question_list.append(question)
+
+            for question in object_spec.negative_questions:
+                if question not in question_list:
+                    question_list.append(question)
+
+        self.question_list = question_list
+
         self._reset_current_question()
         self._need_reset_question = False
 
+
     def _reset_current_question(self):
         all_guesses = self.guesser.get_all_believed_guesses()
-        n_guess = len(all_guesses)
 
         best_question_value = None
-        best_cost = 0.0
-        for object_spec in self.object_spec_list:
-            if n_guess > 0 and all(object_spec.name != x.value for x in all_guesses):
-                continue
+        best_score = (0.0, 0)
+        for question in self.question_list:
+            if question not in self.asked_questions:
+                cost = self._get_question_cost(question)
+                involved = 0
+                for object_spec in self.object_spec_list:
+                    if not any(object_spec.name == g.value for g in all_guesses):
+                        continue
 
-            for potential_question_value in object_spec.positive_questions:
-                if potential_question_value not in self.asked_questions:
-                    cost = self._get_question_cost(potential_question_value)
-                    if best_question_value is None or best_cost > cost:
-                        best_question_value = potential_question_value
-                        best_cost = cost
+                    if question in object_spec.positive_questions:
+                        involved = 1
+                    elif question in object_spec.negative_questions:
+                        involved = 1
                     # else: ignore
+
+                    if involved == 1:
+                        break
+
+                score = (-cost, involved)
+
+                if best_question_value is None or best_score < score:
+                    best_question_value = question
+                    best_score = score
+                # else: ignore
 
         if best_question_value is None:
             self.current_question = None

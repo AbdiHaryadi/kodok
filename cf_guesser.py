@@ -24,17 +24,31 @@ class CertaintyFactorBasedGuesser:
         return max(all_believed_guesses, key=lambda x: x.confidence)
 
     def _get_belief(self, obj_spec: ObjectSpecification):
-        expected_positive_answers = 0
-        total_positive_questions = 0
+        match_score = 0
+        total_questions = 0
+
+        qa_evidence_map = self.qa_evidence_map
+
         for question in obj_spec.positive_questions:
-            total_positive_questions += 1
-            if self._is_positive_answer_confirmed(question):
-                expected_positive_answers += 1
+            total_questions += 1
+            if question in qa_evidence_map:
+                if qa_evidence_map[question] == True:
+                    match_score += 1
+                else:
+                    match_score -= 1
 
-        if total_positive_questions == 0:
-            raise ValueError(f"No positive questions in \"{obj_spec.name}\"")
+        for question in obj_spec.negative_questions:
+            total_questions += 1
+            if question in qa_evidence_map:
+                if qa_evidence_map[question] == False:
+                    match_score += 1
+                else:
+                    match_score -= 1
 
-        belief = expected_positive_answers / total_positive_questions
+        if total_questions == 0:
+            raise ValueError(f"No questions in \"{obj_spec.name}\"")
+
+        belief = max(match_score, 0) / total_questions
         return belief
     
     def _is_positive_answer_confirmed(self, question: str):
