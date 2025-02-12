@@ -80,7 +80,7 @@ if __name__ == "__main__":
     ])
     app = CertaintyFactorBasedApp(object_spec_list)
     while (question := app.get_question()) is not None:
-        while (answer := input(f"{question.value} (y/n)").lower()) not in ["y", "n"]:
+        while (answer := input(f"{question.value} (y/t)").lower()) not in ["y", "t"]:
             print("Jawaban tidak valid!")
         
         if answer == "y":
