@@ -41,10 +41,6 @@ class CertaintyFactorBasedApp:
         return question
     
     def _should_make_final_result(self):
-        all_guesses = self.guesser.get_all_believed_guesses()
-        if len(all_guesses) == 1:
-            return True
-        
         if not self.interviewer.has_question():
             return True
         
