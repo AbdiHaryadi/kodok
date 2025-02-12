@@ -32,6 +32,7 @@ class CertaintyFactorBasedInterviewer:
         self._all_questions_asked = False
 
         self._reset_current_question()
+        self._need_reset_question = False
 
     def _reset_current_question(self):
         all_guesses = self.guesser.get_all_believed_guesses()
@@ -60,6 +61,11 @@ class CertaintyFactorBasedInterviewer:
         callback = lambda _: self._on_answer(question)
         question.add_callback(callback)
         self.current_question = question
+
+    def _update_current_question(self):
+        if self._need_reset_question:
+            self._reset_current_question()
+            self._need_reset_question = False
 
     def _get_question_cost(self, question: str) -> float:
         all_guesses = self.guesser.get_all_believed_guesses()
@@ -90,36 +96,42 @@ class CertaintyFactorBasedInterviewer:
         return cost 
     
     def _get_belief_after_answering_specific_question(self, obj_spec: ObjectSpecification, specific_question: str, answer: bool):
-        match_answers = 0
+        match_score = 0
         total_questions = 0
+
+        qa_evidence_map = self.guesser.get_qa_evidence_map()
+
         for question in obj_spec.positive_questions:
             total_questions += 1
             if question == specific_question:
                 if answer == True:
-                    match_answers += 1
-            elif self._is_positive_answer_confirmed(question):
-                match_answers += 1
+                    match_score += 1
+                else:
+                    match_score -= 1
+            elif question in qa_evidence_map:
+                if qa_evidence_map[question] == True:
+                    match_score += 1
+                else:
+                    match_score -= 1
 
         for question in obj_spec.negative_questions:
             total_questions += 1
             if question == specific_question:
                 if answer == False:
-                    match_answers += 1
-            elif self._is_negative_answer_confirmed(question):
-                match_answers += 1
+                    match_score += 1
+                else:
+                    match_score -= 1
+            elif question in qa_evidence_map:
+                if qa_evidence_map[question] == False:
+                    match_score += 1
+                else:
+                    match_score -= 1
 
         if total_questions == 0:
             raise ValueError(f"No questions in \"{obj_spec.name}\"")
 
-        belief = match_answers / total_questions
+        belief = max(match_score, 0)  / total_questions
         return belief
-    
-    def _is_positive_answer_confirmed(self, question: str):
-        qa_evidence_map = self.guesser.get_qa_evidence_map()
-        if question not in qa_evidence_map:
-            return False
-        
-        return qa_evidence_map[question] == True
     
     def _is_negative_answer_confirmed(self, question: str):
         qa_evidence_map = self.guesser.get_qa_evidence_map()
@@ -129,9 +141,11 @@ class CertaintyFactorBasedInterviewer:
         return qa_evidence_map[question] == False
 
     def has_question(self) -> bool:
+        self._update_current_question()
         return not self._all_questions_asked
 
     def get_question(self) -> Question:
+        self._update_current_question()
         assert self.current_question is not None
         return self.current_question
     
@@ -143,4 +157,4 @@ class CertaintyFactorBasedInterviewer:
             return  # Ignore
         
         self.asked_questions.add(self.current_question.value)
-        self._reset_current_question()
+        self._need_reset_question = True
