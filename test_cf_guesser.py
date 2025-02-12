@@ -58,7 +58,7 @@ class TestCertaintyFactorBasedGuesser(unittest.TestCase):
 
         confidence = g.confidence
         expected_confidence = 1.0
-        self.assertAlmostEqual(confidence, expected_confidence, f"Expecting {expected_confidence}, got {confidence}")
+        self.assertAlmostEqual(confidence, expected_confidence, msg=f"Expecting {expected_confidence}, got {confidence}")
 
         all_guesses = guesser.get_all_believed_guesses()
         self.assertEqual(len(all_guesses), 1)
@@ -80,8 +80,59 @@ class TestCertaintyFactorBasedGuesser(unittest.TestCase):
             question="ap1",
             answer=True
         ))
-        guesser._get_all_believed_guesses = MagicMock()
+        guesser.reset_all_believed_guesses = MagicMock()
 
         guesser.get_all_believed_guesses()
         guesser.get_all_believed_guesses()
-        guesser._get_all_believed_guesses.assert_called_once()
+        guesser.reset_all_believed_guesses.assert_called_once()
+
+    def test_two_positive_updates(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="A",
+                positive_questions=["ap1", "x"]
+            ),
+            ObjectSpecification(
+                name="B",
+                positive_questions=["bp2"]
+            ),
+            ObjectSpecification(
+                name="C",
+                positive_questions=["cp1", "x"]
+            )
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list)
+
+        # First update
+        guesser.update(QuestionAnswer(
+            question="x",
+            answer=True
+        ))
+        g = guesser.guess()
+        guess_value = g.value
+        self.assertIn(guess_value, ["A", "C"], f"Unexpected, got \"{guess_value}\"")
+
+        confidence = g.confidence
+        expected_confidence = 0.5
+        self.assertAlmostEqual(confidence, expected_confidence, msg=f"Expecting {expected_confidence}, got {confidence}")
+
+        all_guesses = guesser.get_all_believed_guesses()
+        self.assertEqual(len(all_guesses), 2)
+
+        # Second update
+        guesser.update(QuestionAnswer(
+            question="ap1",
+            answer=True
+        ))
+        g = guesser.guess()
+        guess_value = g.value
+        self.assertEqual(guess_value, "A", f"Unexpected, got \"{guess_value}\"")
+
+        confidence = g.confidence
+        expected_confidence = 1.0
+        self.assertAlmostEqual(confidence, expected_confidence, msg=f"Expecting {expected_confidence}, got {confidence}")
+
+        all_guesses = guesser.get_all_believed_guesses()
+        self.assertEqual(len(all_guesses), 2)
+    

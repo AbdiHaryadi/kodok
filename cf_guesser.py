@@ -45,19 +45,19 @@ class CertaintyFactorBasedGuesser:
     
     def get_all_believed_guesses(self) -> list[Guess]:
         if not self.latest_all_believed_guesses:
-            self._all_believed_guesses = self._get_all_believed_guesses()
+            self.reset_all_believed_guesses()
             self.latest_all_believed_guesses = True
     
         return self._all_believed_guesses
 
-    def _get_all_believed_guesses(self):
+    def reset_all_believed_guesses(self):
         result: list[Guess] = []
         for obj_spec in self.object_spec_list:
             belief = self._get_belief(obj_spec)
             if belief > 0.0:
                 result.append(Guess(value=obj_spec.name, confidence=belief))
             
-        return result
+        self._all_believed_guesses = result
     
     def update(self, qa: QuestionAnswer):
         question = qa.question
@@ -68,3 +68,4 @@ class CertaintyFactorBasedGuesser:
             raise ValueError(f"Contradiction in question \"{question}\"")
         
         self.qa_evidence_map[question] = qa.answer
+        self.reset_all_believed_guesses()
