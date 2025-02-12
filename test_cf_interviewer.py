@@ -179,6 +179,85 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         self.assertNotEqual(question_1.value, question_2.value)
         self.assertIn(question_2.value, ["bp1", "cp1"])
 
+    def test_remaining_question_for_no_belief(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="b",
+                positive_questions=[
+                    "bp1",
+                ]
+            ),
+            ObjectSpecification(
+                name="c",
+                positive_questions=[
+                    "cp1",
+                ]
+            )
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        guesser.get_all_believed_guesses = MagicMock(return_value=[])
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
+        self.assertTrue(interviewer.has_question())
+        
+        question_1 = interviewer.get_question()
+        self.assertTrue(interviewer.has_question())
+        question_1.answer(True)
+        self.assertTrue(interviewer.has_question())
+
+        question_2 = interviewer.get_question()
+        self.assertTrue(interviewer.has_question())
+        question_2.answer(False)
+        self.assertFalse(interviewer.has_question())
+
+    def test_remaining_question_for_some_belief(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="a",
+                positive_questions=[
+                    "ap1",
+                ]
+            ),
+            ObjectSpecification(
+                name="b",
+                positive_questions=[
+                    "bp1",
+                ]
+            ),
+            ObjectSpecification(
+                name="c",
+                positive_questions=[
+                    "cp1",
+                ]
+            )
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        guesser.get_all_believed_guesses = MagicMock(return_value=[
+            Guess(value="a", confidence=0.1),
+            Guess(value="c", confidence=0.1),
+        ])
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
+        self.assertTrue(interviewer.has_question())
+        
+        question_1 = interviewer.get_question()
+        self.assertTrue(interviewer.has_question())
+        question_1.answer(False)
+        self.assertTrue(interviewer.has_question())
+
+        question_2 = interviewer.get_question()
+        self.assertTrue(interviewer.has_question())
+        question_2.answer(True)
+        self.assertFalse(interviewer.has_question())
+
 class TestQuestion(unittest.TestCase):
     def test_add_callback(self):
         q = Question(value="q1")
