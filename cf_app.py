@@ -30,11 +30,7 @@ class CertaintyFactorBasedApp:
             object_name_set.add(obj_name)
 
     def get_question(self) -> Question | None:
-        all_guesses = self.guesser.get_all_believed_guesses()
-        if len(all_guesses) == 1:
-            return None
-        
-        if not self.interviewer.has_question():
+        if self._should_make_final_result():
             return None
         
         question = self.interviewer.get_question()
@@ -44,10 +40,23 @@ class CertaintyFactorBasedApp:
         )))
         return question
     
-    def get_final_result(self) -> str | None:
+    def _should_make_final_result(self):
         all_guesses = self.guesser.get_all_believed_guesses()
         if len(all_guesses) == 1:
-            return all_guesses[0].value
+            return True
+        
+        if not self.interviewer.has_question():
+            return True
+        
+        return False
+    
+    def get_final_result(self) -> str | None:
+        if not self._should_make_final_result():
+            return None
+        
+        guess = self.guesser.guess()
+        if guess.confidence > 0.0:
+            return guess.value
         
         return None
     

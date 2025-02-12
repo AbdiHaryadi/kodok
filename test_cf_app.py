@@ -54,7 +54,7 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
             question="(terserah)",
             answer=True
         ))
-        app.interviewer.has_question.assert_called_once()
+        app.interviewer.has_question.assert_called()
 
     def test_one_belief_case(self):
         object_spec_list = OSL_SAMPLE
@@ -119,9 +119,9 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
             question="(terserah)",
             answer=False
         ))
-        app.interviewer.has_question.assert_called_once()
+        app.interviewer.has_question.assert_called()
 
-    def test_no_remaining_question(self):
+    def test_no_remaining_question_and_have_guess(self):
         object_spec_list = OSL_SAMPLE
         app = CertaintyFactorBasedApp(object_spec_list)
         app.guesser.get_all_believed_guesses = MagicMock(return_value=[
@@ -135,6 +135,10 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
             )
         ])
         app.guesser.update = MagicMock()
+        app.guesser.guess = MagicMock(return_value=Guess(
+            value="(bebas X)",
+            confidence=0.1
+        ))
 
         app.interviewer.get_question = MagicMock(return_value=Question(
             value="(terserah)"
@@ -145,3 +149,40 @@ class TestCertaintyFactorBasedApp(unittest.TestCase):
         self.assertIsNone(question)
 
         app.interviewer.get_question.assert_not_called()
+
+        result = app.get_final_result()
+        self.assertEqual(result, "(bebas X)")
+
+    def test_no_remaining_question_but_no_guess(self):
+        object_spec_list = OSL_SAMPLE
+        app = CertaintyFactorBasedApp(object_spec_list)
+
+        # Distraction
+        app.guesser.get_all_believed_guesses = MagicMock(return_value=[
+            Guess(
+                value="(bebas 1)",
+                confidence=0.1
+            ),
+            Guess(
+                value="(bebas 2)",
+                confidence=0.1
+            )
+        ])
+        app.guesser.update = MagicMock()
+        app.guesser.guess = MagicMock(return_value=Guess(
+            value="(bebas X)",
+            confidence=0.0
+        ))
+
+        app.interviewer.get_question = MagicMock(return_value=Question(
+            value="(terserah)"
+        ))
+        app.interviewer.has_question = MagicMock(return_value=False)
+
+        question = app.get_question()
+        self.assertIsNone(question)
+
+        app.interviewer.get_question.assert_not_called()
+
+        result = app.get_final_result()
+        self.assertIsNone(result)
