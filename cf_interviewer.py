@@ -132,13 +132,6 @@ class CertaintyFactorBasedInterviewer:
 
         belief = max(match_score, 0)  / total_questions
         return belief
-    
-    def _is_negative_answer_confirmed(self, question: str):
-        qa_evidence_map = self.guesser.get_qa_evidence_map()
-        if question not in qa_evidence_map:
-            return False
-        
-        return qa_evidence_map[question] == False
 
     def has_question(self) -> bool:
         self._update_current_question()
