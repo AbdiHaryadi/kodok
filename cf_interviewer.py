@@ -1,7 +1,7 @@
 from typing import Callable
 
 from cf_guesser import CertaintyFactorBasedGuesser, Guess
-from entities import ObjectSpecification, ObjectSpecificationList
+from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 
 class Question:
     def __init__(self, value: str):
@@ -120,42 +120,11 @@ class CertaintyFactorBasedInterviewer:
         return cost 
     
     def _get_belief_after_answering_specific_question(self, obj_spec: ObjectSpecification, specific_question: str, answer: bool):
-        match_score = 0
-        total_questions = 0
-
-        qa_evidence_map = self.guesser.get_qa_evidence_map()
-
-        for question in obj_spec.positive_questions:
-            total_questions += 1
-            if question == specific_question:
-                if answer == True:
-                    match_score += 1
-                else:
-                    match_score -= 1
-            elif question in qa_evidence_map:
-                if qa_evidence_map[question] == True:
-                    match_score += 1
-                else:
-                    match_score -= 1
-
-        for question in obj_spec.negative_questions:
-            total_questions += 1
-            if question == specific_question:
-                if answer == False:
-                    match_score += 1
-                else:
-                    match_score -= 1
-            elif question in qa_evidence_map:
-                if qa_evidence_map[question] == False:
-                    match_score += 1
-                else:
-                    match_score -= 1
-
-        if total_questions == 0:
-            raise ValueError(f"No questions in \"{obj_spec.name}\"")
-
-        belief = max(match_score, 0)  / total_questions
-        return belief
+        new_state = self.guesser.state.advance(QuestionAnswer(
+            question=specific_question,
+            answer=answer
+        ))
+        return new_state.get_belief(obj_spec)
 
     def has_question(self) -> bool:
         self._update_current_question()

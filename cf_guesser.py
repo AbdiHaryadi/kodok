@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from cf_state import CertaintyFactorBasedState
 from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 
 @dataclass
@@ -12,9 +13,12 @@ class CertaintyFactorBasedGuesser:
             object_spec_list: ObjectSpecificationList
     ):
         self.object_spec_list = object_spec_list
-        self.qa_evidence_map: dict[str, bool] = {}
         self._all_believed_guesses: list[Guess] = []
         self.latest_all_believed_guesses: bool = False
+        self.state = CertaintyFactorBasedState(
+            object_spec_list=object_spec_list,
+            qa_evidence_map={}
+        )
 
     def guess(self) -> Guess:
         all_believed_guesses = self.get_all_believed_guesses()
@@ -24,38 +28,7 @@ class CertaintyFactorBasedGuesser:
         return max(all_believed_guesses, key=lambda x: x.confidence)
 
     def _get_belief(self, obj_spec: ObjectSpecification):
-        match_score = 0
-        total_questions = 0
-
-        qa_evidence_map = self.qa_evidence_map
-
-        for question in obj_spec.positive_questions:
-            total_questions += 1
-            if question in qa_evidence_map:
-                if qa_evidence_map[question] == True:
-                    match_score += 1
-                else:
-                    match_score -= 1
-
-        for question in obj_spec.negative_questions:
-            total_questions += 1
-            if question in qa_evidence_map:
-                if qa_evidence_map[question] == False:
-                    match_score += 1
-                else:
-                    match_score -= 1
-
-        if total_questions == 0:
-            raise ValueError(f"No questions in \"{obj_spec.name}\"")
-
-        belief = max(match_score, 0) / total_questions
-        return belief
-    
-    def _is_positive_answer_confirmed(self, question: str):
-        if question not in self.qa_evidence_map:
-            return False
-        
-        return self.qa_evidence_map[question] == True
+        return self.state.get_belief(obj_spec)
     
     def get_all_believed_guesses(self) -> list[Guess]:
         if not self.latest_all_believed_guesses:
@@ -74,15 +47,5 @@ class CertaintyFactorBasedGuesser:
         self._all_believed_guesses = result
     
     def update(self, qa: QuestionAnswer):
-        question = qa.question
-        if question in self.qa_evidence_map:
-            if qa.answer == self.qa_evidence_map[question]:
-                return
-            
-            raise ValueError(f"Contradiction in question \"{question}\"")
-        
-        self.qa_evidence_map[question] = qa.answer
+        self.state = self.state.advance(qa)
         self.reset_all_believed_guesses()
-
-    def get_qa_evidence_map(self):
-        return self.qa_evidence_map
