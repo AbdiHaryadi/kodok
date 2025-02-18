@@ -57,30 +57,32 @@ class CertaintyFactorBasedApp:
         return None
     
 if __name__ == "__main__":
-    object_spec_list = ObjectSpecificationList([
-        ObjectSpecification(
-            name="Demam Berdarah Dengue (DBD)",
-            positive_questions=[
-                "Demam?",
-                "Demam mendadak yang tinggi?",
-                "Suhu demam hingga 39 derajat Celcius?",
-                "Nyeri kepala?",
-                "Menggigil?",
-            ]
-        ),
-        ObjectSpecification(
-            name="Tipus",
-            positive_questions=[
-                "Demam?",
-                "Demam berlangsung lebih dari seminggu?",
-                "Kelelahan yang berlebihan?",
-                "Nyeri kepala?",
-            ]
-        ),
-    ])
+    import json
+
+    object_spec_list_data: list[ObjectSpecification] = []
+    with open("data.json") as fp:
+        data = json.load(fp)
+
+    for i, object_spec_data in enumerate(data):
+        object_name: str = object_spec_data.get("name", f"Penyakit Tanpa Nama {i}")
+        positive_questions: list[str] = object_spec_data.get("positive_questions", [])
+        negative_questions: list[str] = object_spec_data.get("negative_questions", [])
+        object_spec_list_data.append(ObjectSpecification(
+            name=object_name,
+            positive_questions=positive_questions,
+            negative_questions=negative_questions
+        ))
+
+
+    object_spec_list = ObjectSpecificationList(object_spec_list_data)
     app = CertaintyFactorBasedApp(object_spec_list)
+
+    question_no = 0
     while (question := app.get_question()) is not None:
-        while (answer := input(f"{question.value} (y/t)").lower()) not in ["y", "t"]:
+        print(app.guesser.get_all_believed_guesses())
+
+        question_no += 1
+        while (answer := input(f"Pertanyaan {question_no}: {question.value}\nJawaban (y/t): ").lower()) not in ["y", "t"]:
             print("Jawaban tidak valid!")
         
         if answer == "y":
