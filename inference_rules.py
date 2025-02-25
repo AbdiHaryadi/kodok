@@ -1,6 +1,16 @@
 from dataclasses import dataclass, field
 import json
 
+def update_qa_evidence_map(qa_evidence_map: dict[str, bool], question: str, answer: bool):
+    if question in qa_evidence_map:
+        if qa_evidence_map[question] == answer:
+            return False
+
+        raise ValueError(f"Contradiction detected: For {qa_evidence_map=}, it leads to contradiction in question {question} when answering {answer}.")
+    
+    qa_evidence_map[question] = answer
+    return True
+
 @dataclass
 class GeneralSpecificRule:
     general_questions: list[str] = field(default_factory=lambda: [])
@@ -29,14 +39,9 @@ class GeneralSpecificRule:
 
         if negate_specific_questions:
             for q in self.specific_questions:
-                if q in qa_evidence_map:
-                    if qa_evidence_map[q] == False:
-                        continue
-
-                    raise ValueError(f"Contradiction detected: For {qa_evidence_map=}, it leads to contradiction in question {q}.")
-                
-                qa_evidence_map[q] = False
-                updated = True
+                qa_evidence_update = update_qa_evidence_map(qa_evidence_map, question=q, answer=False)
+                if qa_evidence_update:
+                    updated = True
         
         return updated
     
@@ -51,20 +56,74 @@ class GeneralSpecificRule:
 
         if satisfy_general_questions:
             for q in self.general_questions:
-                if q in qa_evidence_map:
-                    if qa_evidence_map[q] == True:
-                        continue
+                qa_evidence_update = update_qa_evidence_map(qa_evidence_map, question=q, answer=True)
+                if qa_evidence_update:
+                    updated = True
+        
+        return updated
+    
+@dataclass
+class AndRule:
+    parent_question: str
+    child_questions: list[str]
 
-                    raise ValueError(f"Contradiction detected: For {qa_evidence_map=}, it leads to contradiction in question {q}.")
-                
-                qa_evidence_map[q] = True
+    @staticmethod
+    def from_dict(data: dict[str, list[str]]):
+        return GeneralSpecificRule(
+            general_questions=data["parent_question"],
+            specific_questions=data["child_questions"],
+        )
+    
+    def update(self, qa_evidence_map: dict[str, bool]):
+        if self.parent_question in qa_evidence_map:
+            if qa_evidence_map[self.parent_question] == True:
+                return self._update_all_childs_to_positive(qa_evidence_map)
+            
+            unanswered_questions = []
+            found_false_answer = False
+            for q in self.child_questions:
+                if q not in qa_evidence_map:
+                    unanswered_questions.append(q)
+                elif qa_evidence_map[q] == False:
+                    found_false_answer = True
+                    break
+
+            if found_false_answer:
+                return False
+
+            if len(unanswered_questions) == 1:
+                return update_qa_evidence_map(qa_evidence_map, question=unanswered_questions[0], answer=False)
+            
+            return False
+        
+        parent_new_value: bool | None = True
+        for q in self.child_questions:
+            if q in qa_evidence_map:
+                if qa_evidence_map[q] == False:
+                    parent_new_value = False
+                    break
+                # else: check other values
+            else:
+                parent_new_value = None
+                break
+
+        if parent_new_value is not None:
+            return update_qa_evidence_map(qa_evidence_map, question=self.parent_question, answer=parent_new_value)
+        
+        return False
+
+    def _update_all_childs_to_positive(self, qa_evidence_map):
+        updated = False
+        for q in self.child_questions:
+            qa_evidence_map_updated = update_qa_evidence_map(qa_evidence_map, question=q, answer=True)
+            if qa_evidence_map_updated:
                 updated = True
-
         return updated
 
 @dataclass
 class InferenceRules:
     general_specific_rules: list[GeneralSpecificRule] = field(default_factory=list)
+    and_rules: list[AndRule] = field(default_factory=list)
 
     @staticmethod
     def load(path: str):
@@ -72,15 +131,22 @@ class InferenceRules:
             data = json.load(fp)
         
         general_specific_rules = [GeneralSpecificRule.from_dict(x) for x in data["general_specific"]]
+        and_rules = [GeneralSpecificRule.from_dict(x) for x in data.get("and", [])]
         return InferenceRules(
-            general_specific_rules=general_specific_rules
+            general_specific_rules=general_specific_rules,
+            and_rules=and_rules
         )
     
     def update(self, qa_evidence_map: dict[str, bool]):
-        possibly_changed = True
-        while possibly_changed:
-            possibly_changed = False
+        possibly_change_in_next_iteration = True
+        while possibly_change_in_next_iteration:
+            possibly_change_in_next_iteration = False
             for rule in self.general_specific_rules:
                 updated = rule.update(qa_evidence_map)
                 if updated:
-                    possibly_changed = True
+                    possibly_change_in_next_iteration = True
+
+            for rule in self.and_rules:
+                updated = rule.update(qa_evidence_map)
+                if updated:
+                    possibly_change_in_next_iteration = True

@@ -1,6 +1,7 @@
 import unittest
+from unittest.mock import MagicMock
 
-from inference_rules import GeneralSpecificRule, InferenceRules
+from inference_rules import AndRule, GeneralSpecificRule, InferenceRules
 
 class TestInferenceRules(unittest.TestCase):
     def test_update_for_negative_general_to_negative_specific(self):
@@ -72,4 +73,121 @@ class TestInferenceRules(unittest.TestCase):
         inference_rules.update(qa_evidence_map)
         self.assertEqual(qa_evidence_map.get("b", None), True)
         self.assertEqual(qa_evidence_map.get("a", None), True)
+
+    def test_using_and_rules(self):
+        and_rule = AndRule("a", ["b", "c"])
+        and_rule.update = MagicMock(return_value=False)
+        inference_rules = InferenceRules(and_rules=[and_rule])
+        qa_evidence_map = {"a": False}
+        inference_rules.update(qa_evidence_map)
+        and_rule.update.assert_called_once_with(qa_evidence_map)
     
+class TestAndRule(unittest.TestCase):
+    def test_positive_parent(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+
+        qa_evidence_map = {"a": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("b", None), True)
+        self.assertEqual(qa_evidence_map.get("c", None), True)
+
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+    
+    def test_negative_parent_two_childs(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+
+        qa_evidence_map = {"a": False}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+        self.assertIsNone(qa_evidence_map.get("b", None))
+        self.assertIsNone(qa_evidence_map.get("c", None))
+
+    def test_negative_parent_two_childs_one_of_them_is_positive(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+
+        qa_evidence_map = {"a": False, "b": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("c", None), False)
+
+    def test_negative_parent_two_childs_one_of_them_is_negative(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+
+        qa_evidence_map = {"a": False, "b": False}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+        self.assertIsNone(qa_evidence_map.get("c", None))
+
+    def test_negative_parent_three_childs_one_of_them_is_positive(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c", "d"]
+        )
+
+        qa_evidence_map = {"a": False, "b": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+        self.assertIsNone(qa_evidence_map.get("c", None))
+        self.assertIsNone(qa_evidence_map.get("d", None))
+
+    def test_negative_parent_three_childs_two_of_them_are_positive(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c", "d"]
+        )
+
+        qa_evidence_map = {"a": False, "b": True, "c": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("d", None), False)
+    
+    def test_two_childs_all_positive(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+
+        qa_evidence_map = {"b": True, "c": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("a", None), True)
+
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+
+    def test_three_childs_two_of_them_positive(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c", "d"]
+        )
+
+        qa_evidence_map = {"b": True, "c": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+        self.assertIsNone(qa_evidence_map.get("a", None))
+        self.assertIsNone(qa_evidence_map.get("d", None))
+
+    def test_two_childs_one_negative(self):
+        rule = AndRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+
+        qa_evidence_map = {"b": False}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("a", None), False)
