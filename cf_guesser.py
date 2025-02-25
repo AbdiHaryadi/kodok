@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from cf_state import CertaintyFactorBasedState
-from entities import GeneralSpecificRule, ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from inference_rules import InferenceRules
 
 @dataclass
 class Guess:
@@ -11,7 +12,7 @@ class CertaintyFactorBasedGuesser:
     def __init__(
             self,
             object_spec_list: ObjectSpecificationList,
-            general_specific_rules: list[GeneralSpecificRule] = []
+            inference_rules: InferenceRules | None = None
     ):
         self.object_spec_list = object_spec_list
         self._all_believed_guesses: list[Guess] = []
@@ -19,7 +20,7 @@ class CertaintyFactorBasedGuesser:
         self.state = CertaintyFactorBasedState(
             object_spec_list=object_spec_list,
             qa_evidence_map={},
-            general_specific_rules=general_specific_rules
+            inference_rules=inference_rules
         )
 
     def guess(self) -> Guess:

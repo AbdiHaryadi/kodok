@@ -1,17 +1,18 @@
 from cf_guesser import CertaintyFactorBasedGuesser
 from cf_interviewer import CertaintyFactorBasedInterviewer, Question
-from entities import GeneralSpecificRule, ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from inference_rules import InferenceRules
 
 class CertaintyFactorBasedApp:
     def __init__(
             self,
             object_spec_list: ObjectSpecificationList,
-            general_specific_rules: list[GeneralSpecificRule] = []
+            inference_rules: InferenceRules | None = None
     ):
         self.object_spec_list = object_spec_list
         self.guesser = CertaintyFactorBasedGuesser(
             object_spec_list=object_spec_list,
-            general_specific_rules=general_specific_rules
+            inference_rules=inference_rules
         )
         self.interviewer = CertaintyFactorBasedInterviewer(
             object_spec_list=object_spec_list,
@@ -63,11 +64,8 @@ if __name__ == "__main__":
         ))
     object_spec_list = ObjectSpecificationList(object_spec_list_data)
 
-    with open("rules.json") as fp:
-        data = json.load(fp)
-        general_specific_rules = [GeneralSpecificRule.from_dict(x) for x in data["general_specific"]]
-
-    app = CertaintyFactorBasedApp(object_spec_list, general_specific_rules=general_specific_rules)
+    inference_rules = InferenceRules.load("rules.json")
+    app = CertaintyFactorBasedApp(object_spec_list, inference_rules=inference_rules)
 
     question_no = 0
     while (question := app.get_question()) is not None:

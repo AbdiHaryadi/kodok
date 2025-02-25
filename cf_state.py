@@ -1,15 +1,16 @@
-from entities import GeneralSpecificRule, ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from inference_rules import InferenceRules
 
 
 class CertaintyFactorBasedState:
     def __init__(self,
         object_spec_list: ObjectSpecificationList,
         qa_evidence_map: dict[str, bool],
-        general_specific_rules: list[GeneralSpecificRule] = []
+        inference_rules: InferenceRules | None = None
     ):
         self.object_spec_list = object_spec_list
         self.qa_evidence_map = qa_evidence_map
-        self.general_specific_rules = general_specific_rules
+        self.inference_rules = inference_rules
 
     def get_belief(self, obj_spec: ObjectSpecification):
         match_score = 0
@@ -46,7 +47,7 @@ class CertaintyFactorBasedState:
         return CertaintyFactorBasedState(
             object_spec_list=self.object_spec_list,
             qa_evidence_map=new_qa_evidence_map,
-            general_specific_rules=self.general_specific_rules
+            inference_rules=self.inference_rules
         )
     
     def _update_qa_evidence_map_with_new_qa(
@@ -62,23 +63,7 @@ class CertaintyFactorBasedState:
             raise ValueError(f"Contradiction in question \"{question}\"")
         
         qa_evidence_map[question] = qa.answer
-        if qa.answer == True:
-            for rule in self.general_specific_rules:
-                if question not in rule.specific_questions:
-                    continue
-
-                for gq in rule.general_questions:
-                    self._update_qa_evidence_map_with_new_qa(qa_evidence_map, QuestionAnswer(
-                        question=gq,
-                        answer=True
-                    ))
-        else:
-            for rule in self.general_specific_rules:
-                if question not in rule.general_questions:
-                    continue
-
-                for sq in rule.specific_questions:
-                    self._update_qa_evidence_map_with_new_qa(qa_evidence_map, QuestionAnswer(
-                        question=sq,
-                        answer=False
-                    ))
+        if self.inference_rules is None:
+            return
+        
+        self.inference_rules.update(qa_evidence_map)
