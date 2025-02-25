@@ -81,6 +81,7 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
 
         guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
         guesser.get_all_believed_guesses = MagicMock(return_value=[])
+        guesser.state.qa_evidence_map = {}
 
         interviewer = CertaintyFactorBasedInterviewer(
             object_spec_list=object_spec_list,
@@ -88,6 +89,7 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         )
         question_1 = interviewer.get_question()
         question_1.answer(False)
+        guesser.state.qa_evidence_map[question_1.value] = False
 
         question_2 = interviewer.get_question()
         self.assertNotEqual(question_1.value, question_2.value)
@@ -135,6 +137,7 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         guesser.get_all_believed_guesses = MagicMock(return_value=[
             Guess(value="b", confidence=0.1)
         ])
+        guesser.state.qa_evidence_map = {}
 
         interviewer = CertaintyFactorBasedInterviewer(
             object_spec_list=object_spec_list,
@@ -142,6 +145,7 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         )
         question_1 = interviewer.get_question()
         question_1.answer(True)
+        guesser.state.qa_evidence_map[question_1.value] = True
 
         question_2 = interviewer.get_question()
         self.assertNotEqual(question_1.value, question_2.value)
@@ -167,6 +171,7 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
             Guess(value="b", confidence=0.1),
             Guess(value="c", confidence=0.1),
         ])
+        guesser.state.qa_evidence_map = {}
 
         interviewer = CertaintyFactorBasedInterviewer(
             object_spec_list=object_spec_list,
@@ -174,12 +179,13 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         )
         question_1 = interviewer.get_question()
         question_1.answer(False)
+        guesser.state.qa_evidence_map[question_1.value] = False
 
         question_2 = interviewer.get_question()
         self.assertNotEqual(question_1.value, question_2.value)
         self.assertIn(question_2.value, ["bp1", "cp1"])
-
-    def test_remaining_question_for_no_belief(self):
+    
+    def test_remaining_question_when_not_all_answered(self):
         object_spec_list = ObjectSpecificationList([
             ObjectSpecification(
                 name="b",
@@ -197,21 +203,38 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
 
         guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
         guesser.get_all_believed_guesses = MagicMock(return_value=[])
+        guesser.state.qa_evidence_map = {"bp1": True}
 
         interviewer = CertaintyFactorBasedInterviewer(
             object_spec_list=object_spec_list,
             guesser=guesser
         )
         self.assertTrue(interviewer.has_question())
-        
-        question_1 = interviewer.get_question()
-        self.assertTrue(interviewer.has_question())
-        question_1.answer(True)
-        self.assertTrue(interviewer.has_question())
 
-        question_2 = interviewer.get_question()
-        self.assertTrue(interviewer.has_question())
-        question_2.answer(False)
+    def test_remaining_question_when_all_answered(self):
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="b",
+                positive_questions=[
+                    "bp1",
+                ]
+            ),
+            ObjectSpecification(
+                name="c",
+                positive_questions=[
+                    "cp1",
+                ]
+            )
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        guesser.get_all_believed_guesses = MagicMock(return_value=[])
+        guesser.state.qa_evidence_map = {"bp1": True, "cp1": True}
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
         self.assertFalse(interviewer.has_question())
 
     def test_smart_question(self):

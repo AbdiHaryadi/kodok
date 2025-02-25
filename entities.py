@@ -38,4 +38,15 @@ class ObjectSpecificationList:
     
     def __getitem__(self, i: int):
         return self.data[i]
-    
+
+@dataclass
+class GeneralSpecificRule:
+    general_questions: list[str] = field(default_factory=lambda: [])
+    specific_questions: list[str] = field(default_factory=lambda: [])
+
+    @staticmethod
+    def from_dict(data: dict[str, list[str]]):
+        return GeneralSpecificRule(
+            general_questions=data["general_questions"],
+            specific_questions=data["specific_questions"],
+        )

@@ -53,7 +53,7 @@ class CertaintyFactorBasedInterviewer:
         best_question_value = None
         best_score = (0.0, 0)
         for question in self.question_list:
-            if question not in self.asked_questions:
+            if not self._is_question_already_answered(question):
                 cost = self._get_question_cost(question)
                 involved = 0
                 for object_spec in self.object_spec_list:
@@ -85,6 +85,9 @@ class CertaintyFactorBasedInterviewer:
         callback = lambda _: self._on_answer(question)
         question.add_callback(callback)
         self.current_question = question
+
+    def _is_question_already_answered(self, question: str):
+        return question in self.guesser.state.qa_evidence_map
 
     def _update_current_question(self):
         if self._need_reset_question:

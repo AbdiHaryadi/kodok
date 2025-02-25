@@ -1,33 +1,22 @@
 from cf_guesser import CertaintyFactorBasedGuesser
 from cf_interviewer import CertaintyFactorBasedInterviewer, Question
-from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from entities import GeneralSpecificRule, ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 
 class CertaintyFactorBasedApp:
     def __init__(
             self,
-            object_spec_list: list[ObjectSpecification]
+            object_spec_list: ObjectSpecificationList,
+            general_specific_rules: list[GeneralSpecificRule] = []
     ):
         self.object_spec_list = object_spec_list
-        self._validate_object_specificaton_list()
-        self.guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list)
+        self.guesser = CertaintyFactorBasedGuesser(
+            object_spec_list=object_spec_list,
+            general_specific_rules=general_specific_rules
+        )
         self.interviewer = CertaintyFactorBasedInterviewer(
             object_spec_list=object_spec_list,
             guesser=self.guesser
         )
-
-    def _validate_object_specificaton_list(self):
-        object_spec_list = self.object_spec_list
-        n_object_spec = len(object_spec_list)
-        if n_object_spec == 0:
-            raise ValueError("Object specification list is empty")
-        
-        object_name_set: set[str] = set()
-        for obj_spec in object_spec_list:
-            obj_name = obj_spec.name
-            if obj_name in object_name_set:
-                raise ValueError(f"Duplicate object specification with name \"{obj_name}\"")
-            
-            object_name_set.add(obj_name)
 
     def get_question(self) -> Question | None:
         if self._should_make_final_result():
@@ -72,14 +61,19 @@ if __name__ == "__main__":
             positive_questions=positive_questions,
             negative_questions=negative_questions
         ))
-
-
     object_spec_list = ObjectSpecificationList(object_spec_list_data)
-    app = CertaintyFactorBasedApp(object_spec_list)
+
+    with open("rules.json") as fp:
+        data = json.load(fp)
+        general_specific_rules = [GeneralSpecificRule.from_dict(x) for x in data["general_specific"]]
+
+    app = CertaintyFactorBasedApp(object_spec_list, general_specific_rules=general_specific_rules)
 
     question_no = 0
     while (question := app.get_question()) is not None:
-        print(app.guesser.get_all_believed_guesses())
+        print("Tebakan:", app.guesser.get_all_believed_guesses(), end="\n")
+        print("Bukti:", app.guesser.state.qa_evidence_map, end="\n")
+        print("---")
 
         question_no += 1
         while (answer := input(f"Pertanyaan {question_no}: {question.value}\nJawaban (y/t): ").lower()) not in ["y", "t"]:

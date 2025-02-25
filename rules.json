@@ -1,0 +1,184 @@
+{
+    "general_specific": [
+        {
+            "general_questions": [
+                "Batuk?"
+            ],
+            "specific_questions": [
+                "Batuk kronis dengan dahak yang bisa berwarna jernih, putih, kuning, atau hijau?",
+                "Batuk kronis yang tidak sembuh atau berdarah?",
+                "Batuk pada malam hari atau dini hari?",
+                "Batuk terus-menerus?",
+                "Batuk tidak berdahak, atau berdahak dengan cairan mengandung nanah yang berwarna kekuningan?",
+                "Ketika batuk terkadang dahak bercampur darah?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Berat badan menurun?"
+            ],
+            "specific_questions": [
+                "Penurunan berat badan yang tidak dapat dijelaskan?",
+                "Penurunan berat badan yang tidak disengaja?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Berkeringat di malam hari?"
+            ],
+            "specific_questions": [
+                "Berkeringat di malam hari meski tanpa melakukan kegiatan?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Demam berkepanjangan?"
+            ],
+            "specific_questions": [
+                "Demam dan meriang dalam jangka waktu yang panjang?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Demam berlangsung lebih dari seminggu?"
+            ],
+            "specific_questions": [
+                "Demam berlangsung hingga tiga minggu?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Demam berlangsung lebih dari seminggu?"
+            ],
+            "specific_questions": [
+                "Demam berlangsung hingga tiga minggu?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Demam?"
+            ],
+            "specific_questions": [
+                "Demam berkepanjangan?",
+                "Demam berlangsung hingga tiga minggu?",
+                "Demam berlangsung lebih dari seminggu?",
+                "Demam berlangsung terus-menerus selama 2-7 hari kemudian turun dengan cepat?",
+                "Demam dan meriang dalam jangka waktu yang panjang?",
+                "Demam disertai nyeri kepala dan tubuh menggigil?",
+                "Demam mendadak yang tinggi?",
+                "Demam meningkat secara bertahap setiap harinya?",
+                "Demam ringan?",
+                "Demam tidak merespon terhadap obat penurun panas?",
+                "Suhu demam hingga 39 derajat Celcius?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Demam mendadak yang tinggi?"
+            ],
+            "specific_questions": [
+                "Suhu demam hingga 39 derajat Celcius?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Diare?"
+            ],
+            "specific_questions": [
+                "Diare berkepanjangan?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Infeksi yang sering terjadi (berulang)?"
+            ],
+            "specific_questions": [
+                "Infeksi berulang, terutama pada kulit, gusi, atau saluran kemih?",
+                "Infeksi pernapasan berulang (sering terjadi)?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Infeksi?"
+            ],
+            "specific_questions": [
+                "Infeksi berulang, terutama pada kulit, gusi, atau saluran kemih?",
+                "Infeksi jamur di mulut, tenggorokan, atau vagina?",
+                "Infeksi pernapasan berulang (sering terjadi)?",
+                "Infeksi yang sering terjadi (berulang)?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Kelelahan dan kelemahan?"
+            ],
+            "specific_questions": [
+                "Kelelahan dan kelemahan yang berlebihan?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Kelelahan? (lethargy)"
+            ],
+            "specific_questions": [
+                "Kelelahan dan kelemahan yang berlebihan?",
+                "Kelelahan dan kelemahan?",
+                "Kelelahan kronis?",
+                "Kelelahan yang berkelanjutan (persisten)?",
+                "Kelelahan yang berlebihan?",
+                "Kelelahan yang tidak dapat dijelaskan?",
+                "Kelelahan yang tidak wajar?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Nafsu makan menurun?"
+            ],
+            "specific_questions": [
+                "Hilang nafsu makan?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Nyeri dada?"
+            ],
+            "specific_questions": [
+                "Nyeri dada yang terasa ketika bernapas hingga napas yang pendek?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Nyeri kepala?"
+            ],
+            "specific_questions": [
+                "Nyeri kepala yang hebat dan kronis?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Nyeri perut?"
+            ],
+            "specific_questions": [
+                "Nyeri perut yang kronis?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Ruam?"
+            ],
+            "specific_questions": [
+                "Ruam kulit kemerahan?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Tampak bengkak?"
+            ],
+            "specific_questions": [
+                "Pembengkakan kelenjar limfa?",
+                "Pembengkakan pada kaki, pergelangan kaki, atau area lainnya?",
+                "Pembengkakan pada ketiak?"
+            ]
+        }
+    ]
+}

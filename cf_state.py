@@ -1,13 +1,15 @@
-from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from entities import GeneralSpecificRule, ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 
 
 class CertaintyFactorBasedState:
     def __init__(self,
         object_spec_list: ObjectSpecificationList,
-        qa_evidence_map: dict[str, bool]
+        qa_evidence_map: dict[str, bool],
+        general_specific_rules: list[GeneralSpecificRule] = []
     ):
         self.object_spec_list = object_spec_list
         self.qa_evidence_map = qa_evidence_map
+        self.general_specific_rules = general_specific_rules
 
     def get_belief(self, obj_spec: ObjectSpecification):
         match_score = 0
@@ -38,17 +40,45 @@ class CertaintyFactorBasedState:
         return belief
     
     def advance(self, qa: QuestionAnswer) -> "CertaintyFactorBasedState":
+        new_qa_evidence_map = {k: v for k, v in self.qa_evidence_map.items()}
+        self._update_qa_evidence_map_with_new_qa(new_qa_evidence_map, qa)
+
+        return CertaintyFactorBasedState(
+            object_spec_list=self.object_spec_list,
+            qa_evidence_map=new_qa_evidence_map,
+            general_specific_rules=self.general_specific_rules
+        )
+    
+    def _update_qa_evidence_map_with_new_qa(
+            self,
+            qa_evidence_map: dict[str, bool],
+            qa: QuestionAnswer
+    ):
         question = qa.question
-        if question in self.qa_evidence_map:
-            if qa.answer == self.qa_evidence_map[question]:
-                return self
+        if question in qa_evidence_map:
+            if qa.answer == qa_evidence_map[question]:
+                return
             
             raise ValueError(f"Contradiction in question \"{question}\"")
         
-        new_qa_evidence_map = {k: v for k, v in self.qa_evidence_map.items()}
-        new_qa_evidence_map[question] = qa.answer
-        return CertaintyFactorBasedState(
-            object_spec_list=self.object_spec_list,
-            qa_evidence_map=new_qa_evidence_map
-        )
-    
+        qa_evidence_map[question] = qa.answer
+        if qa.answer == True:
+            for rule in self.general_specific_rules:
+                if question not in rule.specific_questions:
+                    continue
+
+                for gq in rule.general_questions:
+                    self._update_qa_evidence_map_with_new_qa(qa_evidence_map, QuestionAnswer(
+                        question=gq,
+                        answer=True
+                    ))
+        else:
+            for rule in self.general_specific_rules:
+                if question not in rule.general_questions:
+                    continue
+
+                for sq in rule.specific_questions:
+                    self._update_qa_evidence_map_with_new_qa(qa_evidence_map, QuestionAnswer(
+                        question=sq,
+                        answer=False
+                    ))
