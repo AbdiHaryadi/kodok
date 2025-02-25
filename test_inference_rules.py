@@ -37,5 +37,39 @@ class TestInferenceRules(unittest.TestCase):
         self.assertEqual(qa_evidence_map.get("apwhatever", None), True)
         self.assertIsNone(qa_evidence_map.get("bp1", None))
 
-    # TODO: Test chaining general-specific
+    def test_negative_general_to_specific_chaining(self):
+        inference_rules = InferenceRules(
+            general_specific_rules=[
+                GeneralSpecificRule(
+                    general_questions=["a"],
+                    specific_questions=["b"]
+                ),
+                GeneralSpecificRule(
+                    general_questions=["b"],
+                    specific_questions=["c"]
+                )
+            ]
+        )
+        qa_evidence_map = {"a": False}
+        inference_rules.update(qa_evidence_map)
+        self.assertEqual(qa_evidence_map.get("b", None), False)
+        self.assertEqual(qa_evidence_map.get("c", None), False)
+
+    def test_positive_specific_to_general_chaining(self):
+        inference_rules = InferenceRules(
+            general_specific_rules=[
+                GeneralSpecificRule(
+                    general_questions=["a"],
+                    specific_questions=["b"]
+                ),
+                GeneralSpecificRule(
+                    general_questions=["b"],
+                    specific_questions=["c"]
+                )
+            ]
+        )
+        qa_evidence_map = {"c": True}
+        inference_rules.update(qa_evidence_map)
+        self.assertEqual(qa_evidence_map.get("b", None), True)
+        self.assertEqual(qa_evidence_map.get("a", None), True)
     
