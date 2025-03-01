@@ -114,51 +114,9 @@
             "Kelelahan kronis?",
             "Diare?",
             "Diare berkepanjangan?",
-            "Infeksi?",
-            "Infeksi jamur di mulut, tenggorokan, atau vagina?",
+            "Luka di mulut, tenggorokan, atau vagina?",
             "Kondisi kulit seperti bintik-bintik ungu atau luka yang tidak sembuh?",
             "Gangguan neurologis termasuk depresi, gangguan memori, dan keterlambatan mental?"
-        ]
-    },
-    {
-        "name": "Diabetes Melitus Tipe 2",
-        "positive_questions": [
-            "Poliuria? (produksi urin yang berlebihan dan sering buang air kecil)",
-            "Polidipsia? (rasa haus yang berlebihan dan sering minum air)",
-            "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)",
-            "Penurunan berat badan yang tidak dapat dijelaskan?",
-            "Kelelahan? (lethargy)",
-            "Kelelahan yang berlebihan?",
-            "Kelelahan dan kelemahan?",
-            "Kelelahan dan kelemahan yang berlebihan?",
-            "Infeksi?",
-            "Luka sulit sembuh?",
-            "Infeksi yang sering terjadi (berulang)?",
-            "Luka sulit sembuh dan infeksi yang sering berulang?",
-            "Gangguan penglihatan, seperti penglihatan kabur?",
-            "Kesemutan atau mati rasa pada tangan dan kaki?"
-        ],
-        "negative_questions": [
-            "Nafsu makan menurun?"
-        ]
-    },
-    {
-        "name": "Diabetes Melitus Tipe 1",
-        "positive_questions": [
-            "Poliuria? (produksi urin yang berlebihan dan sering buang air kecil)",
-            "Polidipsia? (rasa haus yang berlebihan dan sering minum air)",
-            "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)",
-            "Penurunan berat badan yang tidak dapat dijelaskan?",
-            "Kelelahan? (lethargy)",
-            "Kelelahan dan kelemahan?",
-            "Gangguan penglihatan, seperti penglihatan kabur?",
-            "Luka sulit sembuh?",
-            "Infeksi yang sering terjadi (berulang)?",
-            "Luka sulit sembuh dan infeksi yang sering berulang?",
-            "Infeksi berulang, terutama pada kulit, gusi, atau saluran kemih?"
-        ],
-        "negative_questions": [
-            "Nafsu makan menurun?"
         ]
     },
     {
@@ -193,86 +151,6 @@
             "Nyeri pada persendian dan otot?",
             "Rasa nyeri pada otot, sendi, serta mudah lelah?",
             "Denyut nadi yang melemah hingga 100 kali per menit?"
-        ]
-    },
-    {
-        "name": "Kanker",
-        "positive_questions": [
-            "Kelelahan? (lethargy)",
-            "Kelelahan yang tidak dapat dijelaskan?",
-            "Berat badan menurun?",
-            "Penurunan berat badan yang tidak disengaja?",
-            "Perubahan pada kulit, seperti kuning, kemerahan, atau penggelapan?",
-            "Nyeri yang persisten atau tidak hilang?",
-            "Perubahan pada kebiasaan buang air besar atau pola kencing?",
-            "Benjolan atau penebalan area tertentu pada tubuh?",
-            "Kesulitan menelan atau indigestion yang berkelanjutan?",
-            "Perubahan pada tahi lalat, bintik, atau lesi kulit?",
-            "Batuk atau suara serak yang berkelanjutan?"
-        ]
-    },
-    {
-        "name": "Kanker Otak",
-        "positive_questions": [
-            "Nyeri kepala?",
-            "Nyeri kepala yang hebat dan kronis?",
-            "Kejang?",
-            "Mual?",
-            "Muntah?",
-            "Kelelahan? (lethargy)",
-            "Kelelahan yang berkelanjutan (persisten)?",
-            "Perubahan mental atau perilaku?",
-            "Kelemahan atau kelumpuhan pada satu sisi tubuh?",
-            "Gangguan penglihatan, seperti penglihatan kabur?",
-            "Gangguan bicara?"
-        ]
-    },
-    {
-        "name": "Kanker Payudara",
-        "positive_questions": [
-            "Benjolan atau perubahan bentuk pada payudara?",
-            "Pembengkakan pada ketiak?",
-            "Perubahan pada kulit payudara, seperti kemerahan atau pengkerutan?",
-            "Perubahan pada puting susu, seperti retraksi atau keluarnya cairan?",
-            "Nyeri atau ketidaknyamanan pada payudara?"
-        ]
-    },
-    {
-        "name": "Kanker Saluran Pernapasan",
-        "positive_questions": [
-            "Batuk?",
-            "Batuk kronis yang tidak sembuh atau berdarah?",
-            "Sesak napas (kesulitan bernapas, napas pendek)?",
-            "Nyeri dada?",
-            "Suara serak atau perubahan suara?",
-            "Kelelahan? (lethargy)",
-            "Kelelahan yang tidak wajar?",
-            "Penurunan berat badan yang tidak dapat dijelaskan?",
-            "Infeksi?",
-            "Infeksi pernapasan berulang (sering terjadi)?"
-        ]
-    },
-    {
-        "name": "Kanker Serviks",
-        "positive_questions": [
-            "Pendarahan tidak normal, terutama setelah hubungan seksual, menstruasi, atau menopause?",
-            "Keputihan yang berubah, berbau tidak sedap, atau berdarah?",
-            "Nyeri panggul yang tidak biasa atau nyeri saat berhubungan seksual?",
-            "Penurunan berat badan yang tidak dapat dijelaskan?",
-            "Kelelahan? (lethargy)",
-            "Kelelahan yang berkelanjutan (persisten)?"
-        ]
-    },
-    {
-        "name": "Kanker Usus Besar",
-        "positive_questions": [
-            "Perubahan pola buang air besar?",
-            "Pendarahan dalam tinja?",
-            "Penurunan berat badan yang tidak dapat dijelaskan?",
-            "Kelelahan? (lethargy)",
-            "Kelelahan yang berkelanjutan (persisten)?",
-            "Nyeri perut?",
-            "Nyeri perut yang kronis?"
         ]
     },
     {
@@ -315,7 +193,6 @@
             "Batuk?",
             "Batuk kronis dengan dahak yang bisa berwarna jernih, putih, kuning, atau hijau?",
             "Kelebihan kebiruan pada bibir atau ujung kuku?",
-            "Infeksi pernapasan berulang (sering terjadi)?",
             "Kelelahan? (lethargy)",
             "Penurunan berat badan yang tidak disengaja?",
             "Pembengkakan pada kaki, pergelangan kaki, atau area lainnya?"
@@ -389,7 +266,6 @@
             "Kulit pucat?",
             "Detak jantung yang cepat?",
             "Pembesaran organ seperti hati dan limpa?",
-            "Infeksi yang sering terjadi (berulang)?",
             "Tulang rapuh atau deformitas tulang?"
         ],
         "negative_questions": [
