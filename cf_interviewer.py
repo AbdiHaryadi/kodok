@@ -101,8 +101,6 @@ class CertaintyFactorBasedInterviewer:
             possible_choice_count = len(self.object_spec_list)
         else:
             possible_choice_count = n_all_guesses
-        
-        target = possible_choice_count / 2
 
         # What if the question is answered
         k_true = 0
@@ -119,7 +117,13 @@ class CertaintyFactorBasedInterviewer:
             if belief > 0.0:
                 k_false += 1
 
-        cost = abs(target - k_true) + abs(target - k_false)
+        if k_true == 0:
+            k_true = possible_choice_count
+        
+        if k_false == 0:
+            k_false = possible_choice_count
+
+        cost = k_true + k_false
         return cost 
     
     def _get_belief_after_answering_specific_question(self, obj_spec: ObjectSpecification, specific_question: str, answer: bool):
