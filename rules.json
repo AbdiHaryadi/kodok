@@ -110,22 +110,12 @@
         },
         {
             "general_questions": [
-                "Kelelahan dan kelemahan?"
-            ],
-            "specific_questions": [
-                "Kelelahan dan kelemahan yang berlebihan?"
-            ]
-        },
-        {
-            "general_questions": [
                 "Kelelahan? (lethargy)"
             ],
             "specific_questions": [
-                "Kelelahan dan kelemahan yang berlebihan?",
                 "Kelelahan dan kelemahan?",
                 "Kelelahan kronis?",
                 "Kelelahan yang berkelanjutan (persisten)?",
-                "Kelelahan yang berlebihan?",
                 "Kelelahan yang tidak dapat dijelaskan?",
                 "Kelelahan yang tidak wajar?"
             ]

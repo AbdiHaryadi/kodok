@@ -57,7 +57,6 @@
             "Demam meningkat secara bertahap setiap harinya?",
             "Demam berlangsung hingga tiga minggu?",
             "Kelelahan? (lethargy)",
-            "Kelelahan yang berlebihan?",
             "Nyeri kepala?",
             "Nyeri otot?",
             "Nyeri pada persendian dan otot?",
@@ -125,7 +124,6 @@
             "Nyeri dada?",
             "Sesak napas (kesulitan bernapas, napas pendek)?",
             "Kelelahan? (lethargy)",
-            "Kelelahan yang berlebihan?",
             "Pusing atau pingsan?",
             "Pembengkakan pada kaki, pergelangan kaki, atau area lainnya?",
             "Nyeri atau ketidaknyamanan di bagian atas perut, punggung, atau lengan?"
@@ -168,7 +166,6 @@
         "name": "Hepatitis C",
         "positive_questions": [
             "Kelelahan? (lethargy)",
-            "Kelelahan yang berlebihan?",
             "Mual atau muntah?",
             "Hilang nafsu makan?",
             "Demam?",
