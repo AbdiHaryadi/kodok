@@ -13,6 +13,11 @@ class CertaintyFactorBasedState:
         self.inference_rules = inference_rules
 
     def get_belief(self, obj_spec: ObjectSpecification):
+        unclipped_belief = self._get_unclipped_belief(obj_spec)
+        belief = max(unclipped_belief, 0)
+        return belief
+
+    def _get_unclipped_belief(self, obj_spec):
         match_score = 0
         total_questions = 0
 
@@ -37,8 +42,8 @@ class CertaintyFactorBasedState:
         if total_questions == 0:
             raise ValueError(f"No questions in \"{obj_spec.name}\"")
 
-        belief = max(match_score, 0) / total_questions
-        return belief
+        unclipped_belief = match_score / total_questions
+        return unclipped_belief
     
     def advance(self, qa: QuestionAnswer) -> "CertaintyFactorBasedState":
         new_qa_evidence_map = {k: v for k, v in self.qa_evidence_map.items()}
@@ -67,3 +72,8 @@ class CertaintyFactorBasedState:
             return
         
         self.inference_rules.update(qa_evidence_map)
+
+    def get_disbelief(self, obj_spec: ObjectSpecification) -> float:
+        unclipped_belief = self._get_unclipped_belief(obj_spec)
+        disbelief = max(-unclipped_belief, 0)
+        return disbelief
