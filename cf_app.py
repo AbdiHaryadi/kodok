@@ -69,7 +69,8 @@ if __name__ == "__main__":
 
     question_no = 0
     while (question := app.get_question()) is not None:
-        print("Tebakan:", app.guesser.get_all_believed_guesses(), end="\n")
+        guesses = app.guesser.get_all_believed_guesses()
+        print(f"Tebakan ({len(guesses)}):", sorted(guesses, reverse=True, key=lambda x: x.confidence), end="\n")
         print("Bukti:", app.guesser.state.qa_evidence_map, end="\n")
         print("---")
 
