@@ -69,9 +69,9 @@ class AndRule:
 
     @staticmethod
     def from_dict(data: dict[str, list[str]]):
-        return GeneralSpecificRule(
-            general_questions=data["parent_question"],
-            specific_questions=data["child_questions"],
+        return AndRule(
+            parent_question=data["parent_question"],
+            child_questions=data["child_questions"],
         )
     
     def update(self, qa_evidence_map: dict[str, bool]):
@@ -131,7 +131,7 @@ class InferenceRules:
             data = json.load(fp)
         
         general_specific_rules = [GeneralSpecificRule.from_dict(x) for x in data["general_specific"]]
-        and_rules = [GeneralSpecificRule.from_dict(x) for x in data.get("and", [])]
+        and_rules = [AndRule.from_dict(x) for x in data.get("and", [])]
         return InferenceRules(
             general_specific_rules=general_specific_rules,
             and_rules=and_rules
