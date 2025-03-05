@@ -109,12 +109,12 @@ class CertaintyFactorBasedInterviewer:
             if n_all_guesses > 0 and all(object_spec.name != x.value for x in all_guesses):
                 continue
 
-            belief = self._get_belief_after_answering_specific_question(object_spec, question, True)
-            if belief > 0.0:
+            disbelief = self._get_disbelief_after_answering_specific_question(object_spec, question, True)
+            if disbelief == 0.0:
                 k_true += 1
 
-            belief = self._get_belief_after_answering_specific_question(object_spec, question, False)
-            if belief > 0.0:
+            disbelief = self._get_disbelief_after_answering_specific_question(object_spec, question, False)
+            if disbelief == 0.0:
                 k_false += 1
 
         if k_true == 0:
@@ -132,6 +132,13 @@ class CertaintyFactorBasedInterviewer:
             answer=answer
         ))
         return new_state.get_belief(obj_spec)
+    
+    def _get_disbelief_after_answering_specific_question(self, obj_spec: ObjectSpecification, specific_question: str, answer: bool):
+        new_state = self.guesser.state.advance(QuestionAnswer(
+            question=specific_question,
+            answer=answer
+        ))
+        return new_state.get_disbelief(obj_spec)
 
     def has_question(self) -> bool:
         self._update_current_question()
