@@ -54,7 +54,11 @@ class CertaintyFactorBasedInterviewer:
         best_score = (0.0, 0)
         for question in self.question_list:
             if not self._is_question_already_answered(question):
-                cost = self._get_question_cost(question)
+                try:
+                    cost = self._get_question_cost(question)
+                except ValueError:
+                    continue
+
                 involved = 0
                 for object_spec in self.object_spec_list:
                     if not any(object_spec.name == g.value for g in all_guesses):

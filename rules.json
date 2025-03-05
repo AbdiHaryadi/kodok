@@ -170,5 +170,74 @@
                 "Pembengkakan pada ketiak?"
             ]
         }
+    ],
+    "and": [
+        {
+            "parent_question": "Demam disertai nyeri kepala dan tubuh menggigil?",
+            "child_questions": [
+                "Demam?",
+                "Nyeri kepala?",
+                "Menggigil?"
+            ]
+        },
+        {
+            "parent_question": "Kelelahan dan kelemahan?",
+            "child_questions": [
+                "Kelelahan? (lethargy)",
+                "[dummy] Kelemahan?"
+            ]
+        },
+        {
+            "parent_question": "Demam dan meriang dalam jangka waktu yang panjang?",
+            "child_questions": [
+                "Demam berkepanjangan?",
+                "[dummy] Meriang dalam jangka waktu yang panjang?"
+            ]
+        },
+        {
+            "parent_question": "Mual dan muntah?",
+            "child_questions": [
+                "Mual?",
+                "Muntah?"
+            ]
+        },
+        {
+            "parent_question": "Mual, muntah, dan diare?",
+            "child_questions": [
+                "Mual?",
+                "Muntah?",
+                "Diare?"
+            ]
+        },
+        {
+            "parent_question": "Nyeri di belakang mata, otot, dan tulang?",
+            "child_questions": [
+                "Nyeri otot?",
+                "[dummy] Nyeri di belakang mata?",
+                "[dummy] Nyeri tulang?"
+            ]
+        },
+        {
+            "parent_question": "Nyeri pada persendian dan otot?",
+            "child_questions": [
+                "Nyeri otot?",
+                "[dummy] Nyeri pada persendian?"
+            ]
+        },
+        {
+            "parent_question": "Rasa nyeri pada otot, sendi, serta mudah lelah?",
+            "child_questions": [
+                "Nyeri otot?",
+                "[dummy] Nyeri pada persendian?",
+                "Kelelahan? (lethargy)"
+            ]
+        },
+        {
+            "parent_question": "Nyeri dada yang terasa ketika bernapas hingga napas yang pendek?",
+            "child_questions": [
+                "Nyeri dada?",
+                "Sesak napas (kesulitan bernapas, napas pendek)?"
+            ]
+        }
     ]
 }

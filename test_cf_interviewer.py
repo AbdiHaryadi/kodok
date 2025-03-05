@@ -4,7 +4,8 @@ from unittest.mock import MagicMock
 
 from cf_guesser import CertaintyFactorBasedGuesser, Guess
 from cf_interviewer import CertaintyFactorBasedInterviewer, Question
-from entities import ObjectSpecification, ObjectSpecificationList
+from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
+from inference_rules import AndRule, GeneralSpecificRule, InferenceRules
 
 class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
     def test_empty_belief_case(self):
@@ -266,6 +267,31 @@ class TestCertaintyFactorBasedInterviewer(unittest.TestCase):
         )
         question_1 = interviewer.get_question()
         self.assertEqual(question_1.value, "x")
+
+    def test_smart_question_2(self):
+        gs_rule = GeneralSpecificRule(["a"], ["a when b"])
+        and_rule = AndRule("a when b", ["a", "b"])
+        inference_rules = InferenceRules(general_specific_rules=[gs_rule], and_rules=[and_rule])
+
+        object_spec_list = ObjectSpecificationList([
+            ObjectSpecification(
+                name="main",
+                positive_questions=["a", "b", "a when b", "whatever1"]
+            ),
+            ObjectSpecification(
+                name="other",
+                positive_questions=["whatever2"]
+            ),
+        ])
+
+        guesser = CertaintyFactorBasedGuesser(object_spec_list=object_spec_list, inference_rules=inference_rules)
+        guesser.update(qa=QuestionAnswer(question="b", answer=False))
+
+        interviewer = CertaintyFactorBasedInterviewer(
+            object_spec_list=object_spec_list,
+            guesser=guesser
+        )
+        interviewer.get_question()
 
 class TestQuestion(unittest.TestCase):
     def test_add_callback(self):

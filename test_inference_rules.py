@@ -81,6 +81,13 @@ class TestInferenceRules(unittest.TestCase):
         qa_evidence_map = {"a": False}
         inference_rules.update(qa_evidence_map)
         and_rule.update.assert_called_once_with(qa_evidence_map)
+
+    def test_combination_case_1(self):
+        gs_rule = GeneralSpecificRule(["a"], ["a when b"])
+        and_rule = AndRule("a when b", ["a", "b"])
+        inference_rules = InferenceRules(general_specific_rules=[gs_rule], and_rules=[and_rule])
+        qa_evidence_map = {"b": False}
+        inference_rules.update(qa_evidence_map)
     
 class TestAndRule(unittest.TestCase):
     def test_positive_parent(self):
