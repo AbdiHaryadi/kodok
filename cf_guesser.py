@@ -43,9 +43,12 @@ class CertaintyFactorBasedGuesser:
     def reset_all_believed_guesses(self):
         result: list[Guess] = []
         for obj_spec in self.object_spec_list:
+            disbelief = self.state.get_disbelief(obj_spec)
+            if disbelief > 0.0:
+                continue
+
             belief = self._get_belief(obj_spec)
-            if belief > 0.0:
-                result.append(Guess(value=obj_spec.name, confidence=belief))
+            result.append(Guess(value=obj_spec.name, confidence=belief))
             
         self._all_believed_guesses = result
     
