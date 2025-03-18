@@ -51,6 +51,8 @@ class CertaintyFactorBasedApp:
     
 if __name__ == "__main__":
     import json
+    import math
+    import sys
 
     object_spec_list_data: list[ObjectSpecification] = []
     with open("data.json") as fp:
@@ -68,7 +70,35 @@ if __name__ == "__main__":
     object_spec_list = ObjectSpecificationList(object_spec_list_data)
 
     inference_rules = InferenceRules.load("rules.json")
-    app = CertaintyFactorBasedApp(object_spec_list, inference_rules=inference_rules)
+    if len(sys.argv) == 2 and sys.argv[1] == "idf":
+        # Make a weights
+        # First, get all questions and object count
+        questions: set[str] = set()
+        object_count = 0
+        for object_spec in object_spec_list:
+            for q in object_spec.positive_questions:
+                questions.add(q)
+
+            for q in object_spec.negative_questions:
+                questions.add(q)
+
+            object_count += 1
+
+        # Second, count involved objects for each question as weights
+        weights: dict[str, float] = {}
+        for q in questions:
+            question_count = 0
+            for object_spec in object_spec_list:
+                if q in object_spec.positive_questions or q in object_spec.negative_questions:
+                    question_count += 1
+            
+            weights[q] = math.log(object_count / question_count)
+
+        # Now we can build an app with weighted belief calculator
+        belief_calculator = CertaintyFactorBasedBeliefCalculator(weights=weights)
+        app = CertaintyFactorBasedApp(object_spec_list, inference_rules=inference_rules, belief_calculator=belief_calculator)
+    else:
+        app = CertaintyFactorBasedApp(object_spec_list, inference_rules=inference_rules)
 
     question_no = 0
     while (question := app.get_question()) is not None:
