@@ -1,3 +1,4 @@
+from cf_belief_calculator import CertaintyFactorBasedBeliefCalculator
 from cf_guesser import CertaintyFactorBasedGuesser
 from cf_interviewer import CertaintyFactorBasedInterviewer, Question
 from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
@@ -7,12 +8,14 @@ class CertaintyFactorBasedApp:
     def __init__(
             self,
             object_spec_list: ObjectSpecificationList,
-            inference_rules: InferenceRules | None = None
+            inference_rules: InferenceRules | None = None,
+            belief_calculator: CertaintyFactorBasedBeliefCalculator | None = None
     ):
         self.object_spec_list = object_spec_list
         self.guesser = CertaintyFactorBasedGuesser(
             object_spec_list=object_spec_list,
-            inference_rules=inference_rules
+            inference_rules=inference_rules,
+            belief_calculator=belief_calculator
         )
         self.interviewer = CertaintyFactorBasedInterviewer(
             object_spec_list=object_spec_list,
