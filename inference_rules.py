@@ -119,11 +119,30 @@ class AndRule:
             if qa_evidence_map_updated:
                 updated = True
         return updated
+    
+@dataclass
+class ContradictiveRule:
+    first_question: str
+    second_question: str
+
+    def update(self, qa_evidence_map: dict[str, bool]):
+        if self.first_question in qa_evidence_map:
+            inferred_answer = not qa_evidence_map[self.first_question]
+            updated = update_qa_evidence_map(qa_evidence_map, question=self.second_question, answer=inferred_answer)
+            return updated
+        
+        elif self.second_question in qa_evidence_map:
+            inferred_answer = not qa_evidence_map[self.second_question]
+            updated = update_qa_evidence_map(qa_evidence_map, question=self.first_question, answer=inferred_answer)
+            return updated
+        
+        return False
 
 @dataclass
 class InferenceRules:
     general_specific_rules: list[GeneralSpecificRule] = field(default_factory=list)
     and_rules: list[AndRule] = field(default_factory=list)
+    contradictive_rules: list[ContradictiveRule] = field(default_factory=list)
 
     @staticmethod
     def load(path: str):
@@ -147,6 +166,11 @@ class InferenceRules:
                     possibly_change_in_next_iteration = True
 
             for rule in self.and_rules:
+                updated = rule.update(qa_evidence_map)
+                if updated:
+                    possibly_change_in_next_iteration = True
+
+            for rule in self.contradictive_rules:
                 updated = rule.update(qa_evidence_map)
                 if updated:
                     possibly_change_in_next_iteration = True

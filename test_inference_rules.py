@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from inference_rules import AndRule, GeneralSpecificRule, InferenceRules
+from inference_rules import AndRule, ContradictiveRule, GeneralSpecificRule, InferenceRules
 
 class TestInferenceRules(unittest.TestCase):
     def test_update_for_negative_general_to_negative_specific(self):
@@ -88,6 +88,14 @@ class TestInferenceRules(unittest.TestCase):
         inference_rules = InferenceRules(general_specific_rules=[gs_rule], and_rules=[and_rule])
         qa_evidence_map = {"b": False}
         inference_rules.update(qa_evidence_map)
+
+    def test_using_contradictive_rules(self):
+        contradictive_rule = ContradictiveRule("a", "b")
+        contradictive_rule.update = MagicMock(return_value=False)
+        inference_rules = InferenceRules(contradictive_rules=[contradictive_rule])
+        qa_evidence_map = {"a": False}
+        inference_rules.update(qa_evidence_map)
+        contradictive_rule.update.assert_called_once_with(qa_evidence_map)
     
 class TestAndRule(unittest.TestCase):
     def test_positive_parent(self):
@@ -198,3 +206,38 @@ class TestAndRule(unittest.TestCase):
         updated = rule.update(qa_evidence_map)
         self.assertTrue(updated)
         self.assertEqual(qa_evidence_map.get("a", None), False)
+
+class TestContradictiveRule(unittest.TestCase):
+    def test_no_evidence(self):
+        rule = ContradictiveRule(first_question="a", second_question="b")
+        qa_evidence_map = {}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+
+    def test_first_is_positive(self):
+        rule = ContradictiveRule(first_question="a", second_question="b")
+        qa_evidence_map = {"a": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("b", None), False)
+
+    def test_first_is_negative(self):
+        rule = ContradictiveRule(first_question="a", second_question="b")
+        qa_evidence_map = {"a": False}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("b", None), True)
+
+    def test_second_is_positive(self):
+        rule = ContradictiveRule(first_question="a", second_question="b")
+        qa_evidence_map = {"b": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("a", None), False)
+
+    def test_second_is_negative(self):
+        rule = ContradictiveRule(first_question="a", second_question="b")
+        qa_evidence_map = {"b": False}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("a", None), True)
