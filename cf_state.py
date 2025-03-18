@@ -1,3 +1,4 @@
+from cf_belief_calculator import CertaintyFactorBasedBeliefCalculator
 from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 from inference_rules import InferenceRules
 
@@ -6,44 +7,20 @@ class CertaintyFactorBasedState:
     def __init__(self,
         object_spec_list: ObjectSpecificationList,
         qa_evidence_map: dict[str, bool],
-        inference_rules: InferenceRules | None = None
+        inference_rules: InferenceRules | None = None,
+        belief_calculator: CertaintyFactorBasedBeliefCalculator | None = None
     ):
         self.object_spec_list = object_spec_list
         self.qa_evidence_map = qa_evidence_map
         self.inference_rules = inference_rules
+        
+        if belief_calculator is None:
+            self.belief_calculator = CertaintyFactorBasedBeliefCalculator()
+        else:
+            self.belief_calculator = belief_calculator
 
     def get_belief(self, obj_spec: ObjectSpecification):
-        unclipped_belief = self._get_unclipped_belief(obj_spec)
-        belief = max(unclipped_belief, 0)
-        return belief
-
-    def _get_unclipped_belief(self, obj_spec):
-        match_score = 0
-        total_questions = 0
-
-        qa_evidence_map = self.qa_evidence_map
-
-        for question in obj_spec.positive_questions:
-            total_questions += 1
-            if question in qa_evidence_map:
-                if qa_evidence_map[question] == True:
-                    match_score += 1
-                else:
-                    match_score -= 1
-
-        for question in obj_spec.negative_questions:
-            total_questions += 1
-            if question in qa_evidence_map:
-                if qa_evidence_map[question] == False:
-                    match_score += 1
-                else:
-                    match_score -= 1
-
-        if total_questions == 0:
-            raise ValueError(f"No questions in \"{obj_spec.name}\"")
-
-        unclipped_belief = match_score / total_questions
-        return unclipped_belief
+        return self.belief_calculator.get_belief(qa_evidence_map=self.qa_evidence_map, obj_spec=obj_spec)
     
     def advance(self, qa: QuestionAnswer) -> "CertaintyFactorBasedState":
         new_qa_evidence_map = {k: v for k, v in self.qa_evidence_map.items()}
@@ -74,6 +51,4 @@ class CertaintyFactorBasedState:
         self.inference_rules.update(qa_evidence_map)
 
     def get_disbelief(self, obj_spec: ObjectSpecification) -> float:
-        unclipped_belief = self._get_unclipped_belief(obj_spec)
-        disbelief = max(-unclipped_belief, 0)
-        return disbelief
+        return self.belief_calculator.get_disbelief(qa_evidence_map=self.qa_evidence_map, obj_spec=obj_spec)
