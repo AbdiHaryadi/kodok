@@ -56,3 +56,27 @@ class TestCertaintyFactorBasedState(unittest.TestCase):
         self.assertAlmostEqual(result, 0.5)
         result = initial_state.get_disbelief(b)
         self.assertAlmostEqual(result, 0.0)
+
+    def test_advance_with_belief_calculator(self):
+        belief_calculator = MagicMock()
+        initial_state = CertaintyFactorBasedState(
+            object_spec_list=ObjectSpecificationList([
+                ObjectSpecification(
+                    name="a",
+                    positive_questions=[
+                        "ap1",
+                        "ap2",
+                    ]
+                ),
+                ObjectSpecification(
+                    name="b",
+                    positive_questions=[
+                        "bp1",
+                    ]
+                )
+            ]),
+            qa_evidence_map={},
+            belief_calculator=belief_calculator
+        )
+        next_state = initial_state.advance(QuestionAnswer("ap2", True))
+        self.assertEqual(next_state.belief_calculator, belief_calculator)

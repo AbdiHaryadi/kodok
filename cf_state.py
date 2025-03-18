@@ -29,7 +29,8 @@ class CertaintyFactorBasedState:
         return CertaintyFactorBasedState(
             object_spec_list=self.object_spec_list,
             qa_evidence_map=new_qa_evidence_map,
-            inference_rules=self.inference_rules
+            inference_rules=self.inference_rules,
+            belief_calculator=self.belief_calculator
         )
     
     def _update_qa_evidence_map_with_new_qa(
