@@ -239,5 +239,15 @@
                 "Sesak napas (kesulitan bernapas, napas pendek)?"
             ]
         }
+    ],
+    "contradictive": [
+        {
+            "first_question": "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)",
+            "second_question": "Nafsu makan menurun?"
+        },
+        {
+            "first_question": "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)",
+            "second_question": "Hilang nafsu makan?"
+        }
     ]
 }

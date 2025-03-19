@@ -137,6 +137,13 @@ class ContradictiveRule:
             return updated
         
         return False
+    
+    @staticmethod
+    def from_dict(data: dict[str, list[str]]):
+        return ContradictiveRule(
+            first_question=data["first_question"],
+            second_question=data["second_question"],
+        )
 
 @dataclass
 class InferenceRules:
@@ -151,9 +158,11 @@ class InferenceRules:
         
         general_specific_rules = [GeneralSpecificRule.from_dict(x) for x in data["general_specific"]]
         and_rules = [AndRule.from_dict(x) for x in data.get("and", [])]
+        contradictive_rules = [ContradictiveRule.from_dict(x) for x in data.get("contradictive", [])]
         return InferenceRules(
             general_specific_rules=general_specific_rules,
-            and_rules=and_rules
+            and_rules=and_rules,
+            contradictive_rules=contradictive_rules
         )
     
     def update(self, qa_evidence_map: dict[str, bool]):
