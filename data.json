@@ -2,7 +2,6 @@
     {
         "name": "Demam Berdarah Dengue (DBD)",
         "positive_questions": [
-            "Demam?",
             "Demam mendadak yang tinggi?",
             "Suhu demam hingga 39 derajat Celcius?",
             "Demam berlangsung terus-menerus selama 2-7 hari kemudian turun dengan cepat?",
@@ -10,7 +9,6 @@
             "Menggigil?",
             "Lemas (lesu)?",
             "Nyeri di belakang mata, otot, dan tulang?",
-            "Ruam?",
             "Ruam kulit kemerahan?",
             "Kesulitan menelan makanan dan minuman?",
             "Mual?",
@@ -25,21 +23,17 @@
     {
         "name": "Demam Berdarah Dengue (DBD), Fase Kritis",
         "positive_questions": [
-            "Demam?",
             "Demam mendadak yang tinggi?",
             "Suhu demam hingga 39 derajat Celcius?",
             "Demam berlangsung terus-menerus selama 2-7 hari kemudian turun dengan cepat?",
             "Nyeri kepala?",
             "Menggigil?",
             "Lemas (lesu)?",
-            "Nyeri otot?",
             "Nyeri di belakang mata, otot, dan tulang?",
-            "Ruam?",
             "Ruam kulit kemerahan?",
             "Kesulitan menelan makanan dan minuman?",
             "Mual?",
             "Muntah?",
-            "Mual dan muntah?",
             "Gusi berdarah?",
             "Mimisan?",
             "Timbul bintik-bintik merah pada kulit?",
@@ -51,14 +45,12 @@
     {
         "name": "Tipus",
         "positive_questions": [
-            "Demam?",
             "Demam berlangsung lebih dari seminggu?",
             "Demam tidak merespon terhadap obat penurun panas?",
             "Demam meningkat secara bertahap setiap harinya?",
             "Demam berlangsung hingga tiga minggu?",
             "Kelelahan? (lethargy)",
             "Nyeri kepala?",
-            "Nyeri otot?",
             "Nyeri pada persendian dan otot?",
             "Perut terasa kembung atau nyeri?",
             "Diare atau sulit buang air besar?",
@@ -71,47 +63,33 @@
     {
         "name": "Tuberkulosis",
         "positive_questions": [
-            "Batuk?",
             "Batuk terus-menerus?",
-            "Demam?",
-            "Demam berkepanjangan?",
             "Demam dan meriang dalam jangka waktu yang panjang?",
-            "Nyeri dada?",
-            "Sesak napas (kesulitan bernapas, napas pendek)?",
             "Nyeri dada yang terasa ketika bernapas hingga napas yang pendek?",
             "Berat badan menurun?",
             "Ketika batuk terkadang dahak bercampur darah?",
             "Nafsu makan menurun?",
-            "Berkeringat di malam hari?",
             "Berkeringat di malam hari meski tanpa melakukan kegiatan?"
-        ],
-        "negative_questions": [
-            "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)"
         ]
     },
     {
         "name": "HIV, Tahap Pertama (Serokonversi)",
         "positive_questions": [
-            "Demam?",
             "Demam ringan?",
             "Sakit tenggorokan?",
             "Ruam?",
             "Kelelahan? (lethargy)",
             "Pembengkakan kelenjar limfa?",
-            "Nyeri otot?",
             "Nyeri pada persendian dan otot?"
         ]
     },
     {
         "name": "HIV, Tahap Ketiga (AIDS)",
         "positive_questions": [
-            "Demam?",
             "Demam berkepanjangan?",
             "Berkeringat di malam hari?",
             "Penurunan berat badan yang tidak dapat dijelaskan?",
-            "Kelelahan? (lethargy)",
             "Kelelahan kronis?",
-            "Diare?",
             "Diare berkepanjangan?",
             "Luka di mulut, tenggorokan, atau vagina?",
             "Kondisi kulit seperti bintik-bintik ungu atau luka yang tidak sembuh?",
@@ -126,27 +104,17 @@
             "Kelelahan? (lethargy)",
             "Pusing atau pingsan?",
             "Pembengkakan pada kaki, pergelangan kaki, atau area lainnya?",
+            "Detak jantung yang tidak teratur atau berdebar-debar?",
             "Nyeri atau ketidaknyamanan di bagian atas perut, punggung, atau lengan?"
         ]
     },
     {
         "name": "Pneumonia",
         "positive_questions": [
-            "Demam?",
-            "Nyeri kepala?",
-            "Menggigil?",
             "Demam disertai nyeri kepala dan tubuh menggigil?",
-            "Batuk?",
             "Batuk tidak berdahak, atau berdahak dengan cairan mengandung nanah yang berwarna kekuningan?",
-            "Nyeri dada?",
             "Nyeri dada yang terasa ketika bernapas hingga napas yang pendek?",
-            "Mual?",
-            "Muntah?",
-            "Mual dan muntah?",
-            "Diare?",
             "Mual, muntah, dan diare?",
-            "Nyeri otot?",
-            "Nyeri pada persendian dan otot?",
             "Rasa nyeri pada otot, sendi, serta mudah lelah?",
             "Denyut nadi yang melemah hingga 100 kali per menit?"
         ]
@@ -156,7 +124,6 @@
         "positive_questions": [
             "Sesak napas (kesulitan bernapas, napas pendek)?",
             "Mengi? (suara mengi atau bersiul yang dihasilkan saat bernapas)",
-            "Batuk?",
             "Batuk pada malam hari atau dini hari?",
             "Nyeri dada?",
             "Kesulitan berbicara?"
@@ -168,16 +135,12 @@
             "Kelelahan? (lethargy)",
             "Mual atau muntah?",
             "Hilang nafsu makan?",
-            "Demam?",
             "Demam ringan?",
             "Nyeri perut?",
             "Kulit atau mata yang menguning (ikterus, jaundice)?",
             "Urin berwarna gelap?",
             "Tinja berwarna pucat?",
             "Gatal-gatal pada kulit?"
-        ],
-        "negative_questions": [
-            "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)"
         ]
     },
     {
@@ -187,7 +150,6 @@
             "Mengi? (suara mengi atau bersiul yang dihasilkan saat bernapas)",
             "Rasa sesak di dada?",
             "Produksi dahak setiap pagi akibat penumpukan dahak berlebih di paru-paru?",
-            "Batuk?",
             "Batuk kronis dengan dahak yang bisa berwarna jernih, putih, kuning, atau hijau?",
             "Kelebihan kebiruan pada bibir atau ujung kuku?",
             "Kelelahan? (lethargy)",
@@ -256,7 +218,6 @@
     {
         "name": "Thalassemia",
         "positive_questions": [
-            "Kelelahan? (lethargy)",
             "Kelelahan dan kelemahan?",
             "Hilang nafsu makan?",
             "Pertumbuhan terhambat (pada anak-anak)?",
@@ -264,9 +225,6 @@
             "Detak jantung yang cepat?",
             "Pembesaran organ seperti hati dan limpa?",
             "Tulang rapuh atau deformitas tulang?"
-        ],
-        "negative_questions": [
-            "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)"
         ]
     },
     {
@@ -278,15 +236,11 @@
             "Kehilangan gairah seksual?",
             "Kulit atau mata yang menguning (ikterus, jaundice)?",
             "Demam?",
-            "Muntah?",
             "Muntah darah?",
             "Gatal-gatal pada kulit?",
             "Buang air besar berwarna hitam?",
             "Mudah berdarah atau memar?",
             "Munculnya garis merah kecil?"
-        ],
-        "negative_questions": [
-            "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)"
         ]
     },
     {

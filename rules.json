@@ -169,6 +169,14 @@
                 "Pembengkakan pada kaki, pergelangan kaki, atau area lainnya?",
                 "Pembengkakan pada ketiak?"
             ]
+        },
+        {
+            "general_questions": [
+                "Detak jantung yang tidak teratur atau berdebar-debar?"
+            ],
+            "specific_questions": [
+                "Detak jantung yang cepat?"
+            ]
         }
     ],
     "and": [
