@@ -54,7 +54,8 @@
             "Nyeri pada persendian dan otot?",
             "Perut terasa kembung atau nyeri?",
             "Diare atau sulit buang air besar?",
-            "Mual dan muntah?",
+            "Mual?",
+            "Muntah?",
             "Batuk?",
             "Penurunan berat badan atau nafsu makan?",
             "Gelisah?"
@@ -79,7 +80,7 @@
             "Sakit tenggorokan?",
             "Ruam?",
             "Kelelahan? (lethargy)",
-            "Pembengkakan kelenjar limfa?",
+            "Pembengkakan kelenjar limfa (getah bening)?",
             "Nyeri pada persendian dan otot?"
         ]
     },
@@ -111,11 +112,16 @@
     {
         "name": "Pneumonia",
         "positive_questions": [
-            "Demam disertai nyeri kepala dan tubuh menggigil?",
+            "Demam?",
+            "Nyeri kepala?",
+            "Menggigil?",
             "Batuk tidak berdahak, atau berdahak dengan cairan mengandung nanah yang berwarna kekuningan?",
             "Nyeri dada yang terasa ketika bernapas hingga napas yang pendek?",
-            "Mual, muntah, dan diare?",
-            "Rasa nyeri pada otot, sendi, serta mudah lelah?",
+            "Mual?",
+            "Muntah?",
+            "Diare?",
+            "Nyeri pada persendian dan otot?",
+            "Mudah lelah?",
             "Denyut nadi yang melemah hingga 100 kali per menit?"
         ]
     },
@@ -218,7 +224,8 @@
     {
         "name": "Thalassemia",
         "positive_questions": [
-            "Kelelahan dan kelemahan?",
+            "Kelelahan? (lethargy)",
+            "Kelemahan?",
             "Hilang nafsu makan?",
             "Pertumbuhan terhambat (pada anak-anak)?",
             "Kulit pucat?",
@@ -230,7 +237,8 @@
     {
         "name": "Sirosis",
         "positive_questions": [
-            "Kelelahan dan kelemahan?",
+            "Kelelahan? (lethargy)",
+            "Kelemahan?",
             "Mual, diare, nyeri perut, atau kembung?",
             "Hilang nafsu makan?",
             "Kehilangan gairah seksual?",
@@ -252,6 +260,116 @@
             "Lemas (lesu)?",
             "Muntah atau diare?",
             "Hilangnya indra penciuman atau rasa?"
+        ]
+    },
+    {
+        "name": "Flu Burung",
+        "positive_questions": [
+            "Demam mendadak yang tinggi?",
+            "Batuk kering?",
+            "Sesak napas (kesulitan bernapas, napas pendek)?",
+            "Sakit tenggorokan?",
+            "Nyeri otot?",
+            "Kelelahan? (lethargy)",
+            "Lemas (lesu)?",
+            "Mata merah dan iritasi?"
+        ]
+    },
+    {
+        "name": "Campak",
+        "positive_questions": [
+            "Demam dengan suhu tubuh mencapai 40 derajat Celcius?",
+            "Batuk kering?",
+            "Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?",
+            "Pilek?",
+            "Ruam?",
+            "Bintik koplik (bintik-bintik putih kecil di dalam mulut, khususnya di bagian dalam pipi)?"
+        ]
+    },
+    {
+        "name": "Campak (pada anak)",
+        "positive_questions": [
+            "Demam tinggi?",
+            "Batuk?",
+            "Pilek?",
+            "Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?",
+            "Ruam kulit kemerahan?",
+            "Bintik koplik (bintik-bintik putih kecil di dalam mulut, khususnya di bagian dalam pipi)?"
+        ]
+    },
+    {
+        "name": "Rubella",
+        "positive_questions": [
+            "Ruam?",
+            "Ruam berlangsung selama tiga hari?",
+            "Demam ringan?",
+            "Pembengkakan kelenjar limfa (getah bening)?",
+            "Nyeri kepala?",
+            "Nyeri pada persendian dan otot?",
+            "Sakit tenggorokan?",
+            "Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?"
+        ]
+    },
+    {
+        "name": "ADHD",
+        "positive_questions": [
+            "Sulit fokus (mudah teralih dan sering lupa)?",
+            "Hiperaktivitas (tidak bisa diam, sering gelisah, berlari atau memanjat tanpa tujuan jelas)?",
+            "Impulsivitas (bertindak tanpa berpikir terlebih dahulu, kesulitan menunggu giliran)?"
+        ]
+    },
+    {
+        "name": "Alzhemier",
+        "positive_questions": [
+            "Kesulitan mengingat informasi baru (gangguan memori)?",
+            "Kesulitan dalam perencanaan atau menyelesaikan tugas?",
+            "Kehilangan jalur pemikiran saat berbicara?",
+            "Kesulitan dalam navigasi atau pemahaman ruang?",
+            "Penarikan diri dari aktivitas sosial?",
+            "Perubahan mood atau kepribadian?"
+        ]
+    },
+    {
+        "name": "Anoreksia Nervosa",
+        "positive_questions": [
+            "Mengalami kecemasan atau depresi?",
+            "Mengalami kesulitan dalam mengelola stres?",
+            "Memiliki kekhawatiran berlebihan tentang masa depan?",
+            "Cenderung perfeksionis?",
+            "Memiliki citra diri yang negatif?",
+            "Riwayat gangguan makan saat masa kanak-kanak?",
+            "Emosi yang mudah terpengaruh?"
+        ]
+    },
+    {
+        "name": "Antraks Kulit",
+        "positive_questions": [
+            "Kelainan kulit (biasanya terjadi di bagian tubuh yang terbuka seperti kaki, tangan, leher dan wajah)?",
+            "Munculnya eschar atau jaringan hitam pada kulit?"
+        ]
+    },
+    {
+        "name": "Antraks Saluran Pencernaan",
+        "positive_questions": [
+            "Demam?",
+            "Kesulitan menelan makanan dan minuman?",
+            "Mual?",
+            "Diare?",
+            "Muntah?",
+            "Pembengkakan pada leher dan dada?",
+            "Sakit perut hebat?",
+            "Buang air besar berdarah?",
+            "Perut bengkak?"
+        ]
+    },
+    {
+        "name": "Antraks Pernapasan",
+        "positive_questions": [
+            "Demam?",
+            "Kelemahan?",
+            "Batuk kering?",
+            "Sesak napas (kesulitan bernapas, napas pendek)?",
+            "Detak jantung yang cepat?"
         ]
     }
 ]

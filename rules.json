@@ -10,7 +10,8 @@
                 "Batuk pada malam hari atau dini hari?",
                 "Batuk terus-menerus?",
                 "Batuk tidak berdahak, atau berdahak dengan cairan mengandung nanah yang berwarna kekuningan?",
-                "Ketika batuk terkadang dahak bercampur darah?"
+                "Ketika batuk terkadang dahak bercampur darah?",
+                "Batuk kering?"
             ]
         },
         {
@@ -69,15 +70,26 @@
                 "Demam meningkat secara bertahap setiap harinya?",
                 "Demam ringan?",
                 "Demam tidak merespon terhadap obat penurun panas?",
+                "Suhu demam hingga 39 derajat Celcius?",
+                "Demam dengan suhu tubuh mencapai 40 derajat Celcius?",
+                "Demam tinggi?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Demam tinggi?"
+            ],
+            "specific_questions": [
+                "Demam mendadak yang tinggi?",
                 "Suhu demam hingga 39 derajat Celcius?"
             ]
         },
         {
             "general_questions": [
-                "Demam mendadak yang tinggi?"
+                "Suhu demam hingga 39 derajat Celcius?"
             ],
             "specific_questions": [
-                "Suhu demam hingga 39 derajat Celcius?"
+                "Demam dengan suhu tubuh mencapai 40 derajat Celcius?"
             ]
         },
         {
@@ -113,7 +125,6 @@
                 "Kelelahan? (lethargy)"
             ],
             "specific_questions": [
-                "Kelelahan dan kelemahan?",
                 "Kelelahan kronis?",
                 "Kelelahan yang berkelanjutan (persisten)?",
                 "Kelelahan yang tidak dapat dijelaskan?",
@@ -157,7 +168,8 @@
                 "Ruam?"
             ],
             "specific_questions": [
-                "Ruam kulit kemerahan?"
+                "Ruam kulit kemerahan?",
+                "Ruam berlangsung selama tiga hari?"
             ]
         },
         {
@@ -177,6 +189,23 @@
             "specific_questions": [
                 "Detak jantung yang cepat?"
             ]
+        },
+        {
+            "general_questions": [
+                "Gangguan neurologis termasuk depresi, gangguan memori, dan keterlambatan mental?"
+            ],
+            "specific_questions": [
+                "Mengalami kecemasan atau depresi?",
+                "Kesulitan mengingat informasi baru (gangguan memori)?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Kelemahan?"
+            ],
+            "specific_questions": [
+                "Kelemahan anggota gerak dan/atau kelopak mata?"
+            ]
         }
     ],
     "and": [
@@ -186,13 +215,6 @@
                 "Demam?",
                 "Nyeri kepala?",
                 "Menggigil?"
-            ]
-        },
-        {
-            "parent_question": "Kelelahan dan kelemahan?",
-            "child_questions": [
-                "Kelelahan? (lethargy)",
-                "[dummy] Kelemahan?"
             ]
         },
         {
@@ -245,6 +267,13 @@
             "child_questions": [
                 "Nyeri dada?",
                 "Sesak napas (kesulitan bernapas, napas pendek)?"
+            ]
+        },
+        {
+            "parent_question": "Mata merah dan iritasi?",
+            "child_questions": [
+                "Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?",
+                "[dummy] Mata iritasi?"
             ]
         }
     ],
