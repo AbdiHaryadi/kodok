@@ -58,10 +58,22 @@ if __name__ == "__main__":
     with open("data.json") as fp:
         data = json.load(fp)
 
+    inference_rules = InferenceRules.load("rules.json")
     for i, object_spec_data in enumerate(data):
         object_name: str = object_spec_data.get("name", f"Penyakit Tanpa Nama {i}")
         positive_questions: list[str] = object_spec_data.get("positive_questions", [])
         negative_questions: list[str] = object_spec_data.get("negative_questions", [])
+        
+        possibly_updated_in_next_iteration = True
+        while possibly_updated_in_next_iteration:
+            possibly_updated_in_next_iteration = False
+            for rule in inference_rules.general_specific_rules:
+                if any(x in rule.specific_questions for x in positive_questions):
+                    for q in rule.general_questions:
+                        if q not in positive_questions:
+                            positive_questions.append(q)
+                            possibly_updated_in_next_iteration = True
+
         object_spec_list_data.append(ObjectSpecification(
             name=object_name,
             positive_questions=positive_questions,
@@ -69,8 +81,7 @@ if __name__ == "__main__":
         ))
     object_spec_list = ObjectSpecificationList(object_spec_list_data)
 
-    inference_rules = InferenceRules.load("rules.json")
-    if len(sys.argv) == 2 and sys.argv[1] == "idf":
+    if len(sys.argv) != 2 or sys.argv[1] != "uniform":
         # Make a weights
         # First, get all questions and object count
         questions: set[str] = set()
