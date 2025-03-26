@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Callable
 
 
 @dataclass
@@ -38,3 +39,15 @@ class ObjectSpecificationList:
     
     def __getitem__(self, i: int):
         return self.data[i]
+
+class Question:
+    def __init__(self, value: str):
+        self.value = value
+        self.callbacks: list[Callable[[bool], None]] = []
+
+    def add_callback(self, callback: Callable[[bool], None]):
+        self.callbacks.append(callback)
+
+    def answer(self, value: bool):
+        for callback in self.callbacks:
+            callback(value)

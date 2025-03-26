@@ -1,18 +1,18 @@
 from typing import Callable
 
-from cf_guesser import CertaintyFactorBasedGuesser, Guess
 from entities import ObjectSpecification, ObjectSpecificationList, Question, QuestionAnswer
+from naive_guesser import NaiveGuess, NaiveGuesser, is_possibly_satisfied
 
-class CertaintyFactorBasedInterviewer:
+class NaiveInterviewer:
     def __init__(
             self,
             object_spec_list: ObjectSpecificationList,
-            guesser: CertaintyFactorBasedGuesser
+            guesser: NaiveGuesser
     ):
         self.object_spec_list = object_spec_list
         self.guesser = guesser
         
-        self.all_guesses: list[Guess] = []
+        self.all_guesses: list[NaiveGuess] = []
         self._latest_all_guesses: bool = False
 
         self.asked_questions: set[str] = set()
@@ -36,7 +36,7 @@ class CertaintyFactorBasedInterviewer:
 
 
     def _reset_current_question(self):
-        all_guesses = self.guesser.get_all_believed_guesses()
+        all_guesses = self.guesser.get_all_possibly_satisfied_guesses()
 
         best_question_value = None
         best_score = (0.0, 0)
@@ -87,7 +87,7 @@ class CertaintyFactorBasedInterviewer:
             self._need_reset_question = False
 
     def _get_question_cost(self, question: str) -> float:
-        all_guesses = self.guesser.get_all_believed_guesses()
+        all_guesses = self.guesser.get_all_possibly_satisfied_guesses()
         n_all_guesses = len(all_guesses)
         if n_all_guesses == 0:
             possible_choice_count = len(self.object_spec_list)
@@ -101,12 +101,12 @@ class CertaintyFactorBasedInterviewer:
             if n_all_guesses > 0 and all(object_spec.name != x.value for x in all_guesses):
                 continue
 
-            disbelief = self._get_disbelief_after_answering_specific_question(object_spec, question, True)
-            if disbelief == 0.0:
+            possibly_satisfied = self._is_possibly_satisfied_after_answering_specific_question(object_spec, question, True)
+            if possibly_satisfied:
                 k_true += 1
 
-            disbelief = self._get_disbelief_after_answering_specific_question(object_spec, question, False)
-            if disbelief == 0.0:
+            possibly_satisfied = self._is_possibly_satisfied_after_answering_specific_question(object_spec, question, False)
+            if possibly_satisfied:
                 k_false += 1
 
         if k_true == 0:
@@ -118,19 +118,12 @@ class CertaintyFactorBasedInterviewer:
         cost = k_true + k_false
         return cost 
     
-    def _get_belief_after_answering_specific_question(self, obj_spec: ObjectSpecification, specific_question: str, answer: bool):
+    def _is_possibly_satisfied_after_answering_specific_question(self, obj_spec: ObjectSpecification, specific_question: str, answer: bool):
         new_state = self.guesser.state.advance(QuestionAnswer(
             question=specific_question,
             answer=answer
         ))
-        return new_state.get_belief(obj_spec)
-    
-    def _get_disbelief_after_answering_specific_question(self, obj_spec: ObjectSpecification, specific_question: str, answer: bool):
-        new_state = self.guesser.state.advance(QuestionAnswer(
-            question=specific_question,
-            answer=answer
-        ))
-        return new_state.get_disbelief(obj_spec)
+        return is_possibly_satisfied(new_state, obj_spec)
 
     def has_question(self) -> bool:
         self._update_current_question()
