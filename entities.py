@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Callable
 
+from inference_rules import GeneralSpecificRule
+
 
 @dataclass
 class QuestionAnswer:
@@ -12,6 +14,17 @@ class ObjectSpecification:
     name: str
     positive_questions: list[str] = field(default_factory=lambda: [])
     negative_questions: list[str] = field(default_factory=lambda: [])
+
+    def add_general_questions(self, general_specific_rules: list[GeneralSpecificRule]):
+        possibly_updated_in_next_iteration = True
+        while possibly_updated_in_next_iteration:
+            possibly_updated_in_next_iteration = False
+            for rule in general_specific_rules:
+                if any(x in rule.specific_questions for x in self.positive_questions):
+                    for q in rule.general_questions:
+                        if q not in self.positive_questions:
+                            self.positive_questions.append(q)
+                            possibly_updated_in_next_iteration = True
 
 class ObjectSpecificationList:
     def __init__(self, data: list[ObjectSpecification]):
@@ -39,6 +52,10 @@ class ObjectSpecificationList:
     
     def __getitem__(self, i: int):
         return self.data[i]
+    
+    def add_general_questions(self, general_specific_rules: list[GeneralSpecificRule]):
+        for object_spec in self.data:
+            object_spec.add_general_questions(general_specific_rules)
 
 class Question:
     def __init__(self, value: str):
