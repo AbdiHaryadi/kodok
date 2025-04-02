@@ -4,11 +4,9 @@ from inference_rules import InferenceRules
 
 class EvidenceState:
     def __init__(self,
-        object_spec_list: ObjectSpecificationList,
         qa_evidence_map: dict[str, bool],
         inference_rules: InferenceRules | None = None,
     ):
-        self.object_spec_list = object_spec_list
         self.qa_evidence_map = qa_evidence_map
         self.inference_rules = inference_rules
     
@@ -17,7 +15,6 @@ class EvidenceState:
         self._update_qa_evidence_map_with_new_qa(new_qa_evidence_map, qa)
 
         return EvidenceState(
-            object_spec_list=self.object_spec_list,
             qa_evidence_map=new_qa_evidence_map,
             inference_rules=self.inference_rules
         )

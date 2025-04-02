@@ -54,7 +54,6 @@ class NaiveGuesser:
         self._all_possibly_satisfied_guesses: list[NaiveGuess] = []
         self.latest_all_possibly_satisfied_guesses: bool = False
         self.state = EvidenceState(
-            object_spec_list=object_spec_list,
             qa_evidence_map={},
             inference_rules=inference_rules
         )
