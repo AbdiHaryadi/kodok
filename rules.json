@@ -149,14 +149,6 @@
         },
         {
             "general_questions": [
-                "Nyeri kepala?"
-            ],
-            "specific_questions": [
-                "Nyeri kepala yang hebat dan kronis?"
-            ]
-        },
-        {
-            "general_questions": [
                 "Nyeri perut?"
             ],
             "specific_questions": [
@@ -205,6 +197,14 @@
             ],
             "specific_questions": [
                 "Kelemahan anggota gerak dan/atau kelopak mata?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Muntah?"
+            ],
+            "specific_questions": [
+                "Muntah darah?"
             ]
         }
     ],
