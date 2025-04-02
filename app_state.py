@@ -212,8 +212,11 @@ class AppState:
             for question in obj_spec.positive_questions + obj_spec.negative_questions:
                 if question in self.asked_questions:
                     continue
-
+                
                 if question in relevant_questions:
+                    continue
+                
+                if question in self.evidence_state.qa_evidence_map:
                     continue
 
                 relevant_questions.append(question)
