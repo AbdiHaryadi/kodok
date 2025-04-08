@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from inference_rules import AndRule, ContradictiveRule, GeneralSpecificRule, InferenceRules
+from inference_rules import AndRule, ContradictiveRule, GeneralSpecificRule, InferenceRules, OrRule
 
 class TestInferenceRules(unittest.TestCase):
     def test_update_for_negative_general_to_negative_specific(self):
@@ -96,6 +96,14 @@ class TestInferenceRules(unittest.TestCase):
         qa_evidence_map = {"a": False}
         inference_rules.update(qa_evidence_map)
         contradictive_rule.update.assert_called_once_with(qa_evidence_map)
+
+    def test_using_or_rules(self):
+        or_rule = OrRule("a", ["b", "c"])
+        or_rule.update = MagicMock(return_value=False)
+        inference_rules = InferenceRules(or_rules=[or_rule])
+        qa_evidence_map = {"a": False}
+        inference_rules.update(qa_evidence_map)
+        or_rule.update.assert_called_once_with(qa_evidence_map)
     
 class TestAndRule(unittest.TestCase):
     def test_positive_parent(self):
@@ -241,3 +249,71 @@ class TestContradictiveRule(unittest.TestCase):
         updated = rule.update(qa_evidence_map)
         self.assertTrue(updated)
         self.assertEqual(qa_evidence_map.get("a", None), True)
+
+class TestOrRule(unittest.TestCase):
+    def test_no_evidence(self):
+        rule = OrRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+        qa_evidence_map = {}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+
+    def test_positive_parent(self):
+        rule = OrRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+        qa_evidence_map = {"a": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+
+    def test_positive_parent_one_child(self):
+        rule = OrRule(
+            parent_question="a",
+            child_questions=["b"]
+        )
+        qa_evidence_map = {"a": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("b", None), True)
+
+    def test_positive_parent_two_childs(self):
+        rule = OrRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+        qa_evidence_map = {"a": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+
+    def test_positive_parent_two_childs_one_of_them_is_positive(self):
+        rule = OrRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+        qa_evidence_map = {"a": True, "b": True}
+        updated = rule.update(qa_evidence_map)
+        self.assertFalse(updated)
+
+    def test_positive_parent_two_childs_one_of_them_is_negative(self):
+        rule = OrRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+        qa_evidence_map = {"a": True, "b": False}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("c", None), True)
+
+    def test_negative_parent(self):
+        rule = OrRule(
+            parent_question="a",
+            child_questions=["b", "c"]
+        )
+        qa_evidence_map = {"a": False}
+        updated = rule.update(qa_evidence_map)
+        self.assertTrue(updated)
+        self.assertEqual(qa_evidence_map.get("b", None), False)
+    
