@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 from evidence_state import EvidenceState
 from inference_rules import GeneralSpecificRule, InferenceRules
@@ -49,8 +49,9 @@ def is_possibly_general_question(question: str, general_specific_rules: list[Gen
 class AppState:
     object_spec_list: ObjectSpecificationList
     evidence_state: EvidenceState
-    asked_questions: set[str]
-    question_scope: str | None
+    asked_questions: set[str] = field(default_factory=set)
+    question_scope: str | None = None
+    question_values: dict[str, float] = field(default_factory=dict)
 
     @staticmethod
     def make_initial(
@@ -63,8 +64,6 @@ class AppState:
                 qa_evidence_map={},
                 inference_rules=inference_rules
             ),
-            asked_questions=set(),
-            question_scope=None
         )
     
     def step(self, question: str, answer: bool | None):
@@ -84,7 +83,8 @@ class AppState:
             object_spec_list=self.object_spec_list,
             evidence_state=new_evidence_state,
             asked_questions=new_asked_questions,
-            question_scope=new_question_scope
+            question_scope=new_question_scope,
+            question_values=self.question_values
         )
     
     def action(self):
@@ -93,31 +93,87 @@ class AppState:
         
         possible_guesses = self.get_possible_guesses()
         if len(possible_guesses) <= 1:
-            return "guess"
+            if all(self.is_at_least_one_question_asked(g) for g in possible_guesses):
+                return "guess"
         
         valid_questions = self.get_valid_questions()
         if len(valid_questions) == 0:
             return "guess"
         
         return "ask"
-    
-    def guess(self):
-        result: list[str] = []
-        max_score = 0.0
+
+    def is_at_least_one_question_asked(self, guess: str):
         state = self.evidence_state
+        asked_count = 0
         for obj_spec in self.object_spec_list:
-            possibly_satisfied, asked_count, not_asked_count = naive_evaluation(state, obj_spec)
-            if not possibly_satisfied:
+            if obj_spec.name != guess:
                 continue
 
-            score = asked_count / (asked_count + not_asked_count)
-            if score > max_score:
-                max_score = score
-                result = [obj_spec.name]
-            elif score == max_score:
-                result.append(obj_spec.name)
+            _, asked_count, _ = naive_evaluation(state, obj_spec)
+            return asked_count > 0
+        
+        return False
+    
+    def guess(self):
+        all_result: list[str] = []
 
-        return result
+        possibly_changed_in_next_iteration = True
+        while possibly_changed_in_next_iteration and len(all_result) < 3:
+            result: list[str] = []
+            max_score = 0.0
+            state = self.evidence_state
+            for obj_spec in self.object_spec_list:
+                if obj_spec.name in all_result:
+                    continue
+
+                possibly_satisfied, asked_count, not_asked_count = naive_evaluation(state, obj_spec)
+                if not possibly_satisfied:
+                    continue
+
+                score = asked_count / (asked_count + not_asked_count)
+                if score > max_score:
+                    max_score = score
+                    result = [obj_spec.name]
+                elif score == max_score:
+                    result.append(obj_spec.name)
+            
+            if len(result) == 0 or max_score == 0.0:
+                possibly_changed_in_next_iteration = False
+            else:
+                all_result.extend(result)
+        
+        return all_result
+    
+    def guess_with_percentage(self):
+        all_result: list[tuple[str, float]] = []
+
+        possibly_changed_in_next_iteration = True
+        while possibly_changed_in_next_iteration and len(all_result) < 3:
+            result: list[str] = []
+            max_score = 0.0
+            state = self.evidence_state
+            for obj_spec in self.object_spec_list:
+                if any(x[0] == obj_spec.name for x in all_result):
+                    continue
+
+                possibly_satisfied, asked_count, not_asked_count = naive_evaluation(state, obj_spec)
+                if not possibly_satisfied:
+                    continue
+
+                score = asked_count / (asked_count + not_asked_count)
+                if score > max_score:
+                    max_score = score
+                    result = [obj_spec.name]
+                elif score == max_score:
+                    result.append(obj_spec.name)
+            
+            if len(result) == 0 or max_score == 0.0:
+                possibly_changed_in_next_iteration = False
+            else:
+                for x in result:
+                    all_result.append((x, max_score))
+        
+        return all_result
     
     def get_possible_guesses(self):
         result: list[str] = []
@@ -133,12 +189,8 @@ class AppState:
         valid_questions = self.get_valid_questions()
         if len(valid_questions) == 0:
             raise NotImplementedError("No valid questions? Don't ask, then!")
-
-        # Now pick the cost.
-        # Action reward: -(max(next disease count, 1) - 1) / (current disease count - 1)
-
-        # Let's say no cost for now, so question is asked arbitrarily.
-        return valid_questions[0]
+        
+        return max(valid_questions, key=lambda x: self.question_values.get(x, 0.0))
     
     def get_valid_questions(self):
         # Find relevant questions

@@ -9,6 +9,9 @@ if __name__ == "__main__":
     with open("data.json") as fp:
         data = json.load(fp)
 
+    with open("question_values.json", encoding="utf-8") as fp:
+        question_values: dict[str, float] = json.load(fp)
+
     for i, object_spec_data in enumerate(data):
         object_name: str = object_spec_data.get("name", f"Penyakit Tanpa Nama {i}")
         positive_questions: list[str] = object_spec_data.get("positive_questions", [])
@@ -26,13 +29,14 @@ if __name__ == "__main__":
     object_spec_list.add_general_questions(general_specific_rules)
 
     app_state = AppState.make_initial(object_spec_list=object_spec_list, inference_rules=inference_rules)
+    app_state.question_values = question_values
 
-    guess: list[str] | None = None
+    guess: list[tuple[str, float]] | None = None
     question_no = 0
     while guess is None:
         action = app_state.action()
         if action == "guess":
-            guess = app_state.guess()
+            guess = app_state.guess_with_percentage()
         else:
             question_no += 1
             question = app_state.ask()
