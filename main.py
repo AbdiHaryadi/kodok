@@ -28,7 +28,17 @@ if __name__ == "__main__":
     general_specific_rules = inference_rules.general_specific_rules
     object_spec_list.add_general_questions(general_specific_rules)
 
-    app_state = AppState.make_initial(object_spec_list=object_spec_list, inference_rules=inference_rules)
+    questions: list[str] = []
+    with open("questions.txt") as fp:
+        for line in fp:
+            line = line.strip()
+            questions.append(line)
+
+    app_state = AppState.make_initial(
+        object_spec_list=object_spec_list,
+        questions=questions,
+        inference_rules=inference_rules
+    )
     app_state.question_values = question_values
 
     guess: list[tuple[str, float]] | None = None

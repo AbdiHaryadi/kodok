@@ -1,0 +1,172 @@
+Batuk?
+Batuk kering?
+Batuk kronis?
+Batuk berdahak?
+Batuk dengan dahak berwarna jernih?
+Batuk dengan dahak berwarna putih?
+Batuk dengan dahak berwarna kuning?
+Batuk dengan dahak berwarna hijau?
+Batuk pada malam hari?
+Batuk pada dini hari?
+Batuk berdahak dengan cairan mengandung nanah yang berwarna kekuningan?
+Berat badan menurun?
+Bercak kulit?
+Bercak cokelat pada kulit yang mudah terkelupas?
+Bercak kulit merah?
+Bercak kulit putih?
+Bercak kulit tidak gatal?
+Bercak kulit mengkilap?
+Bercak kulit kering bersisik?
+Berkeringat di malam hari meski tanpa melakukan kegiatan?
+Berkeringat di malam hari?
+Bintik koplik (bintik-bintik putih kecil di dalam mulut, khususnya di bagian dalam pipi)?
+Buang air besar berdarah?
+Buang air besar berwarna hitam?
+Cenderung perfeksionis?
+Demam berkepanjangan?
+Demam berlangsung hingga tiga minggu?
+Demam berlangsung lebih dari seminggu?
+Demam berlangsung terus-menerus selama 2-7 hari kemudian turun dengan cepat?
+Meriang dalam jangka waktu yang panjang?
+Demam mendadak yang tinggi?
+Demam meningkat secara bertahap setiap harinya?
+Demam ringan?
+Demam tidak merespon terhadap obat penurun panas?
+Demam tinggi?
+Demam?
+Denyut nadi yang melemah hingga 100 kali per menit?
+Detak jantung yang cepat?
+Detak jantung yang tidak teratur?
+Detak jantung berdebar-debar?
+Diare berkepanjangan?
+Diare?
+Sulit buang air besar?
+Disabilitas tanpa riwayat kecelakaan?
+Deformitas tanpa riwayat kecelakaan?
+Emosi yang mudah terpengaruh?
+Feses cair?
+Feses encer?
+Mengalami kecemasan?
+Depresi?
+Kesulitan mengingat informasi baru (gangguan memori)?
+Keterlambatan mental?
+Gatal-gatal pada kulit?
+Gelisah?
+Gusi berdarah?
+Hilang nafsu makan?
+Hilangnya indra penciuman?
+Hilangnya indra rasa?
+Tidak bisa diam?
+Berlari tanpa tujuan jelas?
+Memanjat tanpa tujuan jelas?
+Bertindak tanpa berpikir terlebih dahulu?
+Kesulitan menunggu giliran?
+Kehilangan gairah seksual?
+Kehilangan jalur pemikiran saat berbicara?
+Kelainan kulit (biasanya terjadi di bagian tubuh yang terbuka seperti kaki, tangan, leher dan wajah)?
+Kelebihan kebiruan pada bibir?
+Kelebihan kebiruan pada ujung kuku?
+Kelelahan kronis?
+Kelelahan? (lethargy)
+Kelemahan anggota gerak?
+Kelemahan?
+Kesemutan pada anggota gerak?
+Rasa tertusuk-tusuk pada anggota gerak?
+Nyeri pada anggota gerak?
+Kesulitan berbicara?
+Kesulitan dalam navigasi?
+Kesulitan dalam pemahaman ruang?
+Kesulitan dalam perencanaan?
+Kesulitan dalam menyelesaikan tugas?
+Kesulitan menelan makanan?
+Kesulitan menelan minuman?
+Ketika batuk terkadang dahak bercampur darah?
+Kondisi kulit seperti bintik-bintik ungu?
+Kondisi kulit seperti luka yang tidak sembuh?
+Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?
+Kram perut?
+Nyeri perut?
+Kulit atau mata yang menguning (ikterus, jaundice)?
+Kulit pucat?
+Kulit tampak keriput?
+Kulit yang tidak berkeringat?
+Alis mata rontok?
+Lemas (lesu)?
+Lepuh pada tangan?
+Lepuh pada kaki?
+Luka tidak nyeri pada tangan?
+Luka tidak nyeri pada kaki?
+Mata iritasi?
+Memiliki citra diri yang negatif?
+Memiliki kekhawatiran berlebihan tentang masa depan?
+Mengalami kesulitan dalam mengelola stres?
+Menggigil?
+Mengi? (suara mengi atau bersiul yang dihasilkan saat bernapas)
+Mimisan?
+Mual?
+Muntah?
+Perut kembung?
+Mudah berdarah?
+Mudah memar?
+Mudah lelah?
+Munculnya eschar atau jaringan hitam pada kulit?
+Munculnya garis merah kecil?
+Muntah darah?
+Nafsu makan menurun?
+Nyeri di atas bagian atas perut?
+Nyeri punggung?
+Nyeri lengan?
+Ketidaknyamanan di atas bagian atas perut?
+Ketidaknyamanan di punggung?
+Ketidaknyamanan di lengan?
+Nyeri dada yang terasa ketika bernapas hingga napas yang pendek?
+Nyeri dada?
+Nyeri otot?
+Nyeri di belakang mata?
+Nyeri tulang?
+Nyeri kepala?
+Nyeri pada persendian?
+Nyeri pada saraf tepi?
+Pembengkakan kelenjar limfa (getah bening)?
+Pembengkakan pada kaki, pergelangan kaki, atau area lainnya?
+Pembesaran organ hati?
+Pembesaran organ limpa?
+Penarikan diri dari aktivitas sosial?
+Penebalan wajah?
+Penebalan cuping telinga?
+Penurunan berat badan yang tidak dapat dijelaskan?
+Penurunan berat badan yang tidak disengaja?
+Pertumbuhan terhambat (pada anak-anak)?
+Perubahan mood?
+Perubahan kepribadian?
+Perut bengkak?
+Perut membuncit?
+Pilek?
+Produksi dahak setiap pagi akibat penumpukan dahak berlebih di paru-paru?
+Pusing?
+Pingsan?
+Rambut mudah rontok?
+Rambut tampak seperti rambut jagung?
+Rasa sesak di dada?
+Riwayat gangguan makan saat masa kanak-kanak?
+Ruam berlangsung selama tiga hari?
+Ruam kulit kemerahan?
+Ruam?
+Sakit perut hebat?
+Sakit tenggorokan?
+Sesak napas (kesulitan bernapas, napas pendek)?
+Suhu demam hingga 39 derajat Celcius?
+Suhu tubuh menurun?
+Tubuh terasa dingin?
+Sulit fokus (mudah teralih dan sering lupa)?
+Tampak bengkak?
+Tampak kurus?
+Timbul bintik-bintik merah pada kulit?
+Tinja berwarna pucat?
+Tulang rapuh?
+Deformitas tulang?
+Tulang-tulang di tubuh terlihat jelas?
+Tungkai membesar?
+Ulkus sulit sembuh?
+Urgensi untuk buang air besar?
+Urin berwarna gelap?

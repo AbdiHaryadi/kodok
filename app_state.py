@@ -48,6 +48,7 @@ def is_possibly_general_question(question: str, general_specific_rules: list[Gen
 @dataclass
 class AppState:
     object_spec_list: ObjectSpecificationList
+    questions: list[str]
     evidence_state: EvidenceState
     asked_questions: set[str] = field(default_factory=set)
     question_scope: str | None = None
@@ -56,18 +57,24 @@ class AppState:
     @staticmethod
     def make_initial(
             object_spec_list: ObjectSpecificationList,
+            questions: list[str],
             inference_rules: InferenceRules
     ):
         return AppState(
             object_spec_list=object_spec_list,
+            questions=questions,
             evidence_state=EvidenceState(
                 qa_evidence_map={},
                 inference_rules=inference_rules
             ),
         )
     
-    def step(self, question: str, answer: bool | None):
-        new_asked_questions = self.asked_questions | {question}
+    def step(self, question: str, answer: bool | None, asked=True) -> "AppState":
+        if asked:
+            new_asked_questions = self.asked_questions | {question}
+        else:
+            new_asked_questions = self.asked_questions
+
         new_question_scope = self.question_scope
         if answer is None:
             new_evidence_state = self.evidence_state
@@ -79,13 +86,43 @@ class AppState:
             if self.question_scope is None and answer is True:
                 new_question_scope = question
 
-        return AppState(
+        new_app_state = AppState(
             object_spec_list=self.object_spec_list,
+            questions=self.questions,
             evidence_state=new_evidence_state,
             asked_questions=new_asked_questions,
             question_scope=new_question_scope,
             question_values=self.question_values
         )
+
+        # Asking itself so it doesn't lead to contradiction.
+        for next_question in new_app_state.get_relevant_questions():
+            try:
+                new_app_state.evidence_state.advance(QuestionAnswer(next_question, True))
+                can_true = True
+            except ValueError:
+                can_true = False
+
+            try:
+                new_app_state.evidence_state.advance(QuestionAnswer(next_question, False))
+                can_false = True
+            except ValueError:
+                can_false = False
+
+            if can_true and can_false:
+                continue
+            
+            if can_true: # but not can_false
+                # Stop iteration
+                return new_app_state.step(next_question, True, asked=False)
+            
+            if can_false: # but not can_true
+                # Stop iteration
+                return new_app_state.step(next_question, False, asked=False)
+
+            raise ValueError("Congratulations, you played yourself. (How???)")
+        
+        return new_app_state
     
     def action(self):
         if len(self.asked_questions) >= QUESTION_LIMIT:
@@ -192,6 +229,13 @@ class AppState:
         
         return max(valid_questions, key=lambda x: self.question_values.get(x, 0.0))
     
+    def ask_or_none(self):
+        valid_questions = self.get_valid_questions()
+        if len(valid_questions) == 0:
+            return None
+        
+        return max(valid_questions, key=lambda x: self.question_values.get(x, 0.0))
+    
     def get_valid_questions(self):
         # Find relevant questions
         relevant_questions = self.get_relevant_questions() 
@@ -222,7 +266,7 @@ class AppState:
 
                 elif (
                         any(sq in rule.general_questions for sq in specific_questions)
-                        and all((gq in specific_questions or gq in self.asked_questions) for gq in rule.general_questions)
+                        and all((gq in specific_questions or gq in self.asked_questions or gq in self.evidence_state.qa_evidence_map) for gq in rule.general_questions)
                     ):
                     extend = True
 
@@ -255,22 +299,16 @@ class AppState:
 
     def get_relevant_questions(self):
         relevant_questions: list[str] = []
-        possible_guesses = self.get_possible_guesses()
-
-        for obj_spec in self.object_spec_list:
-            if obj_spec.name not in possible_guesses:
+        for question in self.questions:
+            if question in self.asked_questions:
+                continue
+            
+            if question in relevant_questions:
                 continue
 
-            for question in obj_spec.positive_questions + obj_spec.negative_questions:
-                if question in self.asked_questions:
-                    continue
-                
-                if question in relevant_questions:
-                    continue
-                
-                if question in self.evidence_state.qa_evidence_map:
-                    continue
+            if question in self.evidence_state.qa_evidence_map:
+                continue
 
-                relevant_questions.append(question)
+            relevant_questions.append(question)
         
         return relevant_questions
