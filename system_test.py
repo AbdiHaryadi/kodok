@@ -73,7 +73,8 @@ if __name__ == "__main__":
                 
                 app_state = new_app_state
 
-        print(app_state.get_possible_guesses())
+        print("Possible guesses:", app_state.get_possible_guesses())
+        print("Guess with percentage:", app_state.guess_with_percentage())
         return (guess, question_no)
 
     for current_object_spec in object_spec_list:
