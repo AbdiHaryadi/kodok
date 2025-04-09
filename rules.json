@@ -11,7 +11,31 @@
                 "Batuk terus-menerus?",
                 "Batuk tidak berdahak, atau berdahak dengan cairan mengandung nanah yang berwarna kekuningan?",
                 "Ketika batuk terkadang dahak bercampur darah?",
-                "Batuk kering?"
+                "Batuk kering?",
+                "Batuk kronis?",
+                "Batuk berdahak?",
+                "Batuk pada malam hari?",
+                "Batuk pada dini hari?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Batuk berdahak?"
+            ],
+            "specific_questions": [
+                "Batuk dengan dahak berwarna jernih?",
+                "Batuk dengan dahak berwarna putih?",
+                "Batuk dengan dahak berwarna kuning?",
+                "Batuk dengan dahak berwarna hijau?",
+                "Ketika batuk terkadang dahak bercampur darah?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Batuk dengan dahak berwarna kuning?"
+            ],
+            "specific_questions": [
+                "Batuk berdahak dengan cairan mengandung nanah yang berwarna kekuningan?"
             ]
         },
         {
@@ -152,7 +176,8 @@
                 "Nyeri perut?"
             ],
             "specific_questions": [
-                "Nyeri perut yang kronis?"
+                "Nyeri perut yang kronis?",
+                "Nyeri di atas bagian atas perut?"
             ]
         },
         {
@@ -171,7 +196,9 @@
             "specific_questions": [
                 "Pembengkakan kelenjar limfa?",
                 "Pembengkakan pada kaki, pergelangan kaki, atau area lainnya?",
-                "Pembengkakan pada ketiak?"
+                "Pembengkakan pada ketiak?",
+                "Pembengkakan pada leher?",
+                "Pembengkakan pada dada?" 
             ]
         },
         {
@@ -188,7 +215,8 @@
             ],
             "specific_questions": [
                 "Mengalami kecemasan atau depresi?",
-                "Kesulitan mengingat informasi baru (gangguan memori)?"
+                "Kesulitan mengingat informasi baru (gangguan memori)?",
+                "Keterlambatan mental?"
             ]
         },
         {
@@ -196,7 +224,9 @@
                 "Kelemahan?"
             ],
             "specific_questions": [
-                "Kelemahan anggota gerak dan/atau kelopak mata?"
+                "Kelemahan anggota gerak dan/atau kelopak mata?",
+                "Kelemahan anggota gerak?",
+                "Kelemahan kelopak mata?"
             ]
         },
         {
@@ -205,6 +235,48 @@
             ],
             "specific_questions": [
                 "Muntah darah?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Bercak kulit?"
+            ],
+            "specific_questions": [
+                "Bercak cokelat pada kulit yang mudah terkelupas?",
+                "Bercak kulit merah?",
+                "Bercak kulit putih?",
+                "Bercak kulit tidak gatal?",
+                "Bercak kulit mengkilap?",
+                "Bercak kulit kering bersisik?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Hiperaktivitas (tidak bisa diam, sering gelisah, berlari atau memanjat tanpa tujuan jelas)?"
+            ],
+            "specific_questions": [
+                "Tidak bisa diam?",
+                "Gelisah?",
+                "Berlari tanpa tujuan jelas?",
+                "Memanjat tanpa tujuan jelas?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Impulsivitas (bertindak tanpa berpikir terlebih dahulu, kesulitan menunggu giliran)?"
+            ],
+            "specific_questions": [
+                "Bertindak tanpa berpikir terlebih dahulu?",
+                "Kesulitan menunggu giliran?"
+            ]
+        },
+        {
+            "general_questions": [
+                "Pembesaran organ seperti hati dan limpa?"
+            ],
+            "specific_questions": [
+                "Pembesaran organ hati?",
+                "Pembesaran organ limpa?"
             ]
         }
     ],
@@ -221,7 +293,7 @@
             "parent_question": "Demam dan meriang dalam jangka waktu yang panjang?",
             "child_questions": [
                 "Demam berkepanjangan?",
-                "[dummy] Meriang dalam jangka waktu yang panjang?"
+                "Meriang dalam jangka waktu yang panjang?"
             ]
         },
         {
@@ -243,22 +315,22 @@
             "parent_question": "Nyeri di belakang mata, otot, dan tulang?",
             "child_questions": [
                 "Nyeri otot?",
-                "[dummy] Nyeri di belakang mata?",
-                "[dummy] Nyeri tulang?"
+                "Nyeri di belakang mata?",
+                "Nyeri tulang?"
             ]
         },
         {
             "parent_question": "Nyeri pada persendian dan otot?",
             "child_questions": [
                 "Nyeri otot?",
-                "[dummy] Nyeri pada persendian?"
+                "Nyeri pada persendian?"
             ]
         },
         {
             "parent_question": "Rasa nyeri pada otot, sendi, serta mudah lelah?",
             "child_questions": [
                 "Nyeri otot?",
-                "[dummy] Nyeri pada persendian?",
+                "Nyeri pada persendian?",
                 "Kelelahan? (lethargy)"
             ]
         },
@@ -273,18 +345,274 @@
             "parent_question": "Mata merah dan iritasi?",
             "child_questions": [
                 "Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?",
-                "[dummy] Mata iritasi?"
+                "Mata iritasi?"
+            ]
+        },
+        {
+            "parent_question": "Batuk kronis dengan dahak yang bisa berwarna jernih, putih, kuning, atau hijau?",
+            "child_questions": [
+                "Batuk kronis?",
+                "Batuk dengan dahak berwarna jernih, putih, kuning, atau hijau?"
+            ]
+        },
+        {
+            "parent_question": "Bercak kulit merah atau putih, tidak gatal, mengkilap atau kering bersisik?",
+            "child_questions": [
+                "Bercak kulit merah atau putih?",
+                "Bercak kulit tidak gatal?",
+                "Bercak kulit mengkilap atau kering bersisik?"
+            ]
+        },
+        {
+            "parent_question": "Kesemutan, tertusuk-tusuk dan nyeri pada anggota gerak?",
+            "child_questions": [
+                "Kesemutan pada anggota gerak?",
+                "Rasa tertusuk-tusuk pada anggota gerak?",
+                "Nyeri pada anggota gerak?"
+            ]
+        },
+        {
+            "parent_question": "Kesulitan menelan makanan dan minuman?",
+            "child_questions": [
+                "Kesulitan menelan makanan?",
+                "Kesulitan menelan minuman?"
+            ]
+        },
+        {
+            "parent_question": "Pembengkakan pada leher dan dada?",
+            "child_questions": [
+                "Pembengkakan pada leher?",
+                "Pembengkakan pada dada?"
+            ]
+        },
+        {
+            "parent_question": "Penebalan wajah dan cuping telinga?",
+            "child_questions": [
+                "Penebalan wajah?",
+                "Penebalan cuping telinga?"
+            ]
+        },
+        {
+            "parent_question": "Suhu tubuh menurun dan tubuh terasa dingin?",
+            "child_questions": [
+                "Suhu tubuh menurun?",
+                "Tubuh terasa dingin?"
             ]
         }
     ],
-    "contradictive": [
+    "or": [
         {
-            "first_question": "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)",
-            "second_question": "Nafsu makan menurun?"
+            "parent_question": "Batuk dengan dahak berwarna jernih, putih, kuning, atau hijau?",
+            "child_questions": [
+                "Batuk dengan dahak berwarna jernih?",
+                "Batuk dengan dahak berwarna putih?",
+                "Batuk dengan dahak berwarna kuning?",
+                "Batuk dengan dahak berwarna hijau?"
+            ]
         },
         {
-            "first_question": "Polifagi? (nafsu makan yang meningkat dan sering merasa lapar)",
-            "second_question": "Hilang nafsu makan?"
+            "parent_question": "Batuk pada malam hari atau dini hari?",
+            "child_questions": [
+                "Batuk pada malam hari?",
+                "Batuk pada dini hari?"
+            ]
+        },
+        {
+            "parent_question": "Batuk tidak berdahak, atau berdahak dengan cairan mengandung nanah yang berwarna kekuningan?",
+            "child_questions": [
+                "Batuk kering?",
+                "Batuk berdahak dengan cairan mengandung nanah yang berwarna kekuningan?"
+            ]
+        },
+        {
+            "parent_question": "Bercak kulit merah atau putih?",
+            "child_questions": [
+                "Bercak kulit merah?",
+                "Bercak kulit putih?"
+            ]
+        },
+        {
+            "parent_question": "Bercak kulit mengkilap atau kering bersisik?",
+            "child_questions": [
+                "Bercak kulit mengkilap?",
+                "Bercak kulit kering bersisik?"
+            ]
+        },
+        {
+            "parent_question": "Diare atau sulit buang air besar?",
+            "child_questions": [
+                "Diare?",
+                "Sulit buang air besar?"
+            ]
+        },
+        {
+            "parent_question": "Detak jantung yang tidak teratur atau berdebar-debar?",
+            "child_questions": [
+                "Detak jantung yang tidak teratur?",
+                "Detak jantung berdebar-debar?"
+            ]
+        },
+        {
+            "parent_question": "Disabilitas/deformitas tanpa Riwayat kecelakaan?",
+            "child_questions": [
+                "Disabilitas tanpa riwayat kecelakaan?",
+                "Deformitas tanpa riwayat kecelakaan?"
+            ]
+        },
+        {
+            "parent_question": "Feses cair atau encer?",
+            "child_questions": [
+                "Feses cair?",
+                "Feses encer?"
+            ]
+        },
+        {
+            "parent_question": "Mengalami kecemasan atau depresi?",
+            "child_questions": [
+                "Mengalami kecemasan?",
+                "Depresi?"
+            ]
+        },
+        {
+            "parent_question": "Hilangnya indra penciuman atau rasa?",
+            "child_questions": [
+                "Hilangnya indra penciuman?",
+                "Hilangnya indra rasa?"
+            ]
+        },
+        {
+            "parent_question": "Kelebihan kebiruan pada bibir atau ujung kuku?",
+            "child_questions": [
+                "Kelebihan kebiruan pada bibir?",
+                "Kelebihan kebiruan pada ujung kuku?"
+            ]
+        },
+        {
+            "parent_question": "Kelemahan anggota gerak dan/atau kelopak mata?",
+            "child_questions": [
+                "Kelemahan anggota gerak?",
+                "Kelemahan kelopak mata?"
+            ]
+        },
+        {
+            "parent_question": "Kesulitan dalam navigasi atau pemahaman ruang?",
+            "child_questions": [
+                "Kesulitan dalam navigasi?",
+                "Kesulitan dalam pemahaman ruang?"
+            ]
+        },
+        {
+            "parent_question": "Kesulitan dalam perencanaan atau menyelesaikan tugas?",
+            "child_questions": [
+                "Kesulitan dalam perencanaan?",
+                "Kesulitan dalam menyelesaikan tugas?"
+            ]
+        },
+        {
+            "parent_question": "Kondisi kulit seperti bintik-bintik ungu atau luka yang tidak sembuh?",
+            "child_questions": [
+                "Kondisi kulit seperti bintik-bintik ungu?",
+                "Kondisi kulit seperti luka yang tidak sembuh?"
+            ]
+        },
+        {
+            "parent_question": "Kram atau nyeri perut?",
+            "child_questions": [
+                "Kram perut?",
+                "Nyeri perut?"
+            ]
+        },
+        {
+            "parent_question": "Kulit yang tidak berkeringat dan/atau alis mata rontok?",
+            "child_questions": [
+                "Kulit yang tidak berkeringat?",
+                "Alis mata rontok?"
+            ]
+        },
+        {
+            "parent_question": "Lepuh atau luka tidak nyeri pada tangan atau kaki?",
+            "child_questions": [
+                "Lepuh pada tangan?",
+                "Lepuh pada kaki?",
+                "Luka tidak nyeri pada tangan?",
+                "Luka tidak nyeri pada kaki?"
+            ]
+        },
+        {
+            "parent_question": "Mual atau muntah?",
+            "child_questions": [
+                "Mual?",
+                "Muntah?"
+            ]
+        },
+        {
+            "parent_question": "Mual, diare, nyeri perut, atau kembung?",
+            "child_questions": [
+                "Mual?",
+                "Diare?",
+                "Nyeri perut?",
+                "Perut kembung?"
+            ]
+        },
+        {
+            "parent_question": "Mudah berdarah atau memar?",
+            "child_questions": [
+                "Mudah berdarah?",
+                "Mudah memar?"
+            ]
+        },
+        {
+            "parent_question": "Muntah atau diare?",
+            "child_questions": [
+                "Muntah?",
+                "Diare?"
+            ]
+        },
+        {
+            "parent_question": "Nyeri atau ketidaknyamanan di bagian atas perut, punggung, atau lengan?",
+            "child_questions": [
+                "Nyeri di atas bagian atas perut?",
+                "Nyeri punggung?",
+                "Nyeri lengan?",
+                "Ketidaknyamanan di atas bagian atas perut?",
+                "Ketidaknyamanan di punggung?",
+                "Ketidaknyamanan di lengan?"
+            ]
+        },
+        {
+            "parent_question": "Penurunan berat badan atau nafsu makan?",
+            "child_questions": [
+                "Berat badan menurun?",
+                "Nafsu makan menurun?"
+            ]
+        },
+        {
+            "parent_question": "Perubahan mood atau kepribadian?",
+            "child_questions": [
+                "Perubahan mood?",
+                "Perubahan kepribadian?"
+            ]
+        },
+        {
+            "parent_question": "Perut terasa kembung atau nyeri?",
+            "child_questions": [
+                "Perut kembung?",
+                "Nyeri perut?"
+            ]
+        },
+        {
+            "parent_question": "Pusing atau pingsan?",
+            "child_questions": [
+                "Pusing?",
+                "Pingsan?"
+            ]
+        },
+        {
+            "parent_question": "Tulang rapuh atau deformitas tulang?",
+            "child_questions": [
+                "Tulang rapuh?",
+                "Deformitas tulang?"
+            ]
         }
     ]
 }
