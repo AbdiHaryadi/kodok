@@ -105,7 +105,6 @@ class AndRule:
                 # else: check other values
             else:
                 parent_new_value = None
-                break
 
         if parent_new_value is not None:
             return update_qa_evidence_map(qa_evidence_map, question=self.parent_question, answer=parent_new_value)
@@ -172,16 +171,15 @@ class OrRule:
             
             return False
         
-        parent_new_value: bool | None = True
+        parent_new_value: bool | None = False
         for q in self.child_questions:
             if q in qa_evidence_map:
-                if qa_evidence_map[q] == False:
-                    parent_new_value = False
+                if qa_evidence_map[q] == True:
+                    parent_new_value = True
                     break
                 # else: check other values
             else:
                 parent_new_value = None
-                break
 
         if parent_new_value is not None:
             return update_qa_evidence_map(qa_evidence_map, question=self.parent_question, answer=parent_new_value)
