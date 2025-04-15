@@ -39,7 +39,8 @@
             "Timbul bintik-bintik merah pada kulit?",
             "Muntah darah?",
             "Buang air besar berwarna hitam?",
-            "Suhu tubuh menurun dan tubuh terasa dingin?"
+            "Suhu tubuh menurun?",
+            "Tubuh terasa dingin?"
         ]
     },
     {
@@ -51,7 +52,8 @@
             "Demam berlangsung hingga tiga minggu?",
             "Kelelahan? (lethargy)",
             "Nyeri kepala?",
-            "Nyeri pada persendian dan otot?",
+            "Nyeri pada persendian?",
+            "Nyeri otot?",
             "Perut terasa kembung atau nyeri?",
             "Diare atau sulit buang air besar?",
             "Mual?",
