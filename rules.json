@@ -278,6 +278,15 @@
                 "Pembesaran organ hati?",
                 "Pembesaran organ limpa?"
             ]
+        },
+        {
+            "general_questions": [
+                "Sulit fokus (mudah teralih dan sering lupa)?"
+            ],
+            "specific_questions": [
+                "Mudah teralih?",
+                "Sering lupa?"
+            ]
         }
     ],
     "and": [

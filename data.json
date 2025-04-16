@@ -8,9 +8,12 @@
             "Nyeri kepala?",
             "Menggigil?",
             "Lemas (lesu)?",
-            "Nyeri di belakang mata, otot, dan tulang?",
+            "Nyeri otot?",
+            "Nyeri di belakang mata?",
+            "Nyeri tulang?",
             "Ruam kulit kemerahan?",
-            "Kesulitan menelan makanan dan minuman?",
+            "Kesulitan menelan makanan?",
+            "Kesulitan menelan minuman?",
             "Mual?",
             "Muntah?",
             "Gusi berdarah?",
@@ -29,9 +32,12 @@
             "Nyeri kepala?",
             "Menggigil?",
             "Lemas (lesu)?",
-            "Nyeri di belakang mata, otot, dan tulang?",
+            "Nyeri otot?",
+            "Nyeri di belakang mata?",
+            "Nyeri tulang?",
             "Ruam kulit kemerahan?",
-            "Kesulitan menelan makanan dan minuman?",
+            "Kesulitan menelan makanan?",
+            "Kesulitan menelan minuman?",
             "Mual?",
             "Muntah?",
             "Gusi berdarah?",
@@ -67,7 +73,8 @@
         "name": "Tuberkulosis",
         "positive_questions": [
             "Batuk terus-menerus?",
-            "Demam dan meriang dalam jangka waktu yang panjang?",
+            "Demam berkepanjangan?",
+            "Meriang dalam jangka waktu yang panjang?",
             "Nyeri dada yang terasa ketika bernapas hingga napas yang pendek?",
             "Berat badan menurun?",
             "Ketika batuk terkadang dahak bercampur darah?",
@@ -83,7 +90,8 @@
             "Ruam?",
             "Kelelahan? (lethargy)",
             "Pembengkakan kelenjar limfa (getah bening)?",
-            "Nyeri pada persendian dan otot?"
+            "Nyeri otot?",
+            "Nyeri pada persendian?"
         ]
     },
     {
@@ -122,7 +130,8 @@
             "Mual?",
             "Muntah?",
             "Diare?",
-            "Nyeri pada persendian dan otot?",
+            "Nyeri otot?",
+            "Nyeri pada persendian?",
             "Mudah lelah?",
             "Denyut nadi yang melemah hingga 100 kali per menit?"
         ]
@@ -181,10 +190,13 @@
         "positive_questions": [
             "Bercak kulit merah atau putih, tidak gatal, mengkilap atau kering bersisik?",
             "Kulit yang tidak berkeringat dan/atau alis mata rontok?",
-            "Penebalan wajah dan cuping telinga?",
+            "Penebalan wajah?",
+            "Penebalan cuping telinga?",
             "Lepuh atau luka tidak nyeri pada tangan atau kaki?",
             "Nyeri pada saraf tepi?",
-            "Kesemutan, tertusuk-tusuk dan nyeri pada anggota gerak?",
+            "Kesemutan pada anggota gerak?",
+            "Rasa tertusuk-tusuk pada anggota gerak?",
+            "Nyeri pada anggota gerak?",
             "Kelemahan anggota gerak dan/atau kelopak mata?",
             "Disabilitas/deformitas tanpa Riwayat kecelakaan?",
             "Ulkus sulit sembuh?"
@@ -274,7 +286,8 @@
             "Nyeri otot?",
             "Kelelahan? (lethargy)",
             "Lemas (lesu)?",
-            "Mata merah dan iritasi?"
+            "Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?",
+            "Mata iritasi?"
         ]
     },
     {
@@ -307,7 +320,8 @@
             "Demam ringan?",
             "Pembengkakan kelenjar limfa (getah bening)?",
             "Nyeri kepala?",
-            "Nyeri pada persendian dan otot?",
+            "Nyeri otot?",
+            "Nyeri pada persendian?",
             "Sakit tenggorokan?",
             "Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?"
         ]
@@ -354,11 +368,13 @@
         "name": "Antraks Saluran Pencernaan",
         "positive_questions": [
             "Demam?",
-            "Kesulitan menelan makanan dan minuman?",
+            "Kesulitan menelan makanan?",
+            "Kesulitan menelan minuman?",
             "Mual?",
             "Diare?",
             "Muntah?",
-            "Pembengkakan pada leher dan dada?",
+            "Pembengkakan pada leher?",
+            "Pembengkakan pada dada?",
             "Sakit perut hebat?",
             "Buang air besar berdarah?",
             "Perut bengkak?"
