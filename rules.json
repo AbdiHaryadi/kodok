@@ -291,70 +291,10 @@
     ],
     "and": [
         {
-            "parent_question": "Demam disertai nyeri kepala dan tubuh menggigil?",
-            "child_questions": [
-                "Demam?",
-                "Nyeri kepala?",
-                "Menggigil?"
-            ]
-        },
-        {
-            "parent_question": "Demam dan meriang dalam jangka waktu yang panjang?",
-            "child_questions": [
-                "Demam berkepanjangan?",
-                "Meriang dalam jangka waktu yang panjang?"
-            ]
-        },
-        {
-            "parent_question": "Mual dan muntah?",
-            "child_questions": [
-                "Mual?",
-                "Muntah?"
-            ]
-        },
-        {
-            "parent_question": "Mual, muntah, dan diare?",
-            "child_questions": [
-                "Mual?",
-                "Muntah?",
-                "Diare?"
-            ]
-        },
-        {
-            "parent_question": "Nyeri di belakang mata, otot, dan tulang?",
-            "child_questions": [
-                "Nyeri otot?",
-                "Nyeri di belakang mata?",
-                "Nyeri tulang?"
-            ]
-        },
-        {
-            "parent_question": "Nyeri pada persendian dan otot?",
-            "child_questions": [
-                "Nyeri otot?",
-                "Nyeri pada persendian?"
-            ]
-        },
-        {
-            "parent_question": "Rasa nyeri pada otot, sendi, serta mudah lelah?",
-            "child_questions": [
-                "Nyeri otot?",
-                "Nyeri pada persendian?",
-                "Kelelahan? (lethargy)"
-            ]
-        },
-        {
             "parent_question": "Nyeri dada yang terasa ketika bernapas hingga napas yang pendek?",
             "child_questions": [
                 "Nyeri dada?",
                 "Sesak napas (kesulitan bernapas, napas pendek)?"
-            ]
-        },
-        {
-            "parent_question": "Mata merah dan iritasi?",
-            "child_questions": [
-                "Konjungtivitis (mata merah, mata bisa menjadi sensitif terhadap cahaya)?",
-                "Mata iritasi?"
             ]
         },
         {
@@ -370,42 +310,6 @@
                 "Bercak kulit merah atau putih?",
                 "Bercak kulit tidak gatal?",
                 "Bercak kulit mengkilap atau kering bersisik?"
-            ]
-        },
-        {
-            "parent_question": "Kesemutan, tertusuk-tusuk dan nyeri pada anggota gerak?",
-            "child_questions": [
-                "Kesemutan pada anggota gerak?",
-                "Rasa tertusuk-tusuk pada anggota gerak?",
-                "Nyeri pada anggota gerak?"
-            ]
-        },
-        {
-            "parent_question": "Kesulitan menelan makanan dan minuman?",
-            "child_questions": [
-                "Kesulitan menelan makanan?",
-                "Kesulitan menelan minuman?"
-            ]
-        },
-        {
-            "parent_question": "Pembengkakan pada leher dan dada?",
-            "child_questions": [
-                "Pembengkakan pada leher?",
-                "Pembengkakan pada dada?"
-            ]
-        },
-        {
-            "parent_question": "Penebalan wajah dan cuping telinga?",
-            "child_questions": [
-                "Penebalan wajah?",
-                "Penebalan cuping telinga?"
-            ]
-        },
-        {
-            "parent_question": "Suhu tubuh menurun dan tubuh terasa dingin?",
-            "child_questions": [
-                "Suhu tubuh menurun?",
-                "Tubuh terasa dingin?"
             ]
         }
     ],
