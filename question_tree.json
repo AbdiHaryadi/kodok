@@ -236,40 +236,62 @@
             "group": "Suhu Demam"
         }
     ],
-    "groups": [
+    "group_questions": [
         {
-            "name": "Jenis Batuk",
-            "questions": [
-                "Batuk kering?",
-                "Batuk berdahak?"
-            ]
+            "group": "Jenis Batuk",
+            "question": "Batuk kering?"
         },
         {
-            "name": "Jenis Dahak Batuk",
-            "questions": [
-                "Batuk dengan dahak berwarna jernih?",
-                "Batuk dengan dahak berwarna putih?",
-                "Batuk dengan dahak berwarna kuning?",
-                "Batuk dengan dahak berwarna hijau?",
-                "Ketika batuk terkadang dahak bercampur darah?"
-            ]
+            "group": "Jenis Batuk",
+            "question": "Batuk berdahak?"
         },
         {
-            "name": "Durasi Demam",
-            "questions": [
-                "Demam berlangsung kurang dari dua hari?",
-                "Demam berlangsung 2-7 hari?",
-                "Demam berlangsung 1-2 minggu?",
-                "Demam berlangsung hingga 3 minggu?"
-            ]
+            "group": "Jenis Dahak Batuk",
+            "question": "Batuk dengan dahak berwarna jernih?"
         },
         {
-            "name": "Suhu Demam",
-            "questions": [
-                "Suhu demam kurang dari 39 derajat Celcius?",
-                "Suhu demam 39 derajat Celcius?",
-                "Suhu demam mencapai 40 derajat Celcius?"
-            ]
+            "group": "Jenis Dahak Batuk",
+            "question": "Batuk dengan dahak berwarna putih?"
+        },
+        {
+            "group": "Jenis Dahak Batuk",
+            "question": "Batuk dengan dahak berwarna kuning?"
+        },
+        {
+            "group": "Jenis Dahak Batuk",
+            "question": "Batuk dengan dahak berwarna hijau?"
+        },
+        {
+            "group": "Jenis Dahak Batuk",
+            "question": "Ketika batuk terkadang dahak bercampur darah?"
+        },
+        {
+            "group": "Durasi Demam",
+            "question": "Demam berlangsung kurang dari dua hari?"
+        },
+        {
+            "group": "Durasi Demam",
+            "question": "Demam berlangsung 2-7 hari?"
+        },
+        {
+            "group": "Durasi Demam",
+            "question": "Demam berlangsung 1-2 minggu?"
+        },
+        {
+            "group": "Durasi Demam",
+            "question": "Demam berlangsung hingga 3 minggu?"
+        },
+        {
+            "group": "Suhu Demam",
+            "question": "Suhu demam kurang dari 39 derajat Celcius?"
+        },
+        {
+            "group": "Suhu Demam",
+            "question": "Suhu demam 39 derajat Celcius?"
+        },
+        {
+            "group": "Suhu Demam",
+            "question": "Suhu demam mencapai 40 derajat Celcius?"
         }
     ]
 }

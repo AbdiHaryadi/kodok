@@ -209,11 +209,15 @@ class InferenceRules:
     or_rules: list[OrRule] = field(default_factory=list)
 
     @staticmethod
-    def load(path: str):
+    def load(path: str, skip_general_specific_rules: bool = False):
         with open(path) as fp:
             data = json.load(fp)
         
-        general_specific_rules = [GeneralSpecificRule.from_dict(x) for x in data["general_specific"]]
+        if skip_general_specific_rules:
+            general_specific_rules = []
+        else:
+            general_specific_rules = [GeneralSpecificRule.from_dict(x) for x in data["general_specific"]]
+        
         and_rules = [AndRule.from_dict(x) for x in data.get("and", [])]
         contradictive_rules = [ContradictiveRule.from_dict(x) for x in data.get("contradictive", [])]
         or_rules = [OrRule.from_dict(x) for x in data.get("or", [])]

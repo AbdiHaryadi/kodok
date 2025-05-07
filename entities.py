@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from inference_rules import GeneralSpecificRule
+from question_tree import QuestionTree
 
 
 @dataclass
@@ -25,6 +26,19 @@ class ObjectSpecification:
                         if q not in self.positive_questions:
                             self.positive_questions.append(q)
                             possibly_updated_in_next_iteration = True
+
+    def add_general_questions_with_tree(self, question_tree: QuestionTree):
+        new_positive_questions: list[str] = []
+        for q in self.positive_questions:
+            question_path = question_tree.get_question_path(q)
+            if question_path is None:
+                continue
+
+            for new_q in question_path:
+                if new_q not in self.positive_questions:
+                    new_positive_questions.append(new_q)
+        
+        self.positive_questions.extend(new_positive_questions)
 
 class ObjectSpecificationList:
     def __init__(self, data: list[ObjectSpecification]):
@@ -56,6 +70,10 @@ class ObjectSpecificationList:
     def add_general_questions(self, general_specific_rules: list[GeneralSpecificRule]):
         for object_spec in self.data:
             object_spec.add_general_questions(general_specific_rules)
+
+    def add_general_questions_with_tree(self, question_tree: QuestionTree):
+        for object_spec in self.data:
+            object_spec.add_general_questions_with_tree(question_tree)
 
 class Question:
     def __init__(self, value: str):
