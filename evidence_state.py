@@ -1,4 +1,4 @@
-from entities import ObjectSpecificationList, QuestionAnswer
+from entities import QuestionAnswer
 from inference_rules import InferenceRules
 
 
