@@ -100,7 +100,7 @@ class AppStateWithTree:
                                 if q == question:
                                     continue
 
-                                new_evidence_state = self.evidence_state.advance(QuestionAnswer(
+                                new_evidence_state = new_evidence_state.advance(QuestionAnswer(
                                     question=q,
                                     answer=False
                                 ))
@@ -122,7 +122,7 @@ class AppStateWithTree:
 
         ask_exists = False
         while (not ask_exists) and (new_app_state.current_tree.parent is not None):
-            ask_exists = len(new_app_state.get_relevant_actions())
+            ask_exists = len(new_app_state.get_relevant_actions()) > 0
             if not ask_exists:
                 new_app_state = AppStateWithTree(
                     object_spec_list=self.object_spec_list,
@@ -363,6 +363,10 @@ if __name__ == "__main__":
     object_spec_list_data: list[ObjectSpecification] = []
     with open("data.json") as fp:
         data = json.load(fp)
+
+    with open("question_values.json", encoding="utf-8") as fp:
+        modified_question_values: dict[str, float] = json.load(fp)
+        question_values = {tuple(k.split("&&")): v for k, v in modified_question_values.items()}
     
     for i, object_spec_data in enumerate(data):
         object_name: str = object_spec_data.get("name", f"Penyakit Tanpa Nama {i}")
@@ -384,6 +388,7 @@ if __name__ == "__main__":
         initial_tree=tree,
         inference_rules=inference_rules
     )
+    app_state.question_values = question_values
 
     guess: list[tuple[str, float]] | None = None
     question_no = 0

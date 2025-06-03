@@ -119,7 +119,10 @@
         "Tungkai membesar?",
         "Ulkus sulit sembuh?",
         "Urgensi untuk buang air besar?",
-        "Urin berwarna gelap?"
+        "Urin berwarna gelap?",
+        "Sulit fokus (mudah teralih dan sering lupa)?",
+        "Hiperaktivitas (tidak bisa diam, sering gelisah, berlari atau memanjat tanpa tujuan jelas)?",
+        "Impulsivitas (bertindak tanpa berpikir terlebih dahulu, kesulitan menunggu giliran)?"
     ],
     "question_branches": [
         {
