@@ -2,9 +2,6 @@ from dataclasses import dataclass, field
 
 from entities import ObjectSpecification, ObjectSpecificationList, QuestionAnswer
 from evidence_state import EvidenceState
-
-import json
-
 from inference_rules import InferenceRules
 from question_tree import QuestionTree
 
@@ -45,7 +42,7 @@ def naive_evaluation(state: EvidenceState, obj_spec: ObjectSpecification):
     return (True, asked_count, not_asked_count)
 
 @dataclass
-class AppStateWithTree:
+class AppState:
     object_spec_list: ObjectSpecificationList
     current_tree: QuestionTree
     evidence_state: EvidenceState
@@ -58,7 +55,7 @@ class AppStateWithTree:
             initial_tree: QuestionTree,
             inference_rules: InferenceRules | None = None
     ):
-        return AppStateWithTree(
+        return AppState(
             object_spec_list=object_spec_list,
             current_tree=initial_tree,
             evidence_state=EvidenceState(
@@ -67,7 +64,7 @@ class AppStateWithTree:
             ),
         )
     
-    def step(self, question: str, answer: bool | None) -> "AppStateWithTree":
+    def step(self, question: str, answer: bool | None) -> "AppState":
         new_asked_questions = self.asked_questions | {question}
         if answer is None:
             new_evidence_state = self.evidence_state
@@ -112,7 +109,7 @@ class AppStateWithTree:
             else:
                 new_tree = self.current_tree
 
-        new_app_state = AppStateWithTree(
+        new_app_state = AppState(
             object_spec_list=self.object_spec_list,
             current_tree=new_tree,
             evidence_state=new_evidence_state,
@@ -124,7 +121,7 @@ class AppStateWithTree:
         while (not ask_exists) and (new_app_state.current_tree.parent is not None):
             ask_exists = len(new_app_state.get_relevant_actions()) > 0
             if not ask_exists:
-                new_app_state = AppStateWithTree(
+                new_app_state = AppState(
                     object_spec_list=self.object_spec_list,
                     current_tree=new_app_state.current_tree.parent,
                     evidence_state=new_evidence_state,

@@ -1,4 +1,4 @@
-from app_state_with_tree import AppStateWithTree
+from app_state import AppState
 from entities import ObjectSpecification, ObjectSpecificationList
 from inference_rules import InferenceRules
 from tqdm import tqdm
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     question_c_map: dict[tuple[str, str], int] = {}
 
     for epoch in tqdm(range(5000)):
-        app_state = AppStateWithTree.make_initial(
+        app_state = AppState.make_initial(
             object_spec_list=object_spec_list,
             initial_tree=tree,
             inference_rules=inference_rules,
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
         if random.random() >= 1 / (len(object_spec_list) + 1):
             current_object_spec = object_spec_list[random.randint(0, len(object_spec_list) - 1)]
-            def current_answer_function(state: AppStateWithTree, action_type: str, action_value: str):
+            def current_answer_function(state: AppState, action_type: str, action_value: str):
                 if action_type == "question":
                     question = action_value
                     state_if_no = state.step(question, False)
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
                 raise NotImplementedError
         else:
-            def current_answer_function(state: AppStateWithTree, action_type: str, action_value: str):
+            def current_answer_function(state: AppState, action_type: str, action_value: str):
                 if action_type == "question":
                     return "tidak"
                 
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         guess: list[str] | None = None
         question_no = 0
 
-        prev_states: list[AppStateWithTree] = []
+        prev_states: list[AppState] = []
         prev_actions: list[str] = []
         rewards: list[float] = []
 

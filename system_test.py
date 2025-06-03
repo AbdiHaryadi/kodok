@@ -1,4 +1,4 @@
-from app_state_with_tree import AppStateWithTree
+from app_state import AppState
 from entities import ObjectSpecification, ObjectSpecificationList
 from inference_rules import InferenceRules
 from typing import Callable, Literal
@@ -35,8 +35,8 @@ if __name__ == "__main__":
     object_spec_list = ObjectSpecificationList(object_spec_list_data)
     object_spec_list.add_general_questions_with_tree(tree)
 
-    def run_simulation(answer_function: Callable[[AppStateWithTree, str], Literal["ya", "tidak", "tidak tahu"]]):
-        app_state = AppStateWithTree.make_initial(
+    def run_simulation(answer_function: Callable[[AppState, str], Literal["ya", "tidak", "tidak tahu"]]):
+        app_state = AppState.make_initial(
             object_spec_list=object_spec_list,
             initial_tree=tree,
             inference_rules=inference_rules,
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         if current_object_spec.name != "Demam Berdarah Dengue (DBD), Fase Kritis":
             continue
         
-        def current_answer_function(state: AppStateWithTree, action_type: str, action_value: str):
+        def current_answer_function(state: AppState, action_type: str, action_value: str):
             if action_type == "question":
                 question = action_value
                 state_if_no = state.step(question, False)
@@ -113,7 +113,7 @@ if __name__ == "__main__":
             print(f"Expecting {current_object_spec.name} be included, got {guess}")
             input("(ENTER)")
 
-    def current_answer_function(state: AppStateWithTree, action_type: str, action_value: str):
+    def current_answer_function(state: AppState, action_type: str, action_value: str):
         if action_type == "question":
             return "tidak"
         

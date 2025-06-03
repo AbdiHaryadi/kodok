@@ -1,5 +1,5 @@
 import json
-from app_state_with_tree import AppStateWithTree
+from app_state import AppState
 from entities import ObjectSpecification, ObjectSpecificationList
 from inference_rules import InferenceRules
 from question_tree import QuestionTree
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     object_spec_list = ObjectSpecificationList(object_spec_list_data)
     object_spec_list.add_general_questions_with_tree(tree)
 
-    app_state = AppStateWithTree.make_initial(
+    app_state = AppState.make_initial(
         object_spec_list=object_spec_list,
         initial_tree=tree,
         inference_rules=inference_rules
