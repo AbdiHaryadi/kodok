@@ -93,7 +93,7 @@
     },
     {
         "name": "Influenza",
-        "frequency": 1.0,
+        "frequency": 0.5,
         "symptoms": [
             {
                 "name": "Hidung berair",
@@ -134,6 +134,68 @@
             {
                 "name": "Myalgia",
                 "frequency": "sangat_sering"
+            }
+        ]
+    },
+    {
+        "name": "Common Cold (Batuk Pilek)",
+        "frequency": 0.5,
+        "symptoms": [
+            {
+                "name": "Mata gatal dan berair",
+                "frequency": "jarang"
+            },
+            {
+                "name": "Hidung berair",
+                "frequency": "sering"
+            },
+            {
+                "name": "Hidung tersumbat",
+                "frequency": "sering"
+            },
+            {
+                "name": "Bersin",
+                "frequency": "sering"
+            },
+            {
+                "name": "Nyeri tenggorokan",
+                "frequency": "sering"
+            },
+            {
+                "name": "Batuk",
+                "frequency": "sering"
+            },
+            {
+                "name": "Nyeri kepala",
+                "frequency": "kadang"
+            },
+            {
+                "name": "Demam",
+                "frequency": "jarang"
+            },
+            {
+                "name": "Malaise",
+                "frequency": "kadang"
+            },
+            {
+                "name": "Lemas",
+                "frequency": "kadang"
+            },
+            {
+                "name": "Myalgia",
+                "frequency": "sering"
+            },
+            {
+                "name": "Mata berair",
+                "frequency": "sering"
+            },
+            {
+                "name": "Sesak napas",
+                "frequency": "jarang"
+            },
+            {
+                "name": "Pembesaran tonsil",
+                "frequency": "jarang"
             }
         ]
     }

@@ -1,4 +1,55 @@
 import json
+import math
+
+class DiseaseProbabilities:
+    def __init__(self, names: list[str], data: list[float]):
+        self.names = names
+        self.data = data
+
+    def print_diseases(self):
+        sorted_disease_and_prob = sorted([(d_name, prob) for d_name, prob in zip(self.names, self.data) if prob > 0.0], key=lambda x: (-x[1], x[0].lower()))
+        if len(sorted_disease_and_prob) > 0:
+            for d_name, prob in sorted_disease_and_prob:
+                print(f"{d_name}: {prob:.6f}")
+        else:
+            print("(kosong)")
+
+    def transition_if_yes(self, conditional_symptom_probs: list[float]):
+        next_disease_prob_if_yes = [p * s_if_p for p, s_if_p in zip(self.data, conditional_symptom_probs)]
+        sum_next_disease_prob_if_yes = sum(next_disease_prob_if_yes)
+        if sum_next_disease_prob_if_yes == 0:
+            return None
+
+        next_disease_prob_if_yes = [x / sum_next_disease_prob_if_yes for x in next_disease_prob_if_yes]
+        return DiseaseProbabilities(self.names, next_disease_prob_if_yes)
+    
+    def transition_if_no(self, conditional_symptom_probs: list[float]):
+        no_disease_prob = 1.0 - sum(self.data)
+        next_disease_prob_if_no = [p * (1 - s_if_p) for p, s_if_p in zip(self.data, conditional_symptom_probs)]
+        sum_next_disease_prob_if_no = sum(next_disease_prob_if_no) + no_disease_prob
+        if sum_next_disease_prob_if_no == 0:
+            return None
+
+        next_disease_prob_if_no = [x / sum_next_disease_prob_if_no for x in next_disease_prob_if_no]
+        return DiseaseProbabilities(self.names, next_disease_prob_if_no)
+    
+    def symptom_prob(self, conditional_symptom_probs: list[float]):
+        result = 0.0
+        for p, s_if_p in zip(self.data, conditional_symptom_probs):
+            result += p * s_if_p
+        return result
+    
+    def is_certain(self):
+        return max(self.data) in [1.0, 0.0]
+    
+    def entropy(self):
+        no_disease_prob = 1.0 - sum(self.data)
+        result = 0.0
+        for p in self.data + [no_disease_prob]:
+            if p > 0.0:
+                result += -p * math.log(p)
+
+        return result
 
 with open("data_3.json") as fp:
     data = json.load(fp)
@@ -67,55 +118,47 @@ stop_asking = False
 
 disease_frequencies = [x["frequency"] for x in data]
 sum_disease_frequencies = sum(disease_frequencies)
-current_disease_prob = [x / (sum_disease_frequencies + 1) for x in disease_frequencies]
+current_disease_prob = DiseaseProbabilities(
+    diseases,
+    [x / (sum_disease_frequencies + 1) for x in disease_frequencies]
+)
 
 print(symptoms)
 
 while not stop_asking:
-    symptom_key_map: dict[int, float] = {}
+    
     print("---")
     print("Prediksi:")
 
-    sorted_disease_and_prob = sorted([(d_name, prob) for d_name, prob in zip(diseases, current_disease_prob) if prob > 0.0], key=lambda x: (-x[1], x[0].lower()))
-    if len(sorted_disease_and_prob) > 0:
-        for d_name, prob in sorted_disease_and_prob:
-            print(f"{d_name}: {prob:.6f}")
-    else:
-        print("(kosong)")
+    current_disease_prob.print_diseases()
     print("---")
 
-    no_disease_prob = 1 - sum(current_disease_prob)
-    if max(current_disease_prob) == 1.0 or no_disease_prob == 1:
+    if current_disease_prob.is_certain():
         stop_asking = True
     else:
+        symptom_key_map: dict[int, float] = {}
         print("---")
+        current_entropy = current_disease_prob.entropy()
         for j in range(n_symptoms):
             if asked_symptoms[j]:
                 continue
 
-            next_disease_prob_if_yes = [p * disease_symptom_prob[i][j] for i, p in enumerate(current_disease_prob)]
-            sum_next_disease_prob_if_yes = sum(next_disease_prob_if_yes)
-            if sum_next_disease_prob_if_yes == 0:
+            cond_probs = [x[j] for x in disease_symptom_prob]
+            next_disease_prob_if_yes = current_disease_prob.transition_if_yes(cond_probs)
+            if next_disease_prob_if_yes is None:
                 continue
 
-            next_disease_prob_if_yes = [x / sum_next_disease_prob_if_yes for x in next_disease_prob_if_yes]
-
-            next_disease_prob_if_no = [p * (1 - disease_symptom_prob[i][j]) for i, p in enumerate(current_disease_prob)]
-            sum_next_disease_prob_if_no = sum(next_disease_prob_if_no) + no_disease_prob
-            if sum_next_disease_prob_if_no == 0:
+            next_disease_prob_if_no = current_disease_prob.transition_if_no(cond_probs)
+            if next_disease_prob_if_no is None:
                 continue
-            next_disease_prob_if_no = [x / sum_next_disease_prob_if_no for x in next_disease_prob_if_no]
 
-            if next_disease_prob_if_yes == next_disease_prob_if_no == current_disease_prob:
-                continue  # Tidak berguna, coy.
+            # if next_disease_prob_if_yes == next_disease_prob_if_no == current_disease_prob:
+            #     continue  # Tidak berguna, coy.
 
-            max_disease_prob_if_yes = max(next_disease_prob_if_yes)
-            max_disease_prob_if_no = max(max(next_disease_prob_if_no), no_disease_prob / sum_next_disease_prob_if_no)
-            
-            symptom_key_map[j] = max_disease_prob_if_yes + max_disease_prob_if_no
-            print(f"{symptoms[j]} jika ya:", max_disease_prob_if_yes)
-            print(f"{symptoms[j]} jika tidak:", max_disease_prob_if_no)
-            print("Total:", symptom_key_map[j])
+            yes_prob = current_disease_prob.symptom_prob(cond_probs)
+            score = -(yes_prob * next_disease_prob_if_yes.entropy() + (1 - yes_prob) * next_disease_prob_if_no.entropy())
+            symptom_key_map[j] = score
+            # print("Score:", symptom_key_map[j])
 
         print("---")
 
@@ -132,15 +175,14 @@ while not stop_asking:
                 else:
                     print("Tidak valid!")
 
+            cond_probs = [x[asked_symptom_index] for x in disease_symptom_prob]
             if answer == "ya":
-                next_disease_prob_if_yes = [p * disease_symptom_prob[i][asked_symptom_index] for i, p in enumerate(current_disease_prob)]
-                sum_next_disease_prob_if_yes = sum(next_disease_prob_if_yes)
-                next_disease_prob_if_yes = [x / sum_next_disease_prob_if_yes for x in next_disease_prob_if_yes]
+                next_disease_prob_if_yes = current_disease_prob.transition_if_yes(cond_probs)
+                assert next_disease_prob_if_yes is not None
                 current_disease_prob = next_disease_prob_if_yes
             else:
-                next_disease_prob_if_no = [p * (1 - disease_symptom_prob[i][asked_symptom_index]) for i, p in enumerate(current_disease_prob)]
-                sum_next_disease_prob_if_no = sum(next_disease_prob_if_no) + no_disease_prob
-                next_disease_prob_if_no = [x / sum_next_disease_prob_if_no for x in next_disease_prob_if_no]
+                next_disease_prob_if_no = current_disease_prob.transition_if_no(cond_probs)
+                assert next_disease_prob_if_no is not None
                 current_disease_prob = next_disease_prob_if_no
             
             asked_symptoms[asked_symptom_index] = True
