@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from inference_rules import GeneralSpecificRule
-from question_tree import QuestionTree
+from symptom_tree import SymptomTree
 
 
 @dataclass
@@ -27,10 +27,10 @@ class ObjectSpecification:
                             self.positive_questions.append(q)
                             possibly_updated_in_next_iteration = True
 
-    def add_general_questions_with_tree(self, question_tree: QuestionTree):
+    def add_general_questions_with_tree(self, question_tree: SymptomTree):
         new_positive_questions: list[str] = []
         for q in self.positive_questions:
-            question_path = question_tree.get_question_path(q)
+            question_path = question_tree.get_symptom_path(q)
             if question_path is None:
                 continue
 
@@ -71,7 +71,7 @@ class ObjectSpecificationList:
         for object_spec in self.data:
             object_spec.add_general_questions(general_specific_rules)
 
-    def add_general_questions_with_tree(self, question_tree: QuestionTree):
+    def add_general_questions_with_tree(self, question_tree: SymptomTree):
         for object_spec in self.data:
             object_spec.add_general_questions_with_tree(question_tree)
 
@@ -86,3 +86,26 @@ class Question:
     def answer(self, value: bool):
         for callback in self.callbacks:
             callback(value)
+
+@dataclass
+class Symptom:
+    name: str
+    frequency: str = ""
+
+@dataclass
+class Disease:
+    name: str
+    symptoms: list[Symptom] = field(default_factory=lambda: [])
+
+    def add_general_questions_with_tree(self, question_tree: SymptomTree):
+        new_symptoms: list[str] = []
+        for s in self.symptoms:
+            question_path = question_tree.get_symptom_path(s.name)
+            if question_path is None:
+                continue
+
+            for new_q in question_path:
+                if all(new_q != x.name for x in self.symptoms):
+                    new_symptoms.append(Symptom(new_q))
+        
+        self.symptoms.extend(new_symptoms)
