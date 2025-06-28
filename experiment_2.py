@@ -8,14 +8,18 @@ class DiseaseProbabilities:
 
     def print_diseases(self):
         sorted_disease_and_prob = sorted([(d_name, prob) for d_name, prob in zip(self.names, self.data) if prob > 0.0], key=lambda x: (-x[1], x[0].lower()))
+        no_disease_prob = 1.0 - sum(self.data)
         if len(sorted_disease_and_prob) > 0:
             for d_name, prob in sorted_disease_and_prob:
                 print(f"{d_name}: {prob:.6f}")
-        else:
-            print("(kosong)")
+        
+        if no_disease_prob > 0.0:
+            print(f"Tidak ada penyakit: {no_disease_prob:.6f}" )
 
     def transition_if_yes(self, conditional_symptom_probs: list[float]):
-        next_disease_prob_if_yes = [p * s_if_p for p, s_if_p in zip(self.data, conditional_symptom_probs)]
+        default_prob = self.symptom_prob(conditional_symptom_probs)
+        next_disease_prob_if_yes = [(p * (s_if_p if s_if_p != -1.0 else default_prob)) for p, s_if_p in zip(self.data, conditional_symptom_probs)]
+
         sum_next_disease_prob_if_yes = sum(next_disease_prob_if_yes)
         if sum_next_disease_prob_if_yes == 0:
             return None
@@ -24,8 +28,9 @@ class DiseaseProbabilities:
         return DiseaseProbabilities(self.names, next_disease_prob_if_yes)
     
     def transition_if_no(self, conditional_symptom_probs: list[float]):
+        default_prob = self.symptom_prob(conditional_symptom_probs)
         no_disease_prob = 1.0 - sum(self.data)
-        next_disease_prob_if_no = [p * (1 - s_if_p) for p, s_if_p in zip(self.data, conditional_symptom_probs)]
+        next_disease_prob_if_no = [p * (1 - (s_if_p if s_if_p != -1.0 else default_prob)) for p, s_if_p in zip(self.data, conditional_symptom_probs)]
         sum_next_disease_prob_if_no = sum(next_disease_prob_if_no) + no_disease_prob
         if sum_next_disease_prob_if_no == 0:
             return None
@@ -35,8 +40,16 @@ class DiseaseProbabilities:
     
     def symptom_prob(self, conditional_symptom_probs: list[float]):
         result = 0.0
+        denominator = 1.0
         for p, s_if_p in zip(self.data, conditional_symptom_probs):
-            result += p * s_if_p
+            if s_if_p != -1.0:
+                result += p * s_if_p
+            else:
+                denominator -= p
+        if denominator <= 0.0:
+            raise ValueError("You can't find the symptom prob if there is no disease related to this!!!!")
+        
+        result /= denominator
         return result
     
     def is_certain(self):
@@ -68,20 +81,17 @@ n_symptoms = len(symptoms)
 
 disease_symptom_prob: list[list[float]] = []
 
-total_symptom_score = 0.0
-known_frequency_count = 0
-
 FREQUENCY_PROB_MAP = {
+    "tidak_ada": 0.0,
     "jarang": 0.15,
     "kadang": 0.5,
     "sering": 0.85,
-    "sangat_sering": 1.00
+    "sangat_sering": 0.99
     # "jarang": 0.25,
     # "kadang": 0.50,
     # "sering": 0.75,
     # "sangat_sering": 1.00
 }
-
 for x in data:
     symptom_prob_list: list[float] = []
     for s in symptoms:
@@ -89,25 +99,16 @@ for x in data:
             if symptom_data["name"] == s:
                 if "frequency" in symptom_data:
                     prob = FREQUENCY_PROB_MAP[symptom_data["frequency"]]
-                    total_symptom_score += prob
-                    known_frequency_count += 1
                     symptom_prob_list.append(prob)
                 else:
-                    symptom_prob_list.append(-1.0)
+                    raise ValueError("No frequency information????")
 
                 break
         
         else:
-            symptom_prob_list.append(0.0)
+            symptom_prob_list.append(-1.0)  # Ini yang salah!
 
     disease_symptom_prob.append(symptom_prob_list)
-
-default_frequency_score = total_symptom_score / known_frequency_count
-
-for i in range(n_diseases):
-    for j in range(n_symptoms):
-        if disease_symptom_prob[i][j] == -1.0:
-           disease_symptom_prob[i][j] = default_frequency_score 
 
 for x in disease_symptom_prob:
     print(*(f"{y:.2f}" for y in x), sep=" ")
@@ -118,15 +119,16 @@ stop_asking = False
 
 disease_frequencies = [x["frequency"] for x in data]
 sum_disease_frequencies = sum(disease_frequencies)
+initial_disease_prob_data = [x / (sum_disease_frequencies + 1) for x in disease_frequencies]
 current_disease_prob = DiseaseProbabilities(
     diseases,
-    [x / (sum_disease_frequencies + 1) for x in disease_frequencies]
+    initial_disease_prob_data
 )
 
 print(symptoms)
+question_no = 1
 
 while not stop_asking:
-    
     print("---")
     print("Prediksi:")
 
@@ -152,15 +154,9 @@ while not stop_asking:
             if next_disease_prob_if_no is None:
                 continue
 
-            # if next_disease_prob_if_yes == next_disease_prob_if_no == current_disease_prob:
-            #     continue  # Tidak berguna, coy.
-
             yes_prob = current_disease_prob.symptom_prob(cond_probs)
             score = -(yes_prob * next_disease_prob_if_yes.entropy() + (1 - yes_prob) * next_disease_prob_if_no.entropy())
             symptom_key_map[j] = score
-            # print("Score:", symptom_key_map[j])
-
-        print("---")
 
         if len(symptom_key_map) == 0:
             stop_asking = True
@@ -168,9 +164,10 @@ while not stop_asking:
             asked_symptom_index = max(symptom_key_map.keys(), key=lambda x: symptom_key_map[x])
 
             answer = ""
+            print(f"Pertanyaan {question_no}")
             while answer == "":
-                candidate_answer = input(f"{symptoms[asked_symptom_index]} (ya/tidak): ")
-                if candidate_answer == "ya" or candidate_answer == "tidak":
+                candidate_answer = input(f"{symptoms[asked_symptom_index]} (ya/tidak/tidak_tahu): ")
+                if candidate_answer == "ya" or candidate_answer == "tidak" or candidate_answer == "tidak_tahu":
                     answer = candidate_answer
                 else:
                     print("Tidak valid!")
@@ -180,9 +177,11 @@ while not stop_asking:
                 next_disease_prob_if_yes = current_disease_prob.transition_if_yes(cond_probs)
                 assert next_disease_prob_if_yes is not None
                 current_disease_prob = next_disease_prob_if_yes
-            else:
+            elif answer == "tidak":
                 next_disease_prob_if_no = current_disease_prob.transition_if_no(cond_probs)
                 assert next_disease_prob_if_no is not None
                 current_disease_prob = next_disease_prob_if_no
+            # else: tidak ada transisi, bro.
             
             asked_symptoms[asked_symptom_index] = True
+            question_no += 1
