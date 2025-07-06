@@ -1,466 +1,426 @@
-[
-    {
-        "name": "Rhinitis Alergi",
-        "frequency": 1.0,
-        "symptoms": [
-            {
-                "name": "Mata gatal dan berair",
-                "frequency": "sering"
-            },
-            {
-                "name": "Hidung berair",
-                "frequency": "sering"
-            },
-            {
-                "name": "Hidung tersumbat",
-                "frequency": "sering"
-            },
-            {
-                "name": "Bersin",
-                "frequency": "sangat_sering"
-            },
-            {
-                "name": "Nyeri tenggorokan",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Batuk",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Nyeri kepala",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Demam",
-                "frequency": "tidak_ada"
-            },
-            {
-                "name": "Malaise",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Lemas",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Myalgia",
-                "frequency": "tidak_ada"
-            }
-        ]
-    },
-    {
-        "name": "ISPA",
-        "frequency": 0.2,
-        "symptoms": [
-            {
-                "name": "Mata gatal dan berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung berair",
-                "frequency": "sering"
-            },
-            {
-                "name": "Hidung tersumbat",
-                "frequency": "sering"
-            },
-            {
-                "name": "Bersin",
-                "frequency": "sangat_sering"
-            },
-            {
-                "name": "Nyeri tenggorokan",
-                "frequency": "sangat_sering"
-            },
-            {
-                "name": "Batuk",
-                "frequency": "sering"
-            },
-            {
-                "name": "Nyeri kepala",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Demam (dewasa)",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Demam (anak)",
-                "frequency": "sering"
-            },
-            {
-                "name": "Malaise",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Lemas",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Myalgia",
-                "frequency": "kadang"
-            }
-        ]
-    },
-    {
-        "name": "Influenza",
-        "frequency": 1.0,
-        "symptoms": [
-            {
-                "name": "Hidung berair",
-                "frequency": "sering"
-            },
-            {
-                "name": "Hidung tersumbat",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Bersin",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Nyeri tenggorokan",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Batuk",
-                "frequency": "sering"
-            },
-            {
-                "name": "Nyeri kepala",
-                "frequency": "sering"
-            },
-            {
-                "name": "Demam",
-                "frequency": "sering"
-            },
-            {
-                "name": "Malaise",
-                "frequency": "sangat_sering"
-            },
-            {
-                "name": "Lemas",
-                "frequency": "sangat_sering"
-            },
-            {
-                "name": "Myalgia",
-                "frequency": "sangat_sering"
-            }
-        ]
-    },
-    {
-        "name": "Common Cold (Batuk Pilek)",
-        "frequency": 0.2,
-        "symptoms": [
-            {
-                "name": "Mata gatal dan berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung berair",
-                "frequency": "sering"
-            },
-            {
-                "name": "Hidung tersumbat",
-                "frequency": "sering"
-            },
-            {
-                "name": "Bersin",
-                "frequency": "sering"
-            },
-            {
-                "name": "Nyeri tenggorokan",
-                "frequency": "sering"
-            },
-            {
-                "name": "Batuk",
-                "frequency": "sering"
-            },
-            {
-                "name": "Nyeri kepala",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Demam (dewasa)",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Demam (anak)",
-                "frequency": "sering"
-            },
-            {
-                "name": "Malaise",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Lemas",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Myalgia",
-                "frequency": "sering"
-            },
-            {
-                "name": "Mata berair",
-                "frequency": "sering"
-            },
-            {
-                "name": "Sesak napas",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Pembesaran tonsil",
-                "frequency": "jarang"
-            }
-        ]
-    },
-    {
-        "name": "Tonsilo Faringitis Bakterial",
-        "frequency": 0.1,
-        "symptoms": [
-            {
-                "name": "Mata gatal dan berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung tersumbat",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Bersin",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Nyeri tenggorokan",
-                "frequency": "sering"
-            },
-            {
-                "name": "Batuk",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Nyeri kepala",
-                "frequency": "sering"
-            },
-            {
-                "name": "Demam",
-                "frequency": "sering"
-            },
-            {
-                "name": "Malaise",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Lemas",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Myalgia",
-                "frequency": "sering"
-            },
-            {
-                "name": "Mata berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Sesak napas",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Pembesaran tonsil",
-                "frequency": "sering"
-            }
-        ]
-    },
-    {
-        "name": "Faringitis Bakterial",
-        "frequency": 0.1,
-        "symptoms": [
-            {
-                "name": "Mata gatal dan berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung tersumbat",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Bersin",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Nyeri tenggorokan",
-                "frequency": "sering"
-            },
-            {
-                "name": "Batuk",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Nyeri kepala",
-                "frequency": "sering"
-            },
-            {
-                "name": "Demam",
-                "frequency": "sering"
-            },
-            {
-                "name": "Malaise",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Lemas",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Myalgia",
-                "frequency": "sering"
-            },
-            {
-                "name": "Mata berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Sesak napas",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Pembesaran tonsil",
-                "frequency": "tidak_ada"
-            }
-        ]
-    },
-    {
-        "name": "Sinusitis Bakterial",
-        "frequency": 0.2,
-        "symptoms": [
-            {
-                "name": "Mata gatal dan berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung berair",
-                "frequency": "sering"
-            },
-            {
-                "name": "Hidung tersumbat",
-                "frequency": "sering"
-            },
-            {
-                "name": "Bersin",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Nyeri tenggorokan",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Batuk",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Nyeri kepala",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Demam",
-                "frequency": "sering"
-            },
-            {
-                "name": "Malaise",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Lemas",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Myalgia",
-                "frequency": "sering"
-            },
-            {
-                "name": "Mata berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Sesak napas",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Pembesaran tonsil",
-                "frequency": "jarang"
-            }
-        ]
-    },
-    {
-        "name": "Bronkitis Akut",
-        "frequency": 0.2,
-        "symptoms": [
-            {
-                "name": "Mata gatal dan berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung berair",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Hidung tersumbat",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Bersin",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Nyeri tenggorokan",
-                "frequency": "sering"
-            },
-            {
-                "name": "Batuk",
-                "frequency": "sangat_sering"
-            },
-            {
-                "name": "Nyeri kepala",
-                "frequency": "sering"
-            },
-            {
-                "name": "Demam",
-                "frequency": "jarang"
-            },
-            {
-                "name": "Malaise",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Lemas",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Myalgia",
-                "frequency": "sering"
-            },
-            {
-                "name": "Mata berair",
-                "frequency": "kadang"
-            },
-            {
-                "name": "Sesak napas",
-                "frequency": "sering"
-            },
-            {
-                "name": "Pembesaran tonsil",
-                "frequency": "jarang"
-            }
-        ]
-    }
-]
+{
+    "diseases": [
+        {
+            "name": "Rhinitis Alergi",
+            "frequency": 1.0,
+            "symptoms": [
+                {
+                    "name": "Mata gatal dan berair",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Nyeri belakang mata",
+                    "frequency": "tidak_ada"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "sangat_sering"
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Batuk",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Batuk kering",
+                    "frequency": "tidak_ada"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Nyeri wajah",
+                    "frequency": "ada"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "tidak_ada"
+                },
+                {
+                    "name": "Malaise",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Lemas",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Myalgia",
+                    "frequency": "tidak_ada"
+                },
+                {
+                    "name": "Durasi mingguan",
+                    "frequency": "ada"
+                }
+            ]
+        },
+        {
+            "name": "ISPA",
+            "frequency": 0.2,
+            "symptoms": [
+                {
+                    "name": "Mata gatal dan berair",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Nyeri belakang mata",
+                    "frequency": "tidak_ada"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "sangat_sering"
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "sangat_sering"
+                },
+                {
+                    "name": "Batuk",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Batuk kering",
+                    "frequency": "tidak_ada"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Demam (dewasa)",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Demam (anak)",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Malaise",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Lemas",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Myalgia",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Myalgia ringan",
+                    "frequency": "ada"
+                }
+            ]
+        },
+        {
+            "name": "Influenza",
+            "frequency": 1.0,
+            "symptoms": [
+                {
+                    "name": "Mata gatal dan berair",
+                    "frequency": "tidak_ada"
+                },
+                {
+                    "name": "Nyeri belakang mata",
+                    "frequency": "ada"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Batuk",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Batuk kering",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Demam tinggi",
+                    "frequency": "ada"
+                },
+                {
+                    "name": "Menggigil",
+                    "frequency": "ada"
+                },
+                {
+                    "name": "Malaise",
+                    "frequency": "sangat_sering"
+                },
+                {
+                    "name": "Lemas",
+                    "frequency": "sangat_sering"
+                },
+                {
+                    "name": "Myalgia",
+                    "frequency": "sangat_sering"
+                },
+                {
+                    "name": "Myalgia sangat berat",
+                    "frequency": "ada"
+                }
+            ]
+        },
+        {
+            "name": "Common Cold (Batuk Pilek)",
+            "parent": "ISPA",
+            "frequency": 0.2,
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Demam (dewasa)",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Demam (anak)",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Myalgia",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Pembesaran tonsil",
+                    "frequency": "jarang"
+                }
+            ]
+        },
+        {
+            "name": "Tonsilo Faringitis Bakterial",
+            "frequency": 0.1,
+            "parent": "ISPA",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Myalgia",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Pembesaran tonsil",
+                    "frequency": "sering"
+                }
+            ]
+        },
+        {
+            "name": "Faringitis Bakterial",
+            "frequency": 0.1,
+            "parent": "Tonsilo Faringitis Bakterial",
+            "symptoms": [
+                {
+                    "name": "Pembesaran tonsil",
+                    "frequency": "tidak_ada"
+                }
+            ]
+        },
+        {
+            "name": "Sinusitis Bakterial",
+            "parent": "ISPA",
+            "frequency": 0.2,
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Myalgia",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "jarang"
+                },
+                
+                {
+                    "name": "Sesak napas",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Pembesaran tonsil",
+                    "frequency": "jarang"
+                }
+            ]
+        },
+        {
+            "name": "Bronkitis Akut",
+            "parent": "ISPA",
+            "frequency": 0.2,
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "frequency": "sangat_sering"
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Myalgia",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "kadang"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "jarang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "sering"
+                },
+                {
+                    "name": "Pembesaran tonsil",
+                    "frequency": "jarang"
+                }
+            ]
+        }
+    ]
+}

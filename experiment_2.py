@@ -63,9 +63,14 @@ class DiseaseProbabilities:
                 result += -p * math.log(p)
 
         return result
+    
+    def should_stop(self):
+        return max(self.data) >= 0.95 or sum(self.data) <= 0.05
 
 with open("data_3.json") as fp:
     data = json.load(fp)
+
+data = data["diseases"]
 
 diseases: list[str] = [x["name"] for x in data]
 n_diseases = len(diseases)
@@ -82,11 +87,12 @@ n_symptoms = len(symptoms)
 disease_symptom_prob: list[list[float]] = []
 
 FREQUENCY_PROB_MAP = {
-    "tidak_ada": 0.0,
+    "tidak_ada": 0.01,
     "jarang": 0.15,
     "kadang": 0.5,
     "sering": 0.85,
-    "sangat_sering": 0.99
+    "sangat_sering": 0.99,
+    "ada": 0.99
     # "jarang": 0.25,
     # "kadang": 0.50,
     # "sering": 0.75,
@@ -135,7 +141,7 @@ while not stop_asking:
     current_disease_prob.print_diseases()
     print("---")
 
-    if current_disease_prob.is_certain():
+    if current_disease_prob.is_certain() or current_disease_prob.should_stop():
         stop_asking = True
     else:
         symptom_key_map: dict[int, float] = {}
