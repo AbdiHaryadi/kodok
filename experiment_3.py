@@ -4,10 +4,10 @@ import pandas as pd
 df = pd.read_excel("data.xlsx", "SymptomTable")
     
 FREQUENCY_PROB_MAP = {
-    "Jarang":        0.10,
-    "Kadang":        0.50,
-    "Sering":        0.90,
-    "Sangat sering": 0.99
+    "jarang":        0.10,
+    "kadang":        0.50,
+    "sering":        0.90,
+    "sangat sering": 0.99
 }
 
 def symptom_prob(disease_probs: list[float], conditional_symptom_probs: list[float], symptom_prob_if_no_disease: float):
@@ -74,7 +74,7 @@ class UnnamedState:
         return max(self.disease_probs) in [1.0, 0.0]
     
     def should_stop(self):
-        return max(self.disease_probs) >= 0.95 or sum(self.disease_probs) <= 0.05
+        return max(self.disease_probs) >= 0.8 or sum(self.disease_probs) <= 0.2
     
     def get_best_symptom_to_ask(self):
         symptoms = self.df["Gejala"].unique()
@@ -142,6 +142,7 @@ class UnnamedState:
                 if not isinstance(frequency, str):
                     frequency = "Sering"
 
+                frequency = frequency.lower()
                 prob = FREQUENCY_PROB_MAP[frequency]
 
                 if (not exists) or (isinstance(current_variant, str) and current_variant != variant):
@@ -158,7 +159,6 @@ class UnnamedState:
         }
 
         conditional_symptom_probs = self.get_conditional_symptom_probs_with_variant(symptom, exists, variant)
-        print(conditional_symptom_probs)
         self.disease_probs = new_disease_probs(self.disease_probs, conditional_symptom_probs, 0.0 if exists else 1.0)
 
     def skip(self, symptom: str):
