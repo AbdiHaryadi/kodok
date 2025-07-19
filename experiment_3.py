@@ -10,41 +10,36 @@ FREQUENCY_PROB_MAP = {
     "Sangat sering": 0.99
 }
 
-def symptom_prob(disease_probs: list[float], conditional_symptom_probs: list[float]):
-    result = 0.0
+def symptom_prob(disease_probs: list[float], conditional_symptom_probs: list[float], symptom_prob_if_no_disease: float):
+    result = (1 - sum(disease_probs)) * symptom_prob_if_no_disease
     denominator = 1.0
     for p, s_if_p in zip(disease_probs, conditional_symptom_probs):
+        # print(p, s_if_p)
         if s_if_p != -1.0:
             result += p * s_if_p
         else:
             denominator -= p
+
     if denominator <= 0.0:
         raise ValueError("You can't find the symptom prob if there is no disease related to this!!!!")
+    
+    # input("(ENTER)")
     
     result /= denominator
     return result
 
-def new_disease_probs_if_yes(disease_probs: list[float], conditional_symptom_probs: list[float]):
-    default_prob = symptom_prob(disease_probs, conditional_symptom_probs)
+def new_disease_probs(disease_probs: list[float], conditional_symptom_probs: list[float], symptom_prob_if_no_disease: float):
+    default_prob = symptom_prob(disease_probs, conditional_symptom_probs, symptom_prob_if_no_disease)
     next_disease_prob_if_yes = [(p * (s_if_p if s_if_p != -1.0 else default_prob)) for p, s_if_p in zip(disease_probs, conditional_symptom_probs)]
 
-    sum_next_disease_prob_if_yes = sum(next_disease_prob_if_yes)
+    no_disease_prob = 1.0 - sum(disease_probs)
+
+    sum_next_disease_prob_if_yes = sum(next_disease_prob_if_yes) + no_disease_prob * symptom_prob_if_no_disease
     if sum_next_disease_prob_if_yes == 0:
         raise ValueError("Impossible")
 
     next_disease_prob_if_yes = [x / sum_next_disease_prob_if_yes for x in next_disease_prob_if_yes]
     return next_disease_prob_if_yes
-
-def new_disease_probs_if_no(disease_probs: list[float], conditional_symptom_probs: list[float]):
-    default_prob = symptom_prob(disease_probs, conditional_symptom_probs)
-    no_disease_prob = 1.0 - sum(disease_probs)
-    next_disease_prob_if_no = [p * (1 - (s_if_p if s_if_p != -1.0 else default_prob)) for p, s_if_p in zip(disease_probs, conditional_symptom_probs)]
-    sum_next_disease_prob_if_no = sum(next_disease_prob_if_no) + no_disease_prob
-    if sum_next_disease_prob_if_no == 0:
-        raise ValueError("Impossible")
-
-    next_disease_prob_if_no = [x / sum_next_disease_prob_if_no for x in next_disease_prob_if_no]
-    return next_disease_prob_if_no
 
 def disease_entropy(disease_probs: list[float]):
     no_disease_prob = 1.0 - sum(disease_probs)
@@ -89,22 +84,51 @@ class UnnamedState:
             if s in self.answer_history:
                 continue
 
-            symptom_filter = self.df["Gejala"] == s
-            filtered_df = self.df[symptom_filter]
-            if filtered_df["Variasi"].isna().all():
-                conditional_symptom_probs = self.get_conditional_symptom_probs(s)
-                yes_prob = symptom_prob(self.disease_probs, conditional_symptom_probs)
-                next_disease_prob_if_yes = new_disease_probs_if_yes(self.disease_probs, conditional_symptom_probs)
-                next_disease_prob_if_no = new_disease_probs_if_no(self.disease_probs, conditional_symptom_probs)
-                score = -(yes_prob * disease_entropy(next_disease_prob_if_yes) + (1 - yes_prob) * disease_entropy(next_disease_prob_if_no))
-            else:
-                continue
+            possibilities = self.get_possibilities(s)
+
+            score = 0.0
+            possibility_probs = []
+            entropies = []
+            for exists, variant, prob_for_no_disease in possibilities:
+                conditional_symptom_probs = self.get_conditional_symptom_probs_with_variant(s, exists, variant)
+                possibility_probs.append(symptom_prob(self.disease_probs, conditional_symptom_probs, prob_for_no_disease))
+
+                next_disease_prob = new_disease_probs(self.disease_probs, conditional_symptom_probs, prob_for_no_disease)
+                entropy = disease_entropy(next_disease_prob)
+                entropies.append(entropy)
+
+            # input("(ENTER)")
+            
+            sum_possibility_probs = sum(possibility_probs)
+            possibility_probs = [x / sum_possibility_probs for x in possibility_probs]
+
+            score = -sum(x * y for x, y in zip(possibility_probs, entropies))
             
             results[s] = score
 
         return max(results.keys(), key=lambda x: results[x])
 
-    def get_conditional_symptom_probs(self, symptom_name: str):
+    def get_possibilities(self, symptom_name: str):
+        symptom_filter = self.df["Gejala"] == symptom_name
+        possibilities = []
+        filtered_df = self.df[symptom_filter]
+        if filtered_df["Variasi"].isna().all():
+            possibilities = [(True, None, 0.0), (False, None, 1.0)]
+
+        else:
+            na_exists = False
+            for opt_el in filtered_df["Variasi"].unique():
+                if isinstance(opt_el, str):
+                    possibilities.append((True, opt_el, 0.0))
+                else:
+                    na_exists = True
+
+            if na_exists:
+                possibilities.append((False, None, 1.0))
+        
+        return possibilities
+    
+    def get_conditional_symptom_probs_with_variant(self, symptom_name: str, exists: bool = True, variant: str | None = None):
         conditional_symptom_probs = []
         symptom_filter = self.df["Gejala"] == symptom_name
         for d in self.disease_names:
@@ -113,11 +137,16 @@ class UnnamedState:
             if len(filtered_df) == 0:
                 conditional_symptom_probs.append(-1.0)
             else:
+                current_variant = filtered_df.iloc[0]["Variasi"]
                 frequency = filtered_df.iloc[0]["Frekuensi"]
                 if not isinstance(frequency, str):
                     frequency = "Sering"
 
                 prob = FREQUENCY_PROB_MAP[frequency]
+
+                if (not exists) or (isinstance(current_variant, str) and current_variant != variant):
+                    prob = 1 - prob
+                
                 conditional_symptom_probs.append(prob)
         
         return conditional_symptom_probs
@@ -128,14 +157,9 @@ class UnnamedState:
             "variant": variant
         }
 
-        if variant is not None:
-            raise NotImplementedError
-        
-        conditional_symptom_probs = self.get_conditional_symptom_probs(symptom)
-        if exists:
-            self.disease_probs = new_disease_probs_if_yes(self.disease_probs, conditional_symptom_probs)
-        else:
-            self.disease_probs = new_disease_probs_if_no(self.disease_probs, conditional_symptom_probs)
+        conditional_symptom_probs = self.get_conditional_symptom_probs_with_variant(symptom, exists, variant)
+        print(conditional_symptom_probs)
+        self.disease_probs = new_disease_probs(self.disease_probs, conditional_symptom_probs, 0.0 if exists else 1.0)
 
     def skip(self, symptom: str):
         self.answer_history[symptom] = {
@@ -157,21 +181,33 @@ while not stop_asking:
     if current_state.is_certain() or current_state.should_stop():
         stop_asking = True
     else:
-        answer = ""
+        answer = -1
         asked_symptom = current_state.get_best_symptom_to_ask()
         print(f"Pertanyaan {question_no}")
-        while answer == "":
-            candidate_answer = input(f"{asked_symptom} (ya/tidak/tidak_tahu): ")
-            if candidate_answer == "ya" or candidate_answer == "tidak" or candidate_answer == "tidak_tahu":
-                answer = candidate_answer
+
+        possibilities = current_state.get_possibilities(asked_symptom)
+        while answer == -1:
+            print(asked_symptom)
+            for i, (exists, variant, _) in enumerate(possibilities):
+                print(f"({i + 1}) {'Tidak' if not exists else ('Ya' if variant is None else variant)}")
+
+            print(f"({i + 2}) (lewati)")
+            candidate_answer = input("Jawab: ")
+
+            if candidate_answer.isdigit():
+                candidate_answer = int(candidate_answer)
+            else:
+                candidate_answer = -1
+
+            if candidate_answer >= 1 and candidate_answer <= i + 2:
+                answer = candidate_answer - 1
             else:
                 print("Tidak valid!")
 
         # cond_probs = [x[asked_symptom_index] for x in disease_symptom_prob]
-        if answer == "ya":
-            current_state.answer(asked_symptom, True)
-        elif answer == "tidak":
-            current_state.answer(asked_symptom, False)
+        if answer < len(possibilities):
+            exists, variant, _ = possibilities[answer]
+            current_state.answer(asked_symptom, exists, variant)
         else:
             current_state.skip(asked_symptom)
         
