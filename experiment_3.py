@@ -1,7 +1,5 @@
 import math
 import pandas as pd
-
-df = pd.read_excel("data.xlsx", "SymptomTable")
     
 FREQUENCY_PROB_MAP = {
     "jarang":        0.10,
@@ -70,15 +68,32 @@ class UnnamedState:
         if no_disease_prob > 0.0:
             print(f"Tidak ada penyakit: {no_disease_prob:.6f}" )
 
+    def get_predictions(self):
+        sorted_disease_and_prob = sorted([(d_name, prob) for d_name, prob in zip(self.disease_names, self.disease_probs) if prob > 0.0], key=lambda x: (-x[1], x[0].lower()))
+        entropy = disease_entropy(self.disease_probs)
+        no_disease_prob = 1.0 - sum(self.disease_probs)
+        return {
+            "diseases": [
+                {
+                    "name": name,
+                    "prob": prob
+                } for name, prob in sorted_disease_and_prob
+            ],
+            "no_disease_prob": no_disease_prob,
+            "entropy": entropy
+        }
+
     def is_certain(self):
         return max(self.disease_probs) in [1.0, 0.0]
     
     def should_stop(self):
-        return max(self.disease_probs) >= 0.8 or sum(self.disease_probs) <= 0.2
+        return max(self.disease_probs) >= 0.8 or sum(self.disease_probs) <= 0.1
     
     def get_best_symptom_to_ask(self):
         symptoms = self.df["Gejala"].unique()
         results = {}
+
+        current_entropy = disease_entropy(self.disease_probs)
 
         for s in symptoms:
             if s in self.answer_history:
@@ -97,6 +112,9 @@ class UnnamedState:
                 entropy = disease_entropy(next_disease_prob)
                 entropies.append(entropy)
 
+            if all(x == current_entropy for x in entropies):
+                continue  # Why you need to ask something that doesn't have any information?
+
             # input("(ENTER)")
             
             sum_possibility_probs = sum(possibility_probs)
@@ -106,9 +124,12 @@ class UnnamedState:
             
             results[s] = score
 
+        if len(results) == 0:
+            return None
+
         return max(results.keys(), key=lambda x: results[x])
 
-    def get_possibilities(self, symptom_name: str):
+    def get_possibilities(self, symptom_name: str) -> list[tuple[bool, str | None, float]]:
         symptom_filter = self.df["Gejala"] == symptom_name
         possibilities = []
         filtered_df = self.df[symptom_filter]
@@ -166,49 +187,51 @@ class UnnamedState:
             "skip": True
         }
 
-current_state = UnnamedState(df)
+if __name__ == "__main__":
+    df = pd.read_excel("data.xlsx", "SymptomTable")
+    current_state = UnnamedState(df)
 
-question_no = 1
-stop_asking = False
+    question_no = 1
+    stop_asking = False
 
-while not stop_asking:
-    print("---")
-    print("Prediksi:")
+    while not stop_asking:
+        print("---")
+        print("Prediksi:")
 
-    current_state.print_diseases()
-    print("---")
+        current_state.print_diseases()
+        print("---")
 
-    if current_state.is_certain() or current_state.should_stop():
-        stop_asking = True
-    else:
-        answer = -1
-        asked_symptom = current_state.get_best_symptom_to_ask()
-        print(f"Pertanyaan {question_no}")
-
-        possibilities = current_state.get_possibilities(asked_symptom)
-        while answer == -1:
-            print(asked_symptom)
-            for i, (exists, variant, _) in enumerate(possibilities):
-                print(f"({i + 1}) {'Tidak' if not exists else ('Ya' if variant is None else variant)}")
-
-            print(f"({i + 2}) (lewati)")
-            candidate_answer = input("Jawab: ")
-
-            if candidate_answer.isdigit():
-                candidate_answer = int(candidate_answer)
-            else:
-                candidate_answer = -1
-
-            if candidate_answer >= 1 and candidate_answer <= i + 2:
-                answer = candidate_answer - 1
-            else:
-                print("Tidak valid!")
-
-        # cond_probs = [x[asked_symptom_index] for x in disease_symptom_prob]
-        if answer < len(possibilities):
-            exists, variant, _ = possibilities[answer]
-            current_state.answer(asked_symptom, exists, variant)
+        if current_state.is_certain() or current_state.should_stop():
+            stop_asking = True
         else:
-            current_state.skip(asked_symptom)
-        
-        question_no += 1
+            answer = -1
+            asked_symptom = current_state.get_best_symptom_to_ask()
+            print(f"Pertanyaan {question_no}")
+
+            possibilities = current_state.get_possibilities(asked_symptom)
+            while answer == -1:
+                print(asked_symptom)
+                for i, (exists, variant, _) in enumerate(possibilities):
+                    print(f"({i + 1}) {'Tidak' if not exists else ('Ya' if variant is None else variant)}")
+
+                print(f"({i + 2}) (lewati)")
+                candidate_answer = input("Jawab: ")
+
+                if candidate_answer.isdigit():
+                    candidate_answer = int(candidate_answer)
+                else:
+                    candidate_answer = -1
+
+                if candidate_answer >= 1 and candidate_answer <= i + 2:
+                    answer = candidate_answer - 1
+                else:
+                    print("Tidak valid!")
+
+            # cond_probs = [x[asked_symptom_index] for x in disease_symptom_prob]
+            if answer < len(possibilities):
+                exists, variant, _ = possibilities[answer]
+                current_state.answer(asked_symptom, exists, variant)
+            else:
+                current_state.skip(asked_symptom)
+            
+            question_no += 1

@@ -3,3 +3,4 @@ logs
 venv/
 credentials.json
 token.json
+data.xlsx
