@@ -27,9 +27,11 @@ def next_question():
     update_asked_symptom_and_answer_possibilities()
 
 def init_new_session():
-    df = pd.read_excel("data_demo.xlsx", "SymptomTable")
+    data_path = st.secrets["DATA_PATH"]
+    df = pd.read_excel(data_path, "SymptomTable")
+    subsymptom_df = pd.read_excel(data_path, "SubsymptomTable")
 
-    current_state = UnnamedState(df)
+    current_state = UnnamedState(df, subsymptom_df)
     st.session_state["current_state"] = current_state
     st.session_state["question_no"] = 1
 

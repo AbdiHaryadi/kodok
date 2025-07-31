@@ -49,14 +49,17 @@ def disease_entropy(disease_probs: list[float]):
     return result
 
 class UnnamedState:
-    def __init__(self, df: pd.DataFrame):
-        self.df = df
+    def __init__(self, symptom_df: pd.DataFrame, subsymptom_df: pd.DataFrame | None = None):
+        self.symptom_df = symptom_df
+        self.subsymptom_df = subsymptom_df
 
-        self.disease_names = df["Penyakit"].unique()
+        self.disease_names = symptom_df["Penyakit"].unique()
         initial_single_prob = 1 / (len(self.disease_names) + 1)
         self.disease_probs = [initial_single_prob for _ in self.disease_names]
 
         self.answer_history = {}
+
+        self.contexts: list[str] = []
 
     def print_diseases(self):
         sorted_disease_and_prob = sorted([(d_name, prob) for d_name, prob in zip(self.disease_names, self.disease_probs) if prob > 0.0], key=lambda x: (-x[1], x[0].lower()))
@@ -90,22 +93,26 @@ class UnnamedState:
         return max(self.disease_probs) >= 0.8 or sum(self.disease_probs) <= 0.1
     
     def get_best_symptom_to_ask(self):
-        symptoms = self.df["Gejala"].unique()
-        results = {}
+        symptoms = self.symptom_df["Gejala"].unique()
+        results: dict[str, float] = {}
 
         current_entropy = disease_entropy(self.disease_probs)
 
         for s in symptoms:
-            if s in self.answer_history:
+            vs = self.get_valid_symptom_to_ask(s)
+            if vs is None:
                 continue
 
             possibilities = self.get_possibilities(s)
 
             score = 0.0
-            possibility_probs = []
-            entropies = []
+            possibility_probs: list[float] = []
+            entropies: list[float] = []
             for exists, variant, prob_for_no_disease in possibilities:
                 conditional_symptom_probs = self.get_conditional_symptom_probs_with_variant(s, exists, variant)
+                if conditional_symptom_probs is None:
+                    continue
+
                 possibility_probs.append(symptom_prob(self.disease_probs, conditional_symptom_probs, prob_for_no_disease))
 
                 next_disease_prob = new_disease_probs(self.disease_probs, conditional_symptom_probs, prob_for_no_disease)
@@ -121,18 +128,43 @@ class UnnamedState:
             possibility_probs = [x / sum_possibility_probs for x in possibility_probs]
 
             score = -sum(x * y for x, y in zip(possibility_probs, entropies))
-            
-            results[s] = score
+
+            if vs in results:
+                results[vs] = max(score, results[vs])
+            else:
+                results[vs] = score
 
         if len(results) == 0:
             return None
 
         return max(results.keys(), key=lambda x: results[x])
+    
+    def get_valid_symptom_to_ask(self, symptom: str) -> str | None:
+        if symptom in self.answer_history:
+            return None
+
+        if self.subsymptom_df is None:
+            return symptom
+        
+        filtered_df = self.subsymptom_df[self.subsymptom_df["AnakGejala"] == symptom]
+
+        if len(filtered_df) == 0:
+            if len(self.contexts) > 0:
+                return None
+            else:
+                return symptom
+            
+        else:
+            parent_symptom: str = filtered_df.iloc[0]["Gejala"]
+            if len(self.contexts) > 0 and parent_symptom == self.contexts[-1]:
+                return symptom
+            else:
+                return self.get_valid_symptom_to_ask(parent_symptom)
 
     def get_possibilities(self, symptom_name: str) -> list[tuple[bool, str | None, float]]:
-        symptom_filter = self.df["Gejala"] == symptom_name
+        symptom_filter = self.symptom_df["Gejala"] == symptom_name
         possibilities = []
-        filtered_df = self.df[symptom_filter]
+        filtered_df = self.symptom_df[symptom_filter]
         if filtered_df["Variasi"].isna().all():
             possibilities = [(True, None, 0.0), (False, None, 1.0)]
 
@@ -151,10 +183,10 @@ class UnnamedState:
     
     def get_conditional_symptom_probs_with_variant(self, symptom_name: str, exists: bool = True, variant: str | None = None):
         conditional_symptom_probs = []
-        symptom_filter = self.df["Gejala"] == symptom_name
+        symptom_filter = self.symptom_df["Gejala"] == symptom_name
         for d in self.disease_names:
-            disease_filter = self.df["Penyakit"] == d
-            filtered_df = self.df[symptom_filter & disease_filter]
+            disease_filter = self.symptom_df["Penyakit"] == d
+            filtered_df = self.symptom_df[symptom_filter & disease_filter]
             if len(filtered_df) == 0:
                 conditional_symptom_probs.append(-1.0)
             else:
@@ -170,8 +202,11 @@ class UnnamedState:
                     prob = 1 - prob
                 
                 conditional_symptom_probs.append(prob)
-        
-        return conditional_symptom_probs
+
+        if all(x == -1.0 for x in conditional_symptom_probs):
+            return None
+        else:
+            return conditional_symptom_probs
     
     def answer(self, symptom: str, exists: bool, variant: str | None = None):
         self.answer_history[symptom] = {
@@ -180,16 +215,30 @@ class UnnamedState:
         }
 
         conditional_symptom_probs = self.get_conditional_symptom_probs_with_variant(symptom, exists, variant)
-        self.disease_probs = new_disease_probs(self.disease_probs, conditional_symptom_probs, 0.0 if exists else 1.0)
+        if conditional_symptom_probs is not None:
+            self.disease_probs = new_disease_probs(self.disease_probs, conditional_symptom_probs, 0.0 if exists else 1.0)
+
+        # Update contexts
+        if exists:
+            self.contexts.append(symptom)
+
+        self.pop_contexts_if_no_questions()
+
+    def pop_contexts_if_no_questions(self):
+        while len(self.contexts) > 0 and self.get_best_symptom_to_ask() is None:
+            self.contexts.pop()
 
     def skip(self, symptom: str):
         self.answer_history[symptom] = {
             "skip": True
         }
 
+        self.pop_contexts_if_no_questions()
+
 if __name__ == "__main__":
     df = pd.read_excel("data.xlsx", "SymptomTable")
-    current_state = UnnamedState(df)
+    subsymptom_df = pd.read_excel("data.xlsx", "SubsymptomTable")
+    current_state = UnnamedState(df, subsymptom_df)
 
     question_no = 1
     stop_asking = False
@@ -206,6 +255,10 @@ if __name__ == "__main__":
         else:
             answer = -1
             asked_symptom = current_state.get_best_symptom_to_ask()
+            if asked_symptom is None:
+                stop_asking = True
+                break
+
             print(f"Pertanyaan {question_no}")
 
             possibilities = current_state.get_possibilities(asked_symptom)
