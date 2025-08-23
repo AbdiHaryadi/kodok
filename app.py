@@ -28,23 +28,97 @@ def next_question():
     st.session_state["question_no"] = st.session_state["question_no"] + 1
     update_asked_symptom_and_answer_possibilities()
 
-def init_new_session():
-    data_path = st.secrets["DATA_PATH"]
-    df = pd.read_excel(data_path, "SymptomTable")
-    subsymptom_df = pd.read_excel(data_path, "SubsymptomTable")
-
-    current_state = UnnamedState(df, subsymptom_df)
-    st.session_state["current_state"] = current_state
-    st.session_state["question_no"] = 1
-
-    update_asked_symptom_and_answer_possibilities()
-
 @st.cache_resource
 def init_supabase():
     url: str = st.secrets["SUPABASE_URL"]
     key: str = st.secrets["SUPABASE_KEY"]
     supabase: Client = create_client(url, key)
     return supabase
+
+def init_new_session():
+    supabase = init_supabase()
+
+    df_dict = {
+        "Penyakit": [],
+        "Gejala": [],
+        "Variasi": [],
+        "Frekuensi": []
+    }
+
+    response = (
+        supabase.table("disease_variant_free_symptoms")
+        .select("disease, symptom, frequency")
+        .execute()
+    )
+    for x in response.data:
+        penyakit = x["disease"]
+        gejala = x["symptom"]
+        variasi = None
+        frekuensi = x["frequency"] if x["frequency"] else None
+
+        df_dict["Penyakit"].append(penyakit)
+        df_dict["Gejala"].append(gejala)
+        df_dict["Variasi"].append(variasi)
+        df_dict["Frekuensi"].append(frekuensi)
+
+    response = (
+        supabase.table("disease_variant_specific_symptoms")
+        .select("disease, symptom, variant, frequency")
+        .execute()
+    )
+    for x in response.data:
+        penyakit = x["disease"]
+        gejala = x["symptom"]
+        variasi = x["variant"]
+        frekuensi = x["frequency"] if x["frequency"] else None
+
+        df_dict["Penyakit"].append(penyakit)
+        df_dict["Gejala"].append(gejala)
+        df_dict["Variasi"].append(variasi)
+        df_dict["Frekuensi"].append(frekuensi)
+    
+    df = pd.DataFrame(df_dict)
+
+    subsymptom_df_dict = {
+        "Gejala": [],
+        "Variasi": [],
+        "AnakGejala": [],
+    }
+    response = (
+        supabase.table("variant_free_subsymptoms")
+        .select("symptom, subsymptom")
+        .execute()
+    )
+    for x in response.data:
+        gejala = x["symptom"]
+        variasi = None
+        anak_gejala = x["subsymptom"]
+
+        subsymptom_df_dict["Gejala"].append(gejala)
+        subsymptom_df_dict["Variasi"].append(variasi)
+        subsymptom_df_dict["AnakGejala"].append(anak_gejala)
+
+    response = (
+        supabase.table("variant_specific_subsymptoms")
+        .select("symptom, variant, subsymptom")
+        .execute()
+    )
+    for x in response.data:
+        gejala = x["symptom"]
+        variasi = x["variant"]
+        anak_gejala = x["subsymptom"]
+
+        subsymptom_df_dict["Gejala"].append(gejala)
+        subsymptom_df_dict["Variasi"].append(variasi)
+        subsymptom_df_dict["AnakGejala"].append(anak_gejala)
+
+    subsymptom_df = pd.DataFrame(subsymptom_df_dict)
+    
+    current_state = UnnamedState(df, subsymptom_df)
+    st.session_state["current_state"] = current_state
+    st.session_state["question_no"] = 1
+
+    update_asked_symptom_and_answer_possibilities()
 
 @st.dialog("Ubah data")
 def ask_password():
@@ -81,8 +155,11 @@ if "role" not in st.session_state:
         ask_password()
 
 elif st.session_state["role"] == "user":
-    current_state = st.session_state["current_state"]
+    if "current_state" not in st.session_state:
+        del st.session_state["role"]
+        st.rerun()
 
+    current_state = st.session_state["current_state"]
     possibilities = st.session_state["possibilities"]
 
     if st.session_state["debug_mode"]:
