@@ -82,6 +82,7 @@ def init_new_session():
 
 def fetch_disease_symptoms_from_supabase(supabase):
     df_dict = {
+        "Id": [],
         "Penyakit": [],
         "Gejala": [],
         "Variasi": [],
@@ -90,15 +91,17 @@ def fetch_disease_symptoms_from_supabase(supabase):
 
     response = (
         supabase.table("disease_variant_free_symptoms")
-        .select("disease, symptom, frequency")
+        .select("id, disease_symptoms(disease, frequency), symptom")
         .execute()
     )
     for x in response.data:
-        penyakit = x["disease"]
+        id_ = x["id"]
+        penyakit = x["disease_symptoms"]["disease"]
         gejala = x["symptom"]
         variasi = None
-        frekuensi = x["frequency"] if x["frequency"] else None
+        frekuensi = x["disease_symptoms"]["frequency"] if x["disease_symptoms"]["frequency"] else None
 
+        df_dict["Id"].append(id_)
         df_dict["Penyakit"].append(penyakit)
         df_dict["Gejala"].append(gejala)
         df_dict["Variasi"].append(variasi)
@@ -106,21 +109,24 @@ def fetch_disease_symptoms_from_supabase(supabase):
 
     response = (
         supabase.table("disease_variant_specific_symptoms")
-        .select("disease, symptom, variant, frequency")
+        .select("id, disease_symptoms(disease, frequency), symptom, variant")
         .execute()
     )
     for x in response.data:
-        penyakit = x["disease"]
+        id_ = x["id"]
+        penyakit = x["disease_symptoms"]["disease"]
         gejala = x["symptom"]
         variasi = x["variant"]
-        frekuensi = x["frequency"] if x["frequency"] else None
+        frekuensi = x["disease_symptoms"]["frequency"] if x["disease_symptoms"]["frequency"] else None
 
+        df_dict["Id"].append(id_)
         df_dict["Penyakit"].append(penyakit)
         df_dict["Gejala"].append(gejala)
         df_dict["Variasi"].append(variasi)
         df_dict["Frekuensi"].append(frekuensi)
     
     df = pd.DataFrame(df_dict)
+    df = df.sort_values("Id")
     return df
 
 @st.dialog("Ubah data")
@@ -139,6 +145,105 @@ def ask_password():
                 st.rerun()
             else:
                 st.toast("Kata sandi salah.", icon="❌")
+
+@st.dialog(f"Ubah Gejala Penyakit")
+def edit_symptom(chosen_disease, symptom, old_variant, old_frequency, symptom_id):
+    st.markdown(f"**{chosen_disease} - {symptom}**")
+
+    response = (
+        supabase.table("symptom_variants")
+        .select("name")
+        .eq("symptom", symptom)
+        .execute()
+    )
+    variant_options = ["-"] + [x["name"] for x in response.data]
+    frequency_options = ["-", "Jarang", "Kadang", "Sering", "Sangat sering"]                
+
+    with st.form("edit_symptom_form", enter_to_submit=False, border=False):
+        new_variant = st.selectbox(
+            "Variasi",
+            variant_options,
+            accept_new_options=True,
+            index=(variant_options.index(old_variant) if old_variant else 0)
+        )
+
+        new_frequency = st.selectbox(
+            "Frekuensi",
+            frequency_options,
+            index=(frequency_options.index(old_frequency) if old_frequency else 0)
+        )
+
+        if st.form_submit_button("Simpan"):
+            if new_frequency == "-":
+                new_frequency = ""
+
+            if new_variant != "-" and new_variant not in variant_options:
+                (
+                    supabase.table("symptom_variants")
+                    .insert({
+                        "symptom": symptom,
+                        "name": new_variant
+                    })
+                    .execute()
+                )
+
+            if old_variant is None:
+                if new_variant != "-":
+                    (
+                        supabase.table("disease_variant_free_symptoms")
+                        .delete()
+                        .eq("id", symptom_id)
+                        .execute()
+                    )
+
+                    (
+                        supabase.table("disease_variant_specific_symptoms")
+                        .insert({
+                            "id": symptom_id,
+                            "symptom": symptom,
+                            "variant": new_variant,
+                        })
+                        .execute()
+                    )
+
+            else:
+                if new_variant == "-":
+                    (
+                        supabase.table("disease_variant_specific_symptoms")
+                        .delete()
+                        .eq("id", symptom_id)
+                        .execute()
+                    )
+
+                    (
+                        supabase.table("disease_variant_free_symptoms")
+                        .insert({
+                            "id": symptom_id,
+                            "symptom": symptom,
+                        })
+                        .execute()
+                    )
+                
+                else:
+                    (
+                        supabase.table("disease_variant_specific_symptoms")
+                        .update({
+                            "variant": new_variant
+                        })
+                        .eq("id", symptom_id)
+                        .execute()
+                    )
+
+            (
+                supabase.table("disease_symptoms")
+                .update({
+                    "frequency": new_frequency
+                })
+                .eq("id", symptom_id)
+                .execute()
+            )
+
+            st.rerun()
 
 if "role" not in st.session_state:
     if "debug_mode" not in st.session_state:
@@ -299,41 +404,8 @@ else:
                 variant_column.text(row["Variasi"] if row["Variasi"] else "-")
                 frequency_column.text(row["Frekuensi"] if row["Frekuensi"] else "-")
 
-                if edit.button("⚙️", key=symptom_column, type="tertiary"):
-                    @st.dialog(f"⚙️ {chosen_disease} - {symptom}")
-                    def edit_symptom():
-                        response = (
-                            supabase.table("symptom_variants")
-                            .select("name")
-                            .eq("symptom", symptom)
-                            .execute()
-                        )
-                        variant_options = ["-"] + [x["name"] for x in response.data]
-                        frequency_options = ["-", "Jarang", "Kadang", "Sering", "Sangat sering"]                
-
-                        with st.form("edit_symptom_form", enter_to_submit=False, border=False):
-                            new_variant = st.selectbox(
-                                "Variasi",
-                                variant_options,
-                                accept_new_options=True,
-                                index=(variant_options.index(row["Variasi"]) if row["Variasi"] else 0)
-                            )
-
-                            new_frequency = st.selectbox(
-                                "Frekuensi",
-                                frequency_options,
-                                index=(frequency_options.index(row["Frekuensi"]) if row["Frekuensi"] else 0)
-                            )
-
-                            if st.form_submit_button("Simpan"):
-                                # if row["Variasi"] is None and new_variant != "-":
-                                #     # You should delete it from disease_variant_free_symptoms,
-                                #     # then insert into disease_variant_specific_symptoms.
-                                #     pass
-                                # # Implement something
-                                st.rerun()
-
-                    edit_symptom()
+                if edit.button("⚙️", key=symptom, type="tertiary"):
+                    edit_symptom(chosen_disease, symptom, row["Variasi"], row["Frekuensi"], row["Id"])
 
             # sb_df = sb_df.drop(columns=["Penyakit"])
             # sb_df["Variasi"] = sb_df["Variasi"].fillna("")
