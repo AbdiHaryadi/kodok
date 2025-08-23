@@ -37,7 +37,50 @@ def init_supabase():
 
 def init_new_session():
     supabase = init_supabase()
+    df = fetch_disease_symptoms_from_supabase(supabase)
 
+    subsymptom_df_dict = {
+        "Gejala": [],
+        "Variasi": [],
+        "AnakGejala": [],
+    }
+    response = (
+        supabase.table("variant_free_subsymptoms")
+        .select("symptom, subsymptom")
+        .execute()
+    )
+    for x in response.data:
+        gejala = x["symptom"]
+        variasi = None
+        anak_gejala = x["subsymptom"]
+
+        subsymptom_df_dict["Gejala"].append(gejala)
+        subsymptom_df_dict["Variasi"].append(variasi)
+        subsymptom_df_dict["AnakGejala"].append(anak_gejala)
+
+    response = (
+        supabase.table("variant_specific_subsymptoms")
+        .select("symptom, variant, subsymptom")
+        .execute()
+    )
+    for x in response.data:
+        gejala = x["symptom"]
+        variasi = x["variant"]
+        anak_gejala = x["subsymptom"]
+
+        subsymptom_df_dict["Gejala"].append(gejala)
+        subsymptom_df_dict["Variasi"].append(variasi)
+        subsymptom_df_dict["AnakGejala"].append(anak_gejala)
+
+    subsymptom_df = pd.DataFrame(subsymptom_df_dict)
+
+    current_state = UnnamedState(df, subsymptom_df)
+    st.session_state["current_state"] = current_state
+    st.session_state["question_no"] = 1
+
+    update_asked_symptom_and_answer_possibilities()
+
+def fetch_disease_symptoms_from_supabase(supabase):
     df_dict = {
         "Penyakit": [],
         "Gejala": [],
@@ -78,47 +121,7 @@ def init_new_session():
         df_dict["Frekuensi"].append(frekuensi)
     
     df = pd.DataFrame(df_dict)
-
-    subsymptom_df_dict = {
-        "Gejala": [],
-        "Variasi": [],
-        "AnakGejala": [],
-    }
-    response = (
-        supabase.table("variant_free_subsymptoms")
-        .select("symptom, subsymptom")
-        .execute()
-    )
-    for x in response.data:
-        gejala = x["symptom"]
-        variasi = None
-        anak_gejala = x["subsymptom"]
-
-        subsymptom_df_dict["Gejala"].append(gejala)
-        subsymptom_df_dict["Variasi"].append(variasi)
-        subsymptom_df_dict["AnakGejala"].append(anak_gejala)
-
-    response = (
-        supabase.table("variant_specific_subsymptoms")
-        .select("symptom, variant, subsymptom")
-        .execute()
-    )
-    for x in response.data:
-        gejala = x["symptom"]
-        variasi = x["variant"]
-        anak_gejala = x["subsymptom"]
-
-        subsymptom_df_dict["Gejala"].append(gejala)
-        subsymptom_df_dict["Variasi"].append(variasi)
-        subsymptom_df_dict["AnakGejala"].append(anak_gejala)
-
-    subsymptom_df = pd.DataFrame(subsymptom_df_dict)
-    
-    current_state = UnnamedState(df, subsymptom_df)
-    st.session_state["current_state"] = current_state
-    st.session_state["question_no"] = 1
-
-    update_asked_symptom_and_answer_possibilities()
+    return df
 
 @st.dialog("Ubah data")
 def ask_password():
@@ -175,11 +178,11 @@ elif st.session_state["role"] == "user":
         conversation_view.markdown(f"**Pertanyaan {question_no}**: {asked_symptom}")
 
         with conversation_view.container():
-            for i, (exists, variant, _) in enumerate(possibilities):
-                label = 'Tidak' if not exists else ('Ya' if variant is None else variant)
+            for i, (exists, variant_column, _) in enumerate(possibilities):
+                label = 'Tidak' if not exists else ('Ya' if variant_column is None else variant_column)
                 label = label.replace(">", "\\>")
                 if st.button(label, use_container_width=True):
-                    current_state.answer(asked_symptom, exists, variant)
+                    current_state.answer(asked_symptom, exists, variant_column)
                     next_question()
                     st.rerun()
 
@@ -265,27 +268,90 @@ elif st.session_state["role"] == "user":
         st.rerun()
 
 else:
-    supabase = init_supabase()
-    response = (
-        supabase.table("disease_symptoms")
-        .select("disease", "symptom", "variant", "frequency")
-        .execute()
-    )
-
-    sb_df = pd.DataFrame(response.data)
-
     st.title("Ubah data")
     symptom_tab, subsymptom_tab, other_tab = st.tabs(["Gejala Penyakit", "Anak Gejala", "???"])
     if symptom_tab:
-        st.data_editor(sb_df, num_rows="dynamic", key="changes")
-        st.write(st.session_state["changes"])
+        supabase = init_supabase()
+        sb_df = fetch_disease_symptoms_from_supabase(supabase)
 
-        button_cols = st.columns(2)
-        if button_cols[0].button("Simpan", type="primary", use_container_width=True):
-            st.toast("(Implementasi simpan di sini)")
+        response = (
+            supabase.table("diseases")
+            .select("name")
+            .execute()
+        )
+        diseases = [x["name"] for x in response.data]
+        if len(diseases) > 0:
+            # Perlu pastikan ini tidak bisa diubah kalau sedang mengubah sesuatu.
+            chosen_disease = st.selectbox("Penyakit", diseases)
 
-        if button_cols[1].button("Batal", use_container_width=True):
-            st.toast("(Implementasi batal di sini)")
+            sb_df = sb_df[sb_df["Penyakit"] == chosen_disease]
+
+            symptom_column, variant_column, frequency_column, _ = st.columns([2, 2, 2, 1])
+            symptom_column.markdown("**Gejala**")
+            variant_column.markdown("**Variasi**")
+            frequency_column.markdown("**Frekuensi**")
+
+            for _, row in sb_df.iterrows():
+                symptom = row["Gejala"]
+
+                symptom_column, variant_column, frequency_column, edit = st.columns([2, 2, 2, 1])
+                symptom_column.text(symptom)
+                variant_column.text(row["Variasi"] if row["Variasi"] else "-")
+                frequency_column.text(row["Frekuensi"] if row["Frekuensi"] else "-")
+
+                if edit.button("⚙️", key=symptom_column, type="tertiary"):
+                    @st.dialog(f"⚙️ {chosen_disease} - {symptom}")
+                    def edit_symptom():
+                        response = (
+                            supabase.table("symptom_variants")
+                            .select("name")
+                            .eq("symptom", symptom)
+                            .execute()
+                        )
+                        variant_options = ["-"] + [x["name"] for x in response.data]
+                        frequency_options = ["-", "Jarang", "Kadang", "Sering", "Sangat sering"]                
+
+                        with st.form("edit_symptom_form", enter_to_submit=False, border=False):
+                            new_variant = st.selectbox(
+                                "Variasi",
+                                variant_options,
+                                accept_new_options=True,
+                                index=(variant_options.index(row["Variasi"]) if row["Variasi"] else 0)
+                            )
+
+                            new_frequency = st.selectbox(
+                                "Frekuensi",
+                                frequency_options,
+                                index=(frequency_options.index(row["Frekuensi"]) if row["Frekuensi"] else 0)
+                            )
+
+                            if st.form_submit_button("Simpan"):
+                                # if row["Variasi"] is None and new_variant != "-":
+                                #     # You should delete it from disease_variant_free_symptoms,
+                                #     # then insert into disease_variant_specific_symptoms.
+                                #     pass
+                                # # Implement something
+                                st.rerun()
+
+                    edit_symptom()
+
+            # sb_df = sb_df.drop(columns=["Penyakit"])
+            # sb_df["Variasi"] = sb_df["Variasi"].fillna("")
+            # sb_df["Frekuensi"] = sb_df["Frekuensi"].fillna("")
+            # sb_df = sb_df.reset_index(drop=True)
+
+            # st.data_editor(sb_df, num_rows="dynamic", key="changes", hide_index=True)
+            # st.write(st.session_state["changes"])
+
+            # button_cols = st.columns(2)
+            # if button_cols[0].button("Simpan", type="primary", use_container_width=True):
+            #     st.toast("(Implementasi simpan di sini)")
+
+            # if button_cols[1].button("Batal", use_container_width=True):
+            #     st.toast("(Implementasi batal di sini)")
+    
+    else:
+        st.text("Tidak ada data penyakit.")
 
     st.divider()
 
