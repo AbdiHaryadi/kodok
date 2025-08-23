@@ -245,6 +245,149 @@ def edit_symptom(chosen_disease, symptom, old_variant, old_frequency, symptom_id
 
             st.rerun()
 
+@st.dialog(f"Tambah Gejala Penyakit")
+def add_symptom(chosen_disease):
+    st.markdown(f"**Penyakit: {chosen_disease}**")
+
+    existing_symptoms = set()
+
+    response = (
+        supabase.table("disease_variant_free_symptoms")
+        .select("symptom, disease_symptoms!inner(disease)")
+        .eq("disease_symptoms.disease", chosen_disease)
+        .execute()
+    )
+    for x in response.data:
+        existing_symptoms.add(x["symptom"])
+
+    response = (
+        supabase.table("disease_variant_specific_symptoms")
+        .select("symptom, disease_symptoms!inner(disease)")
+        .eq("disease_symptoms.disease", chosen_disease)
+        .execute()
+    )
+    for x in response.data:
+        existing_symptoms.add(x["symptom"])
+    
+    reusable_symptoms = set()
+    
+    response = (
+        supabase.table("symptoms")
+        .select("name")
+        .execute()
+    )
+
+    for x in response.data:
+        if x["name"] not in existing_symptoms:
+            reusable_symptoms.add(x["name"])
+
+    reusable_symptoms = sorted(list(reusable_symptoms))
+
+    # with st.form("add_symptom_form", enter_to_submit=False, border=False):
+    new_symptom = st.selectbox("Gejala", reusable_symptoms, index=None, accept_new_options=True)
+
+    new_variant = None
+    variant_options = ["-"]
+    if new_symptom in existing_symptoms:
+        st.warning("Gejala tersebut sudah ada sebelumnya.")
+    elif new_symptom is not None:
+        response = (
+            supabase.table("symptom_variants")
+            .select("name")
+            .eq("symptom", new_symptom)
+            .execute()
+        )
+
+        variant_options = ["-"] + [x["name"] for x in response.data]
+        frequency_options = ["-", "Jarang", "Kadang", "Sering", "Sangat sering"]                
+
+        new_variant = st.selectbox(
+            "Variasi",
+            variant_options,
+            accept_new_options=True
+        )
+
+        new_frequency = st.selectbox(
+            "Frekuensi",
+            frequency_options
+        )
+    
+    if st.button("Simpan", disabled=(new_variant is None)):
+        if new_symptom not in reusable_symptoms:
+            (
+                supabase.table("symptoms")
+                .insert({
+                    "name": new_symptom
+                })
+                .execute()
+            )
+
+        if new_variant != "-" and new_variant not in variant_options:
+            (
+                supabase.table("symptom_variants")
+                .insert({
+                    "symptom": new_symptom,
+                    "name": new_variant
+                })
+                .execute()
+            )
+
+        (
+            supabase.table("disease_symptoms")
+            .insert({
+                "disease": chosen_disease,
+                "frequency": new_frequency,
+            })
+            .execute()
+        )
+
+        response = (
+            supabase.table("disease_symptoms")
+            .select("id")
+            .eq("disease", chosen_disease)
+            .eq("frequency", new_frequency)
+            .order("created_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+        new_id = response.data[0]["id"]
+
+        if new_variant == "-":
+            (
+                supabase.table("disease_variant_free_symptoms")
+                .insert({
+                    "id": new_id,
+                    "symptom": new_symptom,
+                })
+                .execute()
+            )
+        else:
+            (
+                supabase.table("disease_variant_specific_symptoms")
+                .insert({
+                    "id": new_id,
+                    "symptom": new_symptom,
+                    "variant": new_variant
+                })
+                .execute()
+            )
+        
+        st.rerun()
+
+@st.dialog(f"Hapus Gejala Penyakit")
+def delete_symptom(chosen_disease, symptom, symptom_id):
+    st.markdown(f"**Hapus gejala {symptom} dari penyakit {chosen_disease}?**")        
+
+    with st.form("edit_symptom_form", enter_to_submit=False, border=False):
+        if st.form_submit_button("Ya"):
+            (
+                supabase.table("disease_symptoms")
+                .delete()
+                .eq("id", symptom_id)
+                .execute()
+            )
+            st.rerun()
+
 if "role" not in st.session_state:
     if "debug_mode" not in st.session_state:
         st.session_state["debug_mode"] = False
@@ -391,7 +534,7 @@ else:
 
             sb_df = sb_df[sb_df["Penyakit"] == chosen_disease]
 
-            symptom_column, variant_column, frequency_column, _ = st.columns([2, 2, 2, 1])
+            symptom_column, variant_column, frequency_column, _, _ = st.columns([4, 4, 4, 1, 1])
             symptom_column.markdown("**Gejala**")
             variant_column.markdown("**Variasi**")
             frequency_column.markdown("**Frekuensi**")
@@ -399,28 +542,19 @@ else:
             for _, row in sb_df.iterrows():
                 symptom = row["Gejala"]
 
-                symptom_column, variant_column, frequency_column, edit = st.columns([2, 2, 2, 1])
+                symptom_column, variant_column, frequency_column, edit_column, del_column = st.columns([4, 4, 4, 1, 1])
                 symptom_column.text(symptom)
                 variant_column.text(row["Variasi"] if row["Variasi"] else "-")
                 frequency_column.text(row["Frekuensi"] if row["Frekuensi"] else "-")
 
-                if edit.button("⚙️", key=symptom, type="tertiary"):
+                if edit_column.button("⚙️", key=f"{symptom}_edit", type="tertiary"):
                     edit_symptom(chosen_disease, symptom, row["Variasi"], row["Frekuensi"], row["Id"])
 
-            # sb_df = sb_df.drop(columns=["Penyakit"])
-            # sb_df["Variasi"] = sb_df["Variasi"].fillna("")
-            # sb_df["Frekuensi"] = sb_df["Frekuensi"].fillna("")
-            # sb_df = sb_df.reset_index(drop=True)
+                if del_column.button("🗑️", key=f"{symptom}_delete", type="tertiary"):
+                    delete_symptom(chosen_disease, symptom, row["Id"])
 
-            # st.data_editor(sb_df, num_rows="dynamic", key="changes", hide_index=True)
-            # st.write(st.session_state["changes"])
-
-            # button_cols = st.columns(2)
-            # if button_cols[0].button("Simpan", type="primary", use_container_width=True):
-            #     st.toast("(Implementasi simpan di sini)")
-
-            # if button_cols[1].button("Batal", use_container_width=True):
-            #     st.toast("(Implementasi batal di sini)")
+            if st.button("Tambah gejala baru"):
+                add_symptom(chosen_disease)
     
     else:
         st.text("Tidak ada data penyakit.")
