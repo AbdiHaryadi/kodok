@@ -591,14 +591,42 @@ def add_subsymptom(symptom, existing_subsymptoms):
     )
     variant_options = ["-"] + [x["name"] for x in response.data]
 
+    ancestor_list = []
+    curr_el = symptom
+    while curr_el is not None:
+        response = (
+            supabase.table("variant_free_subsymptoms")
+            .select("parent")
+            .eq("subsymptom", curr_el)
+            .execute()
+        )
+        if len(response.data) > 0:
+            curr_el = response.data[0]["parent"]
+            ancestor_list.append(curr_el)
+            continue
+
+        response = (
+            supabase.table("variant_specific_subsymptoms")
+            .select("parent")
+            .eq("subsymptom", curr_el)
+            .execute()
+        )
+        if len(response.data) > 0:
+            curr_el = response.data[0]["parent"]
+            ancestor_list.append(curr_el)
+            continue
+
+        curr_el = None
+
     response = (
         supabase.table("symptoms")
         .select("name")
         .execute()
     )
+
     subsymptom_options = []
     for x in response.data:
-        if x["name"] != symptom and x["name"] not in existing_subsymptoms:
+        if x["name"] != symptom and x["name"] not in existing_subsymptoms and x["name"] not in ancestor_list:
             subsymptom_options.append(x["name"])
 
     with st.form("add_subsymptom_form", enter_to_submit=False, border=False):
@@ -609,28 +637,24 @@ def add_subsymptom(symptom, existing_subsymptoms):
             # TODO: Check if this is valid to add.
             (
                 supabase.table("subsymptoms")
+                .delete()
+                .eq("subsymptom", subsymptom)
+                .execute()
+            )
+            (
+                supabase.table("subsymptoms")
                 .insert({
                     "subsymptom": subsymptom
                 })
                 .execute()
             )
 
-            response = (
-                supabase.table("subsymptoms")
-                .select("id")
-                .eq("subsymptom", subsymptom)
-                .order("created_at", desc=True)
-                .limit(1)
-                .execute()
-            )
-            new_id = response.data[0]["id"]
-
             if variant == "-":
                 (
                     supabase.table("variant_free_subsymptoms")
                     .insert({
-                        "id": new_id,
-                        "symptom": symptom
+                        "subsymptom": subsymptom,
+                        "parent": symptom,
                     })
                     .execute()
                 )
@@ -638,13 +662,27 @@ def add_subsymptom(symptom, existing_subsymptoms):
                 (
                     supabase.table("variant_specific_subsymptoms")
                     .insert({
-                        "id": new_id,
-                        "symptom": symptom,
-                        "variant": variant
+                        "subsymptom": subsymptom,
+                        "parent": symptom,
+                        "parent_variant": variant
                     })
                     .execute()
                 )
             
+            st.rerun()
+
+@st.dialog(f"Hapus Anak Gejala")
+def delete_subsymptom(subsymptom, parent):
+    st.markdown(f"**Hapus anak gejala {subsymptom} dari induk {parent}?**")        
+
+    with st.form("delete_subsymptom_form", enter_to_submit=False, border=False):
+        if st.form_submit_button("Ya"):
+            (
+                supabase.table("subsymptoms")
+                .delete()
+                .eq("subsymptom", subsymptom)
+                .execute()
+            )
             st.rerun()
 
 if "role" not in st.session_state:
@@ -872,40 +910,37 @@ else:
             view_data = []
             response = (
                 supabase.table("variant_free_subsymptoms")
-                .select("id", "subsymptoms(subsymptom)")
-                .eq("symptom", chosen_symptom)
+                .select("subsymptom", "subsymptoms(created_at)")
+                .eq("parent", chosen_symptom)
                 .execute()
             )
             for x in response.data:
-                view_data.append((x["id"], "-", x["subsymptoms"]["subsymptom"]))
+                view_data.append((x["subsymptoms"]["created_at"], "-", x["subsymptom"]))
 
             response = (
                 supabase.table("variant_specific_subsymptoms")
-                .select("id", "variant", "subsymptoms(subsymptom)")
-                .eq("symptom", chosen_symptom)
+                .select("parent_variant", "subsymptom", "subsymptoms(created_at)")
+                .eq("parent", chosen_symptom)
                 .execute()
             )
             
             for x in response.data:
-                view_data.append((x["id"], x["variant"], x["subsymptoms"]["subsymptom"]))
+                view_data.append((x["subsymptoms"]["created_at"], x["parent_variant"], x["subsymptom"]))
             
             view_data.sort(key=lambda x: x[0])
 
-            layout = [3, 9, 1, 1]
-            variant_column, subsymptom_column, _, _ = st.columns(layout)
+            layout = [3, 10, 1]
+            variant_column, subsymptom_column, _ = st.columns(layout)
             variant_column.markdown("**Variasi**")
             subsymptom_column.markdown("**Anak Gejala**")
 
             for _, variant, subsymptom in view_data:
-                variant_column, subsymptom_column, edit_column, del_column = st.columns(layout)
+                variant_column, subsymptom_column, del_column = st.columns(layout)
                 variant_column.text(variant)
                 subsymptom_column.text(subsymptom)
 
-                if edit_column.button("⚙️", key=f"subsymptom_{subsymptom}_edit", type="tertiary"):
-                    pass
-
                 if del_column.button("🗑️", key=f"subsymptom_{subsymptom}_delete", type="tertiary"):
-                    pass
+                    delete_subsymptom(subsymptom, chosen_symptom)
 
             if st.button("Tambah anak gejala"):
                 existing_subsymptoms = [subsymptom for _, _, subsymptom in view_data]
