@@ -3,6 +3,7 @@ import pandas as pd
 from supabase import create_client, Client
 import time
 from experiment_3 import UnnamedState
+from llm import generate_description
 
 def to_proper_decimal_string(float_data):
     x = f"{float_data:.6f}".replace(".", ",")
@@ -393,7 +394,10 @@ def delete_disease_symptom(chosen_disease, symptom, symptom_id):
 def add_disease():
     with st.form("add_disease_form", enter_to_submit=False, border=False):
         disease_name = st.text_input("Nama")
-        disease_description = st.text_area("Deskripsi (opsional)")
+        disease_description = st.text_area(
+            "Deskripsi (opsional)",
+            placeholder="Tulis deskripsi di sini, atau tulis \"GENERATE\" (tanpa tanda petik) untuk pembangkitan otomatis."
+        )
 
         if st.form_submit_button("Tambah"):
             disease_name = disease_name.strip()
@@ -412,6 +416,8 @@ def add_disease():
                     disease_description = disease_description.strip()
                     if disease_description == "-":
                         disease_description = ""
+                    elif disease_description == "GENERATE":
+                        disease_description = generate_description(disease_name)
                     
                     (
                         supabase.table("diseases")
@@ -428,7 +434,11 @@ def edit_disease(old_name, old_description):
     st.markdown(f"**Penyakit: {old_name}**")
     with st.form("edit_disease_form", enter_to_submit=False, border=False):
         disease_name = st.text_input("Nama", value=old_name)
-        disease_description = st.text_area("Deskripsi (opsional)", value=old_description)
+        disease_description = st.text_area(
+            "Deskripsi (opsional)",
+            value=old_description,
+            placeholder="Tulis deskripsi di sini, atau tulis \"GENERATE\" (tanpa tanda petik) untuk pembangkitan otomatis."
+        )
 
         if st.form_submit_button("Ubah"):
             disease_name = disease_name.strip()
@@ -438,6 +448,8 @@ def edit_disease(old_name, old_description):
                 disease_description = disease_description.strip()
                 if disease_description == "-":
                     disease_description = ""
+                elif disease_description == "GENERATE":
+                    disease_description = generate_description(disease_name)
                 
                 if disease_name != old_name:
                     existing_data = (
@@ -489,7 +501,10 @@ def delete_disease(disease_name):
 def add_symptom():
     with st.form("add_symptom_form", enter_to_submit=False, border=False):
         symptom_name = st.text_input("Nama")
-        symptom_description = st.text_area("Deskripsi (opsional)")
+        symptom_description = st.text_area(
+            "Deskripsi (opsional)",
+            placeholder="Tulis deskripsi di sini, atau tulis \"GENERATE\" (tanpa tanda petik) untuk pembangkitan otomatis."
+        )
 
         if st.form_submit_button("Tambah"):
             symptom_name = symptom_name.strip()
@@ -508,6 +523,8 @@ def add_symptom():
                     symptom_description = symptom_description.strip()
                     if symptom_description == "-":
                         symptom_description = ""
+                    elif symptom_description == "GENERATE":
+                        symptom_description = generate_description(symptom_name)
                     
                     (
                         supabase.table("symptoms")
@@ -524,7 +541,11 @@ def edit_symptom(old_name, old_description):
     st.markdown(f"**Gejala: {old_name}**")
     with st.form("edit_symptom_form", enter_to_submit=False, border=False):
         symptom_name = st.text_input("Nama", value=old_name)
-        symptom_description = st.text_area("Deskripsi (opsional)", value=old_description)
+        symptom_description = st.text_area(
+            "Deskripsi (opsional)",
+            value=old_description,
+            placeholder="Tulis deskripsi di sini, atau tulis \"GENERATE\" (tanpa tanda petik) untuk pembangkitan otomatis."
+        )
 
         if st.form_submit_button("Ubah"):
             symptom_name = symptom_name.strip()
@@ -534,6 +555,8 @@ def edit_symptom(old_name, old_description):
                 symptom_description = symptom_description.strip()
                 if symptom_description == "-":
                     symptom_description = ""
+                elif symptom_description == "GENERATE":
+                    symptom_description = generate_description(symptom_name)
                 
                 if symptom_name != old_name:
                     existing_data = (
