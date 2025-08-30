@@ -46,13 +46,13 @@ def init_new_session():
     }
     response = (
         supabase.table("variant_free_subsymptoms")
-        .select("subsymptoms(subsymptom), symptom")
+        .select("subsymptom", "parent")
         .execute()
     )
     for x in response.data:
-        gejala = x["symptom"]
+        gejala = x["parent"]
         variasi = None
-        anak_gejala = x["subsymptoms"]["subsymptom"]
+        anak_gejala = x["subsymptom"]
 
         subsymptom_df_dict["Gejala"].append(gejala)
         subsymptom_df_dict["Variasi"].append(variasi)
@@ -60,12 +60,12 @@ def init_new_session():
 
     response = (
         supabase.table("variant_specific_subsymptoms")
-        .select("subsymptoms(subsymptom), symptom, variant")
+        .select("subsymptom", "parent", "parent_variant")
         .execute()
     )
     for x in response.data:
-        gejala = x["subsymptoms"]["symptom"]
-        variasi = x["variant"]
+        gejala = x["parent"]
+        variasi = x["parent_variant"]
         anak_gejala = x["subsymptom"]
 
         subsymptom_df_dict["Gejala"].append(gejala)
