@@ -36,6 +36,8 @@ def init_supabase():
     supabase: Client = create_client(url, key)
     return supabase
 
+supabase = init_supabase()
+
 def init_new_session():
     supabase = init_supabase()
     df = fetch_disease_symptoms_from_supabase(supabase)
@@ -717,8 +719,7 @@ if "role" not in st.session_state:
         init_new_session()
         st.rerun()
 
-    new_value = st.checkbox("Mode awakutu", value=st.session_state["debug_mode"])
-    st.session_state["debug_mode"] = new_value
+    # Removing debug mode for now.
 
     st.divider()
 
@@ -743,15 +744,9 @@ elif st.session_state["role"] == "user":
         question_no = st.session_state["question_no"]
         asked_symptom = st.session_state["asked_symptom"]
 
-        left, right = conversation_view.columns([0.9, 0.1])
+        left, right = conversation_view.columns([0.9, 0.1], vertical_alignment="center")
 
         left.markdown(f"**Pertanyaan {question_no}**: {asked_symptom}")
-        if right.button("❓", use_container_width=True, type="tertiary"):
-            @st.dialog("Keterangan")
-            def popup():
-                st.text("Keterangan di sini")
-
-            popup()
 
         with conversation_view.container():
             for i, (exists, variant_column, _) in enumerate(possibilities):
@@ -766,6 +761,21 @@ elif st.session_state["role"] == "user":
             current_state.skip(asked_symptom)
             next_question()
             st.rerun()
+
+        description = (
+            supabase.table("symptoms")
+            .select("description")
+            .eq("name", asked_symptom)
+            .execute()
+        ).data[0]["description"]
+
+        if description:
+            if right.button("❓", use_container_width=True, type="tertiary"):
+                @st.dialog("Keterangan")
+                def popup():
+                    st.text(description)
+
+                popup()
 
     else:
         conversation_view.markdown("Sesi selesai.")
@@ -786,7 +796,16 @@ elif st.session_state["role"] == "user":
                 d_name = p["name"]
                 prediction_exists = True
                 prob = to_proper_percentage_string(prob)
-                prediction_content += f"\n- {d_name}: {prob}"
+                prediction_content += f"\n- **{d_name} ({prob})**"
+
+                description = (
+                    supabase.table("diseases")
+                    .select("description")
+                    .eq("name", d_name)
+                    .execute()
+                ).data[0]["description"]
+                if description:
+                    prediction_content += f"—{description}"
 
             if not prediction_exists:
                 prediction_content += " (kosong)"
@@ -851,8 +870,6 @@ else:
         "Daftar Anak Gejala",
         "Gejala Penyakit"
     ])
-
-    supabase = init_supabase()
 
     with disease_list_tab:
         response = (
