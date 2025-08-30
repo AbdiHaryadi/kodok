@@ -423,7 +423,15 @@ elif st.session_state["role"] == "user":
         question_no = st.session_state["question_no"]
         asked_symptom = st.session_state["asked_symptom"]
 
-        conversation_view.markdown(f"**Pertanyaan {question_no}**: {asked_symptom}")
+        left, right = conversation_view.columns([0.9, 0.1])
+
+        left.markdown(f"**Pertanyaan {question_no}**: {asked_symptom}")
+        if right.button("❓", use_container_width=True, type="tertiary"):
+            @st.dialog("Keterangan")
+            def popup():
+                st.text("Keterangan di sini")
+
+            popup()
 
         with conversation_view.container():
             for i, (exists, variant_column, _) in enumerate(possibilities):
