@@ -284,6 +284,7 @@ def add_disease_symptom(chosen_disease):
     reusable_symptoms = sorted(list(reusable_symptoms))
 
     # with st.form("add_symptom_form", enter_to_submit=False, border=False):
+    # TODO: Remove accept_new_options
     new_symptom = st.selectbox("Gejala", reusable_symptoms, index=None, accept_new_options=True)
 
     new_variant = None
@@ -486,7 +487,7 @@ def delete_disease(disease_name):
 
 @st.dialog("Tambah Gejala")
 def add_symptom():
-    with st.form("add_gejala_form", enter_to_submit=False, border=False):
+    with st.form("add_symptom_form", enter_to_submit=False, border=False):
         symptom_name = st.text_input("Nama")
         symptom_description = st.text_area("Deskripsi (opsional)")
 
@@ -570,7 +571,7 @@ def edit_symptom(old_name, old_description):
 def delete_symptom(symptom_name):
     st.markdown(f"**Hapus gejala {symptom_name}?**")        
 
-    with st.form("delete_disease_form", enter_to_submit=False, border=False):
+    with st.form("delete_symptom_form", enter_to_submit=False, border=False):
         if st.form_submit_button("Ya"):
             (
                 supabase.table("symptoms")
@@ -578,6 +579,72 @@ def delete_symptom(symptom_name):
                 .eq("name", symptom_name)
                 .execute()
             )
+            st.rerun()
+
+@st.dialog("Tambah Anak Gejala")
+def add_subsymptom(symptom, existing_subsymptoms):
+    response = (
+        supabase.table("symptom_variants")
+        .select("name")
+        .eq("symptom", symptom)
+        .execute()
+    )
+    variant_options = ["-"] + [x["name"] for x in response.data]
+
+    response = (
+        supabase.table("symptoms")
+        .select("name")
+        .execute()
+    )
+    subsymptom_options = []
+    for x in response.data:
+        if x["name"] != symptom and x["name"] not in existing_subsymptoms:
+            subsymptom_options.append(x["name"])
+
+    with st.form("add_subsymptom_form", enter_to_submit=False, border=False):
+        variant = st.selectbox("Variasi", variant_options)
+        subsymptom = st.selectbox("Anak gejala", subsymptom_options, index=None)
+
+        if st.form_submit_button("Tambah"):
+            # TODO: Check if this is valid to add.
+            (
+                supabase.table("subsymptoms")
+                .insert({
+                    "subsymptom": subsymptom
+                })
+                .execute()
+            )
+
+            response = (
+                supabase.table("subsymptoms")
+                .select("id")
+                .eq("subsymptom", subsymptom)
+                .order("created_at", desc=True)
+                .limit(1)
+                .execute()
+            )
+            new_id = response.data[0]["id"]
+
+            if variant == "-":
+                (
+                    supabase.table("variant_free_subsymptoms")
+                    .insert({
+                        "id": new_id,
+                        "symptom": symptom
+                    })
+                    .execute()
+                )
+            else:
+                (
+                    supabase.table("variant_specific_subsymptoms")
+                    .insert({
+                        "id": new_id,
+                        "symptom": symptom,
+                        "variant": variant
+                    })
+                    .execute()
+                )
+            
             st.rerun()
 
 if "role" not in st.session_state:
@@ -791,12 +858,68 @@ else:
         if st.button("Tambah gejala"):
             add_symptom()
 
+    with subsymptom_list_tab:
+        response = (
+            supabase.table("symptoms")
+            .select("name")
+            .execute()
+        )
+        symptoms = [x["name"] for x in response.data]
+
+        if len(symptoms) > 0:
+            chosen_symptom = st.selectbox("Gejala", symptoms, key="chosen_symptom")
+
+            view_data = []
+            response = (
+                supabase.table("variant_free_subsymptoms")
+                .select("id", "subsymptoms(subsymptom)")
+                .eq("symptom", chosen_symptom)
+                .execute()
+            )
+            for x in response.data:
+                view_data.append((x["id"], "-", x["subsymptoms"]["subsymptom"]))
+
+            response = (
+                supabase.table("variant_specific_subsymptoms")
+                .select("id", "variant", "subsymptoms(subsymptom)")
+                .eq("symptom", chosen_symptom)
+                .execute()
+            )
+            
+            for x in response.data:
+                view_data.append((x["id"], x["variant"], x["subsymptoms"]["subsymptom"]))
+            
+            view_data.sort(key=lambda x: x[0])
+
+            layout = [3, 9, 1, 1]
+            variant_column, subsymptom_column, _, _ = st.columns(layout)
+            variant_column.markdown("**Variasi**")
+            subsymptom_column.markdown("**Anak Gejala**")
+
+            for _, variant, subsymptom in view_data:
+                variant_column, subsymptom_column, edit_column, del_column = st.columns(layout)
+                variant_column.text(variant)
+                subsymptom_column.text(subsymptom)
+
+                if edit_column.button("⚙️", key=f"subsymptom_{subsymptom}_edit", type="tertiary"):
+                    pass
+
+                if del_column.button("🗑️", key=f"subsymptom_{subsymptom}_delete", type="tertiary"):
+                    pass
+
+            if st.button("Tambah anak gejala"):
+                existing_subsymptoms = [subsymptom for _, _, subsymptom in view_data]
+                add_subsymptom(chosen_symptom, existing_subsymptoms)
+            
+        else:
+            st.info("Tidak ada data gejala.")
+
     with disease_symptom_tab:
         sb_df = fetch_disease_symptoms_from_supabase(supabase)
 
         response = (
             supabase.table("diseases")
-            .select("name", "description")
+            .select("name")
             .execute()
         )
         diseases = [x["name"] for x in response.data]
