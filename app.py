@@ -378,12 +378,108 @@ def add_symptom(chosen_disease):
 def delete_symptom(chosen_disease, symptom, symptom_id):
     st.markdown(f"**Hapus gejala {symptom} dari penyakit {chosen_disease}?**")        
 
-    with st.form("edit_symptom_form", enter_to_submit=False, border=False):
+    with st.form("delete_symptom_form", enter_to_submit=False, border=False):
         if st.form_submit_button("Ya"):
             (
                 supabase.table("disease_symptoms")
                 .delete()
                 .eq("id", symptom_id)
+                .execute()
+            )
+            st.rerun()
+
+@st.dialog("Tambah Penyakit")
+def add_disease():
+    with st.form("add_disease_form", enter_to_submit=False, border=False):
+        disease_name = st.text_input("Nama")
+        disease_description = st.text_area("Deskripsi (opsional)")
+
+        if st.form_submit_button("Tambah"):
+            disease_name = disease_name.strip()
+            if disease_name == "":
+                st.error("Nama tidak boleh kosong.")
+            else:
+                existing_data = (
+                    supabase.table("diseases")
+                    .select("name")
+                    .eq("name", disease_name)
+                    .execute()
+                )
+                if len(existing_data.data) > 0:
+                    st.error(f"Penyakit dengan nama \"{disease_name}\" sudah ada.")
+                else:
+                    disease_description = disease_description.strip()
+                    if disease_description == "-":
+                        disease_description = ""
+                    
+                    (
+                        supabase.table("diseases")
+                        .insert({
+                            "name": disease_name,
+                            "description": disease_description
+                        })
+                        .execute()
+                    )
+                    st.rerun()
+
+@st.dialog("Ubah Penyakit")
+def edit_disease(old_name, old_description):
+    st.markdown(f"**Penyakit: {old_name}**")
+    with st.form("edit_disease_form", enter_to_submit=False, border=False):
+        disease_name = st.text_input("Nama", value=old_name)
+        disease_description = st.text_area("Deskripsi (opsional)", value=old_description)
+
+        if st.form_submit_button("Ubah"):
+            disease_name = disease_name.strip()
+            if disease_name == "":
+                st.error("Nama tidak boleh kosong.")
+            else:
+                disease_description = disease_description.strip()
+                if disease_description == "-":
+                    disease_description = ""
+                
+                if disease_name != old_name:
+                    existing_data = (
+                        supabase.table("diseases")
+                        .select("name")
+                        .eq("name", disease_name)
+                        .execute()
+                    )
+                    if len(existing_data.data) > 0:
+                        st.error(f"Penyakit dengan nama \"{disease_name}\" sudah ada.")
+                    else:
+                        (
+                            supabase.table("diseases")
+                            .update({
+                                "name": disease_name,
+                                "description": disease_description
+                            })
+                            .eq("name", old_name)
+                            .execute()
+                        )
+                        st.rerun()
+
+                else:
+                    (
+                        supabase.table("diseases")
+                        .update({
+                            "description": disease_description
+                        })
+                        .eq("name", old_name)
+                        .execute()
+                    )
+                    st.rerun()
+
+@st.dialog(f"Hapus Penyakit")
+def delete_disease(disease_name):
+    st.markdown(f"**Hapus penyakit {disease_name}?**")        
+
+    with st.form("delete_disease_form", enter_to_submit=False, border=False):
+        if st.form_submit_button("Ya"):
+            (
+                supabase.table("diseases")
+                .delete()
+                .eq("name", disease_name)
                 .execute()
             )
             st.rerun()
@@ -525,20 +621,58 @@ elif st.session_state["role"] == "user":
 
 else:
     st.title("Ubah data")
-    symptom_tab, subsymptom_tab, other_tab = st.tabs(["Gejala Penyakit", "Anak Gejala", "???"])
-    if symptom_tab:
-        supabase = init_supabase()
+    disease_list_tab, symptom_list_tab, disease_symptom_tab = st.tabs([
+        "Daftar Penyakit",
+        "Daftar Gejala",
+        "Gejala Penyakit"
+    ])
+
+    supabase = init_supabase()
+
+    with disease_list_tab:
+        response = (
+            supabase.table("diseases")
+            .select("name", "description")
+            .execute()
+        )
+        if len(response.data) > 0:
+            layout = [4, 8, 1, 1]
+            name_column, description_column, _, _ = st.columns(layout)
+            name_column.markdown("**Nama**")
+            description_column.markdown("**Deskripsi**")
+
+            for disease_data in response.data:
+                name_column, description_column, edit_column, del_column = st.columns(layout)
+                disease_name = disease_data["name"]
+                disease_description = disease_data["description"]
+
+                name_column.text(disease_name)
+                description_column.text(disease_description if disease_description != "" else "-")
+
+                if edit_column.button("⚙️", key=f"disease_{disease_name}_edit", type="tertiary"):
+                    edit_disease(disease_name, disease_description)
+
+                if del_column.button("🗑️", key=f"disease_{disease_name}_delete", type="tertiary"):
+                    delete_disease(disease_name)
+                
+            
+        else:
+            st.info("Tidak ada data penyakit.")
+
+        if st.button("Tambah penyakit"):
+            add_disease()
+
+    with disease_symptom_tab:
         sb_df = fetch_disease_symptoms_from_supabase(supabase)
 
         response = (
             supabase.table("diseases")
-            .select("name")
+            .select("name", "description")
             .execute()
         )
         diseases = [x["name"] for x in response.data]
         if len(diseases) > 0:
-            # Perlu pastikan ini tidak bisa diubah kalau sedang mengubah sesuatu.
-            chosen_disease = st.selectbox("Penyakit", diseases)
+            chosen_disease = st.selectbox("Penyakit", diseases, key="chosen_disease")
 
             sb_df = sb_df[sb_df["Penyakit"] == chosen_disease]
 
@@ -561,11 +695,11 @@ else:
                 if del_column.button("🗑️", key=f"{symptom}_delete", type="tertiary"):
                     delete_symptom(chosen_disease, symptom, row["Id"])
 
-            if st.button("Tambah gejala baru"):
+            if st.button("Tambah gejala"):
                 add_symptom(chosen_disease)
     
-    else:
-        st.text("Tidak ada data penyakit.")
+        else:
+            st.text("Tidak ada data penyakit.")
 
     st.divider()
 
