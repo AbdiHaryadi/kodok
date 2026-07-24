@@ -33,29 +33,6 @@ class Symptom:
     def get_answer(self):
         return self.answer
 
-st.title("Kodok")
-if "symptoms" not in st.session_state:
-    first_symptom = Symptom(
-        name="Batuk",
-        properties=[
-            BinarySymptomProperty(
-                name="Kekambuhan",
-                description="Contoh deskripsi",
-            ),
-            DiscreteSymptomProperty(
-                name="Jenis batuk",
-                description="Contoh deskripsi",
-                possible_answers=["Kering", "Berdahak"]
-            ),
-            DiscreteSymptomProperty(
-                name="Cairan hidung & tenggorokan",
-                description="Contoh deskripsi",
-                possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
-            )
-        ]
-    )
-    st.session_state["symptoms"] = [first_symptom]
-
 def streamlit_ask_symptom_existence(symptom: Symptom):
     name = symptom.get_name()
     st.text(name)
@@ -81,18 +58,88 @@ def streamlit_ask_property(property: SymptomProperty):
             property.set_answer(answer)
             st.rerun()
 
-current_symptom: Symptom = st.session_state["symptoms"][-1]
-if (symptom_exists := current_symptom.get_answer()) is None:
+st.title("Kodok")
+if "symptoms" not in st.session_state:
+    first_symptom = Symptom(
+        name="Batuk",
+        properties=[
+            BinarySymptomProperty(
+                name="Kekambuhan",
+                description="Contoh deskripsi",
+            ),
+            DiscreteSymptomProperty(
+                name="Jenis batuk",
+                description="Contoh deskripsi",
+                possible_answers=["Kering", "Berdahak"]
+            ),
+            DiscreteSymptomProperty(
+                name="Cairan hidung & tenggorokan",
+                description="Contoh deskripsi",
+                possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
+            )
+        ]
+    )
+    st.session_state["symptoms"] = [first_symptom]
+    st.rerun()
+
+symptoms: list[Symptom] = st.session_state["symptoms"]
+current_symptom = symptoms[-1]
+if (current_symptom_exists := current_symptom.get_answer()) is None:
     streamlit_ask_symptom_existence(current_symptom)
-elif symptom_exists:
-    current_properties = current_symptom.get_properties()
-    for i, current_property in enumerate(current_properties):
-        if current_property.get_answer() is None:
-            st.header(current_symptom.get_name())
-            st.progress(i / len(current_properties))
-            streamlit_ask_property(current_property)
-            break
-    else:
-        st.text("Done (all properties asked)")
 else:
-    st.text("Done (no symptom existence)")
+    if current_symptom_exists:
+        current_properties = current_symptom.get_properties()
+        for i, current_property in enumerate(current_properties):
+            if current_property.get_answer() is None:
+                st.header(current_symptom.get_name())
+                st.progress(i / len(current_properties))
+                streamlit_ask_property(current_property)
+                current_symptom_completed = False
+                break
+        else:
+            current_symptom_completed = True
+    else:
+        current_symptom_completed = True
+
+    if current_symptom_completed:
+        # Check if you need more symptoms.
+        any_symptom_exists = any(x.get_answer() is True for x in symptoms)
+        if not any_symptom_exists:
+            next_symptom_needed = True
+        else:
+            streak_to_stop = 3
+            if len(symptoms) < streak_to_stop:
+                next_symptom_needed = True
+            else:
+                for current_symptom in symptoms[-streak_to_stop:]:
+                    if current_symptom.get_answer() is True:
+                        next_symptom_needed = True
+                        break
+                else:
+                    next_symptom_needed = False
+        
+        if next_symptom_needed:
+            number = len(st.session_state["symptoms"]) + 1
+            next_symptom = Symptom(
+                name=f"Batuk {number}",
+                properties=[
+                    BinarySymptomProperty(
+                        name="Kekambuhan",
+                        description="Contoh deskripsi",
+                    ),
+                    DiscreteSymptomProperty(
+                        name="Jenis batuk",
+                        description="Contoh deskripsi",
+                        possible_answers=["Kering", "Berdahak"]
+                    ),
+                    DiscreteSymptomProperty(
+                        name="Cairan hidung & tenggorokan",
+                        description="Contoh deskripsi",
+                        possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
+                    )
+                ]
+            )
+            symptoms.append(next_symptom)
+            st.rerun()
+
+        st.text("Done I think")
