@@ -12,11 +12,13 @@ class Symptom:
             name: str,
             description: str = "",
             properties: list[SymptomProperty] = [],
+            section: str = "",
     ):
         self.name = name
         self.description = description
         self.answer: bool | None = None
         self.properties = properties
+        self.section = section
     
     def get_name(self):
         return self.name
@@ -32,6 +34,37 @@ class Symptom:
     
     def get_answer(self):
         return self.answer
+
+class DummySymptomManager:
+    def __init__(self, symptoms: list[Symptom] = []):
+        self.symptoms = symptoms
+
+    def take_symptom_to_ask(self):
+        name = "Batuk"
+        if len(self.symptoms) >= 1:
+            name = f"{name} {len(self.symptoms) + 1}"
+
+        new_symptom = Symptom(
+            name=name,
+            properties=[
+                BinarySymptomProperty(
+                    name="Kekambuhan",
+                    description="Contoh deskripsi",
+                ),
+                DiscreteSymptomProperty(
+                    name="Jenis batuk",
+                    description="Contoh deskripsi",
+                    possible_answers=["Kering", "Berdahak"]
+                ),
+                DiscreteSymptomProperty(
+                    name="Cairan hidung & tenggorokan",
+                    description="Contoh deskripsi",
+                    possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
+                )
+            ]
+        )
+        self.symptoms.append(new_symptom)
+        return new_symptom
 
 def streamlit_ask_symptom_existence(symptom: Symptom):
     name = symptom.get_name()
@@ -60,29 +93,13 @@ def streamlit_ask_property(property: SymptomProperty):
 
 st.title("Kodok")
 if "symptoms" not in st.session_state:
-    first_symptom = Symptom(
-        name="Batuk",
-        properties=[
-            BinarySymptomProperty(
-                name="Kekambuhan",
-                description="Contoh deskripsi",
-            ),
-            DiscreteSymptomProperty(
-                name="Jenis batuk",
-                description="Contoh deskripsi",
-                possible_answers=["Kering", "Berdahak"]
-            ),
-            DiscreteSymptomProperty(
-                name="Cairan hidung & tenggorokan",
-                description="Contoh deskripsi",
-                possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
-            )
-        ]
-    )
-    st.session_state["symptoms"] = [first_symptom]
+    manager = DummySymptomManager()
+    manager.take_symptom_to_ask()
+    st.session_state["symptoms"] = manager.symptoms
     st.rerun()
 
-symptoms: list[Symptom] = st.session_state["symptoms"]
+manager = DummySymptomManager(st.session_state["symptoms"])
+symptoms: list[Symptom] = manager.symptoms
 current_symptom = symptoms[-1]
 if (current_symptom_exists := current_symptom.get_answer()) is None:
     streamlit_ask_symptom_existence(current_symptom)
@@ -119,27 +136,7 @@ else:
                     next_symptom_needed = False
         
         if next_symptom_needed:
-            number = len(st.session_state["symptoms"]) + 1
-            next_symptom = Symptom(
-                name=f"Batuk {number}",
-                properties=[
-                    BinarySymptomProperty(
-                        name="Kekambuhan",
-                        description="Contoh deskripsi",
-                    ),
-                    DiscreteSymptomProperty(
-                        name="Jenis batuk",
-                        description="Contoh deskripsi",
-                        possible_answers=["Kering", "Berdahak"]
-                    ),
-                    DiscreteSymptomProperty(
-                        name="Cairan hidung & tenggorokan",
-                        description="Contoh deskripsi",
-                        possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
-                    )
-                ]
-            )
-            symptoms.append(next_symptom)
+            manager.take_symptom_to_ask()
             st.rerun()
 
         st.text("Done I think")
