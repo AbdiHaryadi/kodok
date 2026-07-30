@@ -1,3 +1,5 @@
+import random
+
 import streamlit as st
 
 from symptom import (
@@ -35,40 +37,46 @@ class Symptom:
     def get_answer(self):
         return self.answer
 
-class DummySymptomManager:
-    def __init__(self, symptoms: list[Symptom] = []):
+    def get_section(self):
+        return self.section
+
+class SymptomChoser:
+    def __init__(self, symptoms: list[Symptom]) -> None:
         self.symptoms = symptoms
+        self.rng = random.Random(120)
+
+    def take_one(
+            self,
+            section: str | None = None
+    ):
+        result: Symptom | None = None
+        attempt = 0
+        while result is None and attempt < 500:
+            attempt += 1
+            index = self.rng.randint(0, len(self.symptoms) - 1)
+            if section is None or self.symptoms[index].section == section:
+                result = self.symptoms.pop(index)
+
+        assert result is not None
+        return result
+
+class DummySymptomManager:
+    def __init__(self, symptoms: list[Symptom]):
+        self.choser = SymptomChoser(symptoms)
+        self.history: list[Symptom] = []
+        self.specific_section: str | None = None
 
     def take_symptom_to_ask(self):
-        name = "Batuk"
-        if len(self.symptoms) >= 1:
-            name = f"{name} {len(self.symptoms) + 1}"
-
-        new_symptom = Symptom(
-            name=name,
-            properties=[
-                BinarySymptomProperty(
-                    name="Kekambuhan",
-                    description="Contoh deskripsi",
-                ),
-                DiscreteSymptomProperty(
-                    name="Jenis batuk",
-                    description="Contoh deskripsi",
-                    possible_answers=["Kering", "Berdahak"]
-                ),
-                DiscreteSymptomProperty(
-                    name="Cairan hidung & tenggorokan",
-                    description="Contoh deskripsi",
-                    possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
-                )
-            ]
-        )
-        self.symptoms.append(new_symptom)
+        new_symptom = self.choser.take_one(section=self.specific_section)
+        self.history.append(new_symptom)
         return new_symptom
+
+    def set_specific_section(self, new_specific_section: str | None):
+        self.specific_section = new_specific_section
 
 def streamlit_ask_symptom_existence(symptom: Symptom):
     name = symptom.get_name()
-    st.text(name)
+    st.text(f"{name} (bagian: {symptom.get_section()})")
 
     answer = None
     if st.button("Ya"):
@@ -92,15 +100,39 @@ def streamlit_ask_property(property: SymptomProperty):
             st.rerun()
 
 st.title("Kodok")
-if "symptoms" not in st.session_state:
-    manager = DummySymptomManager()
+if "manager" not in st.session_state:
+    asked_symptoms: list[Symptom] = []
+    for i in range(100):
+        rng = random.Random(1000 + i)
+        symptom = Symptom(
+            name=f"Gejala {i + 1}",
+            properties=[
+                BinarySymptomProperty(
+                    name="Kekambuhan",
+                    description="Contoh deskripsi",
+                ),
+                DiscreteSymptomProperty(
+                    name="Jenis batuk",
+                    description="Contoh deskripsi",
+                    possible_answers=["Kering", "Berdahak"]
+                ),
+                DiscreteSymptomProperty(
+                    name="Cairan hidung & tenggorokan",
+                    description="Contoh deskripsi",
+                    possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
+                )
+            ],
+            section=f"Bagian {rng.randint(1, 10)}"
+        )
+        asked_symptoms.append(symptom)
+    manager = DummySymptomManager(asked_symptoms)
     manager.take_symptom_to_ask()
-    st.session_state["symptoms"] = manager.symptoms
+    st.session_state["manager"] = manager
     st.rerun()
 
-manager = DummySymptomManager(st.session_state["symptoms"])
-symptoms: list[Symptom] = manager.symptoms
-current_symptom = symptoms[-1]
+manager: DummySymptomManager = st.session_state["manager"]
+asked_symptoms: list[Symptom] = manager.history
+current_symptom = asked_symptoms[-1]
 if (current_symptom_exists := current_symptom.get_answer()) is None:
     streamlit_ask_symptom_existence(current_symptom)
 else:
@@ -119,16 +151,19 @@ else:
         current_symptom_completed = True
 
     if current_symptom_completed:
+        if current_symptom_exists:
+            manager.set_specific_section(current_symptom.get_section())
+        
         # Check if you need more symptoms.
-        any_symptom_exists = any(x.get_answer() is True for x in symptoms)
+        any_symptom_exists = any(x.get_answer() is True for x in asked_symptoms)
         if not any_symptom_exists:
             next_symptom_needed = True
         else:
             streak_to_stop = 3
-            if len(symptoms) < streak_to_stop:
+            if len(asked_symptoms) < streak_to_stop:
                 next_symptom_needed = True
             else:
-                for current_symptom in symptoms[-streak_to_stop:]:
+                for current_symptom in asked_symptoms[-streak_to_stop:]:
                     if current_symptom.get_answer() is True:
                         next_symptom_needed = True
                         break
