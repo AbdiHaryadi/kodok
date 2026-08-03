@@ -14,7 +14,7 @@ class Symptom:
             name: str,
             description: str = "",
             properties: list[SymptomProperty] = [],
-            section: str = "",
+            section: str = "???",
     ):
         self.name = name
         self.description = description
@@ -55,7 +55,9 @@ class SymptomChoser:
             attempt += 1
             index = self.rng.randint(0, len(self.symptoms) - 1)
             if section is None or self.symptoms[index].section == section:
-                result = self.symptoms.pop(index)
+                chosen_symptom = self.symptoms.pop(index)
+                if chosen_symptom.get_answer() is None:
+                    result = chosen_symptom
 
         assert result is not None
         return result
@@ -65,6 +67,16 @@ class DummySymptomManager:
         self.choser = SymptomChoser(symptoms)
         self.history: list[Symptom] = []
         self.specific_section: str | None = None
+        self.done = False
+        self.rng = random.Random()
+        self.symptoms = symptoms
+
+        unasked_sections: list[str] = []
+        for symptom in symptoms:
+            section = symptom.get_section()
+            if section not in unasked_sections:
+                unasked_sections.append(section)
+        self.unasked_sections = unasked_sections
 
     def take_symptom_to_ask(self):
         new_symptom = self.choser.take_one(section=self.specific_section)
@@ -72,7 +84,31 @@ class DummySymptomManager:
         return new_symptom
 
     def set_specific_section(self, new_specific_section: str | None):
+        if new_specific_section is None and self.specific_section is not None:
+            self.unasked_sections.remove(self.specific_section)
         self.specific_section = new_specific_section
+
+    def get_specific_section(self):
+        return self.specific_section
+
+    def get_next_section_to_ask(self):
+        next_section = self.unasked_sections[0]
+        return next_section
+
+    def set_next_section_relevance(self, relevance: bool):
+        next_section = self.get_next_section_to_ask()
+        if relevance:
+            self.history.clear()
+            self.specific_section = next_section
+        else:
+            for symptom in self.symptoms:
+                if symptom.get_section() == next_section and symptom.get_answer() is None:
+                    symptom.set_answer(False)
+            self.unasked_sections.remove(next_section)
+            self.done = self.rng.random() < 0.5
+
+    def is_done(self):
+        return self.done
 
 def streamlit_ask_symptom_existence(symptom: Symptom):
     name = symptom.get_name()
@@ -126,52 +162,71 @@ if "manager" not in st.session_state:
         )
         asked_symptoms.append(symptom)
     manager = DummySymptomManager(asked_symptoms)
-    manager.take_symptom_to_ask()
     st.session_state["manager"] = manager
     st.rerun()
 
 manager: DummySymptomManager = st.session_state["manager"]
-asked_symptoms: list[Symptom] = manager.history
-current_symptom = asked_symptoms[-1]
-if (current_symptom_exists := current_symptom.get_answer()) is None:
-    streamlit_ask_symptom_existence(current_symptom)
+if manager.is_done():
+    st.text("Done I think")
 else:
-    if current_symptom_exists:
-        current_properties = current_symptom.get_properties()
-        for i, current_property in enumerate(current_properties):
-            if current_property.get_answer() is None:
-                st.header(current_symptom.get_name())
-                st.progress(i / len(current_properties))
-                streamlit_ask_property(current_property)
-                current_symptom_completed = False
-                break
+    asked_symptoms: list[Symptom] = manager.history
+    if len(asked_symptoms) == 0:
+        manager.take_symptom_to_ask()
+        st.rerun()
+
+    current_symptom = asked_symptoms[-1]
+    if (current_symptom_exists := current_symptom.get_answer()) is None:
+        streamlit_ask_symptom_existence(current_symptom)
+    else:
+        if current_symptom_exists:
+            current_properties = current_symptom.get_properties()
+            for i, current_property in enumerate(current_properties):
+                if current_property.get_answer() is None:
+                    st.header(current_symptom.get_name())
+                    st.progress(i / len(current_properties))
+                    streamlit_ask_property(current_property)
+                    current_symptom_completed = False
+                    break
+            else:
+                current_symptom_completed = True
         else:
             current_symptom_completed = True
-    else:
-        current_symptom_completed = True
 
-    if current_symptom_completed:
-        if current_symptom_exists:
-            manager.set_specific_section(current_symptom.get_section())
-        
-        # Check if you need more symptoms.
-        any_symptom_exists = any(x.get_answer() is True for x in asked_symptoms)
-        if not any_symptom_exists:
-            next_symptom_needed = True
-        else:
-            streak_to_stop = 3
-            if len(asked_symptoms) < streak_to_stop:
+        if current_symptom_completed:
+            if current_symptom_exists:
+                manager.set_specific_section(current_symptom.get_section())
+            
+            # Check if you need more symptoms.
+            any_symptom_exists = any(x.get_answer() is True for x in asked_symptoms)
+            if not any_symptom_exists:
                 next_symptom_needed = True
             else:
-                for current_symptom in asked_symptoms[-streak_to_stop:]:
-                    if current_symptom.get_answer() is True:
-                        next_symptom_needed = True
-                        break
+                streak_to_stop = 3
+                if len(asked_symptoms) < streak_to_stop:
+                    next_symptom_needed = True
                 else:
-                    next_symptom_needed = False
-        
-        if next_symptom_needed:
-            manager.take_symptom_to_ask()
-            st.rerun()
+                    for current_symptom in asked_symptoms[-streak_to_stop:]:
+                        if current_symptom.get_answer() is True:
+                            next_symptom_needed = True
+                            break
+                    else:
+                        next_symptom_needed = False
+            
+            if next_symptom_needed:
+                manager.take_symptom_to_ask()
+                st.rerun()
 
-        st.text("Done I think")
+            manager.set_specific_section(None)
+
+            section = manager.get_next_section_to_ask()
+            st.text(f"Ada keluhan di \"{section}\"?")
+        
+            answer = None
+            if st.button("Ya"):
+                answer = True
+            if st.button("Tidak"):
+                answer = False
+        
+            if answer is not None:
+                manager.set_next_section_relevance(answer)
+                st.rerun()
