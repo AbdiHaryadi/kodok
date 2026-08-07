@@ -1,3 +1,4 @@
+import json
 import random
 
 import streamlit as st
@@ -138,29 +139,23 @@ def streamlit_ask_property(property: SymptomProperty):
 st.title("Kodok")
 if "manager" not in st.session_state:
     asked_symptoms: list[Symptom] = []
-    for i in range(100):
-        rng = random.Random(1000 + i)
-        symptom = Symptom(
-            name=f"Gejala {i + 1}",
-            properties=[
-                BinarySymptomProperty(
-                    name="Kekambuhan",
-                    description="Contoh deskripsi",
-                ),
-                DiscreteSymptomProperty(
-                    name="Jenis batuk",
-                    description="Contoh deskripsi",
-                    possible_answers=["Kering", "Berdahak"]
-                ),
-                DiscreteSymptomProperty(
-                    name="Cairan hidung & tenggorokan",
-                    description="Contoh deskripsi",
-                    possible_answers=["Cair & Bening", "Kental & Kuning Kehijauan"]
-                )
-            ],
-            section=f"Bagian {rng.randint(1, 10)}"
-        )
-        asked_symptoms.append(symptom)
+    with open("sample.json") as fp:
+        json_data = json.load(fp)
+    st.code(json_data)
+
+    for section_data in json_data["sections"]:
+        for symptom_data in section_data["symptoms"]:
+            symptom = Symptom(
+                name=symptom_data["name"],
+                properties=[
+                    BinarySymptomProperty(
+                        name=symptom_property["name"],
+                        description="Contoh deskripsi",
+                    ) for symptom_property in symptom_data.get("properties", [])
+                ],
+                section=section_data["name"]
+            )
+            asked_symptoms.append(symptom)
     manager = DummySymptomManager(asked_symptoms)
     st.session_state["manager"] = manager
     st.rerun()
