@@ -5,18 +5,6 @@ from symptom import Symptom, SymptomProperty
 class Action:
     pass
 
-class AskSymptom(Action):
-    def __init__(self, symptom: str):
-        self.symptom = symptom
-
-class AskSymptomProperty(Action):
-    def __init__(self, symptom_property: str):
-        self.symptom_property = symptom_property
-
-class AskSection(Action):
-    def __init__(self, section: str):
-        self.section = section
-
 class GivePrediction(Action):
     pass
 
@@ -81,6 +69,12 @@ class PatientState:
     def is_symptom_property_asked(self, symptom_property: SymptomProperty):
         return symptom_property in self.symptom_property_answers
 
+    def copy(self):
+        return PatientState(
+            symptom_occurences=self.symptom_occurences.copy(),
+            symptom_property_answers=self.symptom_property_answers.copy(),
+        )
+
 class Predictor:
     def is_confidence_enough(self):
         return random.random() < 0.5
@@ -127,9 +121,9 @@ class DoctorState:
         return GivePrediction()
 
     def get_action_for_asking_new_symptom_property(self, symptom: Symptom):
-        for symptom_property in symptom.get_properties():
-            if self.patient_state.is_symptom_property_asked(symptom_property):
-                return AskSymptomProperty(symptom_property.get_name())
+        for i, symptom_property in enumerate(symptom.get_properties()):
+            if not self.patient_state.is_symptom_property_asked(symptom_property):
+                return AskSymptomProperty(self, symptom, symptom_property, previous_property_completed=i)
 
         return None
 
@@ -141,7 +135,7 @@ class DoctorState:
             if self.patient_state.is_symptom_asked(symptom):
                 continue
 
-            return AskSymptom(symptom.get_name())
+            return AskSymptom(self, symptom)
 
         return None
 
@@ -150,9 +144,75 @@ class DoctorState:
             if symptom in self.patient_state.symptom_occurences:
                 continue
 
-            return AskSection(symptom.get_section())
+            return AskSection(self, symptom.get_section())
 
         return None
 
     def is_prediction_enough(self):
         return self.done
+
+    def copy(self):
+        return DoctorState(
+            symptoms=self.symptoms.copy(),
+            patient_state=self.patient_state.copy(),
+            specific_section=self.specific_section,
+            current_symptom=self.current_symptom,
+            no_symptom_streak=self.no_symptom_streak,
+            need_ask_other_section=self.need_ask_other_section,
+        )
+
+class AskSymptom(Action):
+    def __init__(self, state: DoctorState, symptom: Symptom):
+        self.state = state
+        self.symptom = symptom
+
+    def answer(self, exists: bool) -> DoctorState:
+        new_state = self.state.copy()
+        new_state.patient_state.symptom_occurences[self.symptom] = exists
+        if exists:
+            new_state.specific_section = self.symptom.get_section()
+            new_state.current_symptom = self.symptom
+            new_state.no_symptom_streak = 0
+        else:
+            new_state.no_symptom_streak += 1
+
+        return new_state
+
+class AskSection(Action):
+    def __init__(self, state: DoctorState, section: str):
+        self.state = state
+        self.section = section
+
+    def answer(self, exists_symptom_in_this_section: bool) -> DoctorState:
+        new_state = self.state.copy()
+        if exists_symptom_in_this_section:
+            new_state.specific_section = self.section
+            new_state.current_symptom = None
+            new_state.no_symptom_streak = 0
+            new_state.need_ask_other_section = True
+        else:
+            for symptom in self.state.symptoms:
+                if symptom.get_section() == self.section:
+                    new_state.patient_state.symptom_occurences[symptom] = False
+            
+            new_state.need_ask_other_section = False
+
+        return new_state
+
+class AskSymptomProperty(Action):
+    def __init__(
+            self,
+            state: DoctorState,
+            symptom: Symptom,
+            symptom_property: SymptomProperty,
+            previous_property_completed: int = 0,
+    ):
+        self.state = state
+        self.symptom = symptom
+        self.symptom_property = symptom_property
+        self.previous_property_completed = previous_property_completed
+
+    def answer(self, value: str):
+        new_state = self.state.copy()
+        new_state.patient_state.symptom_property_answers[self.symptom_property] = value
+        return new_state
