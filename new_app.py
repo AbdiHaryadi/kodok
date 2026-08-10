@@ -6,40 +6,9 @@ import streamlit as st
 from symptom import (
     BinarySymptomProperty,
     DiscreteSymptomProperty,
+    Symptom,
     SymptomProperty,
 )
-
-class Symptom:
-    def __init__(
-            self,
-            name: str,
-            description: str = "",
-            properties: list[SymptomProperty] = [],
-            section: str = "???",
-    ):
-        self.name = name
-        self.description = description
-        self.answer: bool | None = None
-        self.properties = properties
-        self.section = section
-    
-    def get_name(self):
-        return self.name
-    
-    def get_description(self):
-        return self.description
-    
-    def set_answer(self, answer: bool):
-        self.answer = answer
-
-    def get_properties(self):
-        return self.properties.copy()
-    
-    def get_answer(self):
-        return self.answer
-
-    def get_section(self):
-        return self.section
 
 class SymptomChoser:
     def __init__(self, symptoms: list[Symptom]) -> None:
