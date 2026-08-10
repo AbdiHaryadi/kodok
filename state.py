@@ -6,11 +6,11 @@ class Action:
     pass
 
 class AskSymptom(Action):
-    def __init__(self, symptom: Symptom):
+    def __init__(self, symptom: str):
         self.symptom = symptom
 
 class AskSymptomProperty(Action):
-    def __init__(self, symptom_property: SymptomProperty):
+    def __init__(self, symptom_property: str):
         self.symptom_property = symptom_property
 
 class AskSection(Action):
@@ -19,6 +19,42 @@ class AskSection(Action):
 
 class GivePrediction(Action):
     pass
+
+class PatientSymptomPropertyInfo:
+    def __init__(
+            self,
+            name: str,
+            value: str,
+            subproperties: list["PatientSymptomPropertyInfo"] | None = None,
+    ):
+            self.name = name
+            self.value = value
+            self.subproperties = [] if subproperties is None else subproperties
+
+    def copy(self):
+        return PatientSymptomPropertyInfo(
+            name=self.name,
+            value=self.value,
+            subproperties=self.subproperties.copy() 
+        )
+
+class PatientSymptomInfo:
+    def __init__(
+            self,
+            name: str,
+            value: bool = True,
+            properties: list[PatientSymptomPropertyInfo] | None = None,
+    ):
+        self.name = name
+        self.value = value
+        self.properties = [] if properties is None else properties
+
+    def copy(self):
+        return PatientSymptomInfo(
+            name=self.name,
+            value=self.value,
+            properties=[property.copy() for property in self.properties]
+        )
 
 class PatientState:
     def __init__(
@@ -93,7 +129,7 @@ class DoctorState:
     def get_action_for_asking_new_symptom_property(self, symptom: Symptom):
         for symptom_property in symptom.get_properties():
             if self.patient_state.is_symptom_property_asked(symptom_property):
-                return AskSymptomProperty(symptom_property)
+                return AskSymptomProperty(symptom_property.get_name())
 
         return None
 
@@ -105,7 +141,7 @@ class DoctorState:
             if self.patient_state.is_symptom_asked(symptom):
                 continue
 
-            return AskSymptom(symptom)
+            return AskSymptom(symptom.get_name())
 
         return None
 
