@@ -75,6 +75,15 @@ class PatientState:
             symptom_property_answers=self.symptom_property_answers.copy(),
         )
 
+    @classmethod
+    def from_string_dict(cls, symptom_occurences: dict[str, bool] | None = None):
+        return cls(
+            symptom_occurences={
+                Symptom(name=name): occured
+                for name, occured in symptom_occurences.items()
+            } if symptom_occurences is not None else None
+        )
+
 class Predictor:
     def is_confidence_enough(self):
         return random.random() < 0.5
