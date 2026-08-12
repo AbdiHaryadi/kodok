@@ -6,19 +6,12 @@ class SymptomProperty:
     ):
         self.name = name
         self.description = description
-        self.answer: str | None = None
 
     def get_name(self):
         return self.name
     
     def get_description(self):
         return self.description
-    
-    def get_answer(self):
-        return self.answer
-    
-    def set_answer(self, answer: str):
-        self.answer = answer
 
 class DiscreteSymptomProperty(SymptomProperty):
     def __init__(
@@ -32,12 +25,9 @@ class DiscreteSymptomProperty(SymptomProperty):
 
     def get_possible_answers(self):
         return self.possible_answers.copy()
-    
-    def set_answer(self, answer: str):
-        if answer not in self.possible_answers:
-            raise ValueError("Invalid answer!")
 
-        return super().set_answer(answer)
+    def is_valid_answer(self, answer: str):
+        return answer in self.possible_answers
     
 class BinarySymptomProperty(DiscreteSymptomProperty):
     def __init__(self, name: str, description: str = ""):
@@ -57,7 +47,6 @@ class Symptom:
     ):
         self.name = name
         self.description = description
-        self.answer: bool | None = None
         self.properties = properties
         self.section = section
     
@@ -66,15 +55,9 @@ class Symptom:
     
     def get_description(self):
         return self.description
-    
-    def set_answer(self, answer: bool):
-        self.answer = answer
 
     def get_properties(self):
         return self.properties.copy()
-    
-    def get_answer(self):
-        return self.answer
 
     def get_section(self):
         return self.section
