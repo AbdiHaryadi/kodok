@@ -119,11 +119,17 @@ class DoctorState:
             or self.no_symptom_streak < 3
         ):
             action = self.get_action_for_asking_new_symptom()
+            if action is None:
+                action = self.get_action_for_asking_new_symptom(ignore_specific_section=True)
+
             if action is not None:
                 return action
 
         if self.need_ask_other_section or (not self.is_prediction_enough()):
             action = self.get_action_for_asking_new_section()
+            if action is None:
+                action = self.get_action_for_asking_new_symptom(ignore_specific_section=True)
+
             if action is not None:
                 return action
         
@@ -136,13 +142,20 @@ class DoctorState:
 
         return None
 
-    def get_action_for_asking_new_symptom(self):
+    def get_action_for_asking_new_symptom(self, ignore_specific_section: bool = False):
         for symptom in self.symptoms:
-            if self.specific_section is not None and symptom.get_section() != self.specific_section:
+            if (
+                (not ignore_specific_section)
+                and self.specific_section is not None
+                and symptom.get_section() != self.specific_section
+            ):
                 continue
 
             if self.patient_state.is_symptom_asked(symptom):
                 continue
+
+            if ignore_specific_section:
+                print("Warning: Asking unasked, but not related to specific section.")
 
             return AskSymptom(self, symptom)
 
