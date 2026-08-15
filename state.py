@@ -107,33 +107,30 @@ class DoctorState:
         self.current_symptom = current_symptom
         self.no_symptom_streak = no_symptom_streak
         self.need_ask_other_section = need_ask_other_section
-    
-    def act(self) -> Action:
+
+    def act_based_on_flowchart(self, ignore_specific_section: bool = False) -> Action | None:
         if self.current_symptom is not None:
-            action = self.get_action_for_asking_new_symptom_property(self.current_symptom)
-            if action is not None:
-                return action
+            return self.get_action_for_asking_new_symptom_property(self.current_symptom)
 
         if (
             (not self.patient_state.is_at_least_one_symptom_occured(specific_section=self.specific_section))
             or self.no_symptom_streak < 3
         ):
-            action = self.get_action_for_asking_new_symptom()
-            if action is None:
-                action = self.get_action_for_asking_new_symptom(ignore_specific_section=True)
-
-            if action is not None:
-                return action
+            return self.get_action_for_asking_new_symptom(ignore_specific_section=ignore_specific_section)
 
         if self.need_ask_other_section or (not self.is_prediction_enough()):
-            action = self.get_action_for_asking_new_section()
-            if action is None:
-                action = self.get_action_for_asking_new_symptom(ignore_specific_section=True)
-
-            if action is not None:
-                return action
+            return self.get_action_for_asking_new_section()
         
         return GivePrediction()
+    
+    def act(self) -> Action:
+        action = self.act_based_on_flowchart()
+        if action is None:
+            action = self.act_based_on_flowchart(ignore_specific_section=True)
+        if action is None:
+            action = GivePrediction()
+
+        return action
 
     def get_action_for_asking_new_symptom_property(self, symptom: Symptom):
         for i, symptom_property in enumerate(symptom.get_properties()):
