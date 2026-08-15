@@ -1,97 +1,21 @@
-import random
-
+from disease import Disease
+from patient import PatientState
 from symptom import Symptom, SymptomProperty
+
 
 class Action:
     pass
 
-class GivePrediction(Action):
-    pass
-
-class PatientSymptomPropertyInfo:
-    def __init__(
-            self,
-            name: str,
-            value: str,
-            subproperties: list["PatientSymptomPropertyInfo"] | None = None,
-    ):
-            self.name = name
-            self.value = value
-            self.subproperties = [] if subproperties is None else subproperties
-
-    def copy(self):
-        return PatientSymptomPropertyInfo(
-            name=self.name,
-            value=self.value,
-            subproperties=self.subproperties.copy() 
-        )
-
-class PatientSymptomInfo:
-    def __init__(
-            self,
-            name: str,
-            value: bool = True,
-            properties: list[PatientSymptomPropertyInfo] | None = None,
-    ):
+class DiseasePrediction:
+    def __init__(self, name: str, predicate: str):
         self.name = name
-        self.value = value
-        self.properties = [] if properties is None else properties
-
-    def copy(self):
-        return PatientSymptomInfo(
-            name=self.name,
-            value=self.value,
-            properties=[property.copy() for property in self.properties]
-        )
-
-class PatientState:
-    def __init__(
-            self,
-            symptom_occurences: dict[Symptom, bool] | None = None,
-            symptom_property_answers: dict[SymptomProperty, str] | None = None,
-    ):
-        self.symptom_occurences = {} if symptom_occurences is None else symptom_occurences
-        self.symptom_property_answers = {} if symptom_property_answers is None else symptom_property_answers
-
-    def is_at_least_one_symptom_occured(self, specific_section: str | None):
-        for symptom, occured in self.symptom_occurences.items():
-            if specific_section is not None and symptom.get_section() != specific_section:
-                continue
-
-            if occured:
-                return True
-
-        return False
-
-    def is_symptom_asked(self, symptom: Symptom):
-        return symptom in self.symptom_occurences
-
-    def is_symptom_property_asked(self, symptom_property: SymptomProperty):
-        return symptom_property in self.symptom_property_answers
-
-    def copy(self):
-        return PatientState(
-            symptom_occurences=self.symptom_occurences.copy(),
-            symptom_property_answers=self.symptom_property_answers.copy(),
-        )
-
-    @classmethod
-    def from_string_dict(cls, symptom_occurences: dict[str, bool] | None = None):
-        return cls(
-            symptom_occurences={
-                Symptom(name=name): occured
-                for name, occured in symptom_occurences.items()
-            } if symptom_occurences is not None else None
-        )
-
-class Predictor:
-    def is_confidence_enough(self):
-        return random.random() < 0.5
+        self.predicate = predicate
 
 class DoctorState:
     def __init__(
             self,
             symptoms: list[Symptom],
+            diseases: list[Disease] | None = None,
             patient_state: PatientState | None = None,
             specific_section: str | None = None,
             current_symptom: Symptom | None = None,
@@ -102,6 +26,7 @@ class DoctorState:
         self.done = False
 
         self.symptoms = symptoms
+        self.diseases = [] if diseases is None else diseases
         self.patient_state = PatientState() if patient_state is None else patient_state
         self.specific_section = specific_section
         self.current_symptom = current_symptom
@@ -110,7 +35,9 @@ class DoctorState:
 
     def act_based_on_flowchart(self, ignore_specific_section: bool = False) -> Action | None:
         if self.current_symptom is not None:
-            return self.get_action_for_asking_new_symptom_property(self.current_symptom)
+            action = self.get_action_for_asking_new_symptom_property(self.current_symptom)
+            if action is not None:
+                return action
 
         if (
             (not self.patient_state.is_at_least_one_symptom_occured(specific_section=self.specific_section))
@@ -121,14 +48,24 @@ class DoctorState:
         if self.need_ask_other_section or (not self.is_prediction_enough()):
             return self.get_action_for_asking_new_section()
         
-        return GivePrediction()
+        return self.get_action_for_giving_prediction()
+
+    def get_action_for_giving_prediction(self):
+        print(self.diseases)
+        chosen_prediction = self.diseases[0]
+        return GivePrediction([DiseasePrediction(
+            name=chosen_prediction.name,
+            predicate="(TBA)"
+        )])
     
     def act(self) -> Action:
         action = self.act_based_on_flowchart()
         if action is None:
             action = self.act_based_on_flowchart(ignore_specific_section=True)
+            if action is not None:
+                print("Warning: Action found by ignoring specific section.")
         if action is None:
-            action = GivePrediction()
+            action = self.get_action_for_giving_prediction()
 
         return action
 
@@ -173,6 +110,7 @@ class DoctorState:
     def copy(self):
         return DoctorState(
             symptoms=self.symptoms.copy(),
+            diseases=self.diseases.copy(),
             patient_state=self.patient_state.copy(),
             specific_section=self.specific_section,
             current_symptom=self.current_symptom,
@@ -235,3 +173,7 @@ class AskSymptomProperty(Action):
         new_state = self.state.copy()
         new_state.patient_state.symptom_property_answers[self.symptom_property] = value
         return new_state
+
+class GivePrediction(Action):
+    def __init__(self, predictions: list[DiseasePrediction]):
+        self.predictions = predictions

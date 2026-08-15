@@ -1,4 +1,4 @@
-from state import PatientState
+from patient import PatientState
 
 
 class DiseaseSymptomPropertyInfo:

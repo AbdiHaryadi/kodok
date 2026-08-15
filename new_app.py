@@ -2,7 +2,8 @@ import json
 
 import streamlit as st
 
-from state import AskSection, AskSymptom, AskSymptomProperty, DoctorState, GivePrediction
+from disease import Disease
+from doctor import AskSection, AskSymptom, AskSymptomProperty, DoctorState, GivePrediction
 from symptom import (
     BinarySymptomProperty,
     DiscreteSymptomProperty,
@@ -61,7 +62,7 @@ if "state" not in st.session_state:
             )
             asked_symptoms.append(symptom)
 
-    state = DoctorState(symptoms=asked_symptoms)
+    state = DoctorState(symptoms=asked_symptoms, diseases=[Disease(name="Covid", symptom_infos=[])])
     st.session_state["state"] = state
     st.rerun()
 
@@ -69,8 +70,9 @@ state: DoctorState = st.session_state["state"]
 action = state.act()
 
 if isinstance(action, GivePrediction):
-    st.text("Hasil prediksi (contoh): Covid")
-    st.text("Tingkat: sedang")
+    st.text(f"Hasil prediksi:")
+    for index, pred in enumerate(action.predictions):
+        st.text(f"{index + 1}. {pred.name} (Tingkat: {pred.predicate})")
 elif isinstance(action, AskSymptom):
     streamlit_ask_symptom_existence(action)
 elif isinstance(action, AskSymptomProperty):
