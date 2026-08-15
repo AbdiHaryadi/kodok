@@ -96,11 +96,16 @@ class DoctorState:
         return None
 
     def get_action_for_asking_new_section(self):
-        for symptom in self.symptoms:
-            if symptom in self.patient_state.symptom_occurences:
-                continue
+        not_asked_sections: list[str] = []
+        for symptom in self.patient_state.symptom_occurences:
+            section = symptom.get_section()
+            if section is not None and section not in not_asked_sections:
+                not_asked_sections.append(section)
 
-            return AskSection(self, symptom.get_section())
+        for symptom in self.symptoms:
+            section = symptom.get_section()
+            if section is not None and section not in not_asked_sections:
+                return AskSection(self, section)
 
         return None
 

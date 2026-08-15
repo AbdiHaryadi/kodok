@@ -5,7 +5,6 @@ import streamlit as st
 from disease import Disease
 from doctor import AskSection, AskSymptom, AskSymptomProperty, DoctorState, GivePrediction
 from symptom import (
-    BinarySymptomProperty,
     DiscreteSymptomProperty,
     Symptom,
 )
