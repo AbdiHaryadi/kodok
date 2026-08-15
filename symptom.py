@@ -43,7 +43,7 @@ class Symptom:
             name: str,
             description: str = "",
             properties: list[SymptomProperty] = [],
-            section: str = "???",
+            section: str | None = None,
     ):
         self.name = name
         self.description = description
