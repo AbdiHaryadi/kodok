@@ -37,6 +37,15 @@ class BinarySymptomProperty(DiscreteSymptomProperty):
             possible_answers=["Ya", "Tidak"]
         )
 
+def symptom_property_factory(symptom_property_data: dict):
+    if "possible_answers" in symptom_property_data:
+        return DiscreteSymptomProperty(
+            name=symptom_property_data["name"],
+            possible_answers=symptom_property_data["possible_answers"]
+        )
+    else:
+        return BinarySymptomProperty(name=symptom_property_data["name"])
+
 class Symptom:
     def __init__(
             self,
@@ -61,3 +70,14 @@ class Symptom:
 
     def get_section(self):
         return self.section
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            name=data["name"],
+            section=data.get("section", None),
+            properties=[
+                symptom_property_factory(property_data)
+                for property_data in data.get("properties", [])
+            ]
+        )

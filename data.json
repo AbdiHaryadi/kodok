@@ -1,0 +1,429 @@
+{
+    "diseases": [
+        {
+            "name": "Common Cold (Batuk Pilek)",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Jarang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Kering",
+                            "frequency": "Jarang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Sering"
+                        }
+                    ]
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Suara serak",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "properties": [
+                        {
+                            "name": "Kekentalan",
+                            "value": "Cair"
+                        },
+                        {
+                            "name": "Warna",
+                            "value": "Bening"
+                        }
+                    ]
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Sering",
+                    "properties": [
+                        {
+                            "name": "Keparahan",
+                            "value": "Ringan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Mata gatal",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Kadang",
+                    "properties": [
+                        {
+                            "name": "Keparahan",
+                            "value": "Ringan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri menelan",
+                    "frequency": "Jarang"
+                }
+            ]
+        },
+        {
+            "name": "Tonsilofaringitis Bakterial",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Kadang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Kering",
+                            "frequency": "Jarang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Jarang"
+                        }
+                    ]
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "Sering",
+                    "properties": [
+                        {
+                            "name": "Tonjolan sangat terlihat"
+                        }
+                    ]
+                },
+                {
+                    "name": "Suara serak",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "properties": [
+                        {
+                            "name": "Kekentalan",
+                            "value": "Kental"
+                        },
+                        {
+                            "name": "Warna",
+                            "value": "Kuning kehijauan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Sering",
+                    "properties": [
+                        {
+                            "name": "Keparahan",
+                            "value": "Sedang-berat"
+                        }
+                    ]
+                },
+                {
+                    "name": "Mata gatal",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Sering",
+                    "properties": [
+                        {
+                            "name": "Keparahan",
+                            "value": "Sedang-berat"
+                        }
+                    ]
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri menelan",
+                    "frequency": "Sering"
+                }
+            ]
+        },
+        {
+            "name": "Sinusitis Bakterial",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Kadang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Kering",
+                            "frequency": "Jarang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Jarang"
+                        }
+                    ]
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "properties": [
+                        {
+                            "name": "Kekentalan",
+                            "value": "Kental"
+                        },
+                        {
+                            "name": "Warna",
+                            "value": "Kuning kehijauan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Mata gatal",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Jarang",
+                    "properties": [
+                        {
+                            "name": "Nyeri pada wajah"
+                        }
+                    ]
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri menelan",
+                    "frequency": "Jarang"
+                }
+            ]
+        }
+    ],
+    "symptoms": [
+        {
+            "name": "Batuk",
+            "section": "THT",
+            "properties": [
+                {
+                    "name": "Durasi",
+                    "possible_answers": [
+                        "< 7 hari",
+                        "> 7 hari",
+                        "> 14 hari"
+                    ]
+                },
+                {
+                    "name": "Kekambuhan"
+                },
+                {
+                    "name": "Jenis",
+                    "possible_answers": [
+                        "Kering",
+                        "Berdahak"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Nyeri tenggorokan",
+            "section": "THT",
+            "properties": [
+                {
+                    "name": "Tonjolan sangat terlihat"
+                }
+            ]
+        },
+        {
+            "name": "Suara serak",
+            "section": "THT"
+        },
+        {
+            "name": "Demam"
+        },
+        {
+            "name": "Hidung tersumbat",
+            "section": "THT"
+        },
+        {
+            "name": "Hidung berair",
+            "section": "THT"
+        },
+        {
+            "name": "Cairan hidung & tenggorokan",
+            "section": "THT",
+            "properties": [
+                {
+                    "name": "Kekentalan",
+                    "possible_answers": [
+                        "Cair",
+                        "Kental"
+                    ]
+                },
+                {
+                    "name": "Warna",
+                    "possible_answers": [
+                        "Bening",
+                        "Kuning kehijauan"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Myalgia (nyeri tubuh)",
+            "properties": [
+                {
+                    "name": "Keparahan",
+                    "possible_answers": [
+                        "Ringan",
+                        "Sedang-berat"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Mata gatal",
+            "section": "Mata"
+        },
+        {
+            "name": "Mata berair",
+            "section": "Mata"
+        },
+        {
+            "name": "Bersin",
+            "section": "THT"
+        },
+        {
+            "name": "Nyeri kepala",
+            "section": "Kepala",
+            "properties": [
+                {
+                    "name": "Keparahan",
+                    "possible_answers": [
+                        "Ringan",
+                        "Sedang-berat"
+                    ]
+                },
+                {
+                    "name": "Nyeri pada wajah"
+                }
+            ]
+        },
+        {
+            "name": "Sesak napas",
+            "section": "Paru"
+        },
+        {
+            "name": "Nyeri dada",
+            "section": "Dada"
+        },
+        {
+            "name": "Penurunan berat badan"
+        },
+        {
+            "name": "Keringat malam"
+        },
+        {
+            "name": "Nyeri menelan",
+            "section": "THT"
+        }
+    ]
+}

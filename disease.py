@@ -14,6 +14,14 @@ class DiseaseSymptomPropertyInfo:
             self.frequency = frequency
             self.subproperties = [] if subproperties is None else subproperties
 
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            name=data["name"],
+            value=data.get("value", None),
+            frequency=data.get("frequency", None)
+        )
+
 class DiseaseSymptomInfo:
     def __init__(
             self,
@@ -40,6 +48,17 @@ class DiseaseSymptomInfo:
         
         raise NotImplementedError(f"Unknown frequency score for {self.frequency}")
 
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            name=data["name"],
+            frequency=data.get("frequency", None),
+            properties=[
+                DiseaseSymptomPropertyInfo.from_dict(prop_data)
+                for prop_data in data.get("properties", [])
+            ]
+        )
+
 class Disease:
     def __init__(
             self,
@@ -62,6 +81,16 @@ class Disease:
                     break
 
         return score
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            name=data["name"],
+            symptom_infos=[
+                DiseaseSymptomInfo.from_dict(symptom_data)
+                for symptom_data in data["symptoms"]
+            ]
+        )
 
 sample_disease = Disease(
     name="Common Cold (Batuk Pilek)",

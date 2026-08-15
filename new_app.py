@@ -43,26 +43,19 @@ def streamlit_ask_property(action: AskSymptomProperty):
 
 st.title("Kodok")
 if "state" not in st.session_state:
-    asked_symptoms: list[Symptom] = []
-    with open("sample.json") as fp:
+    with open("data.json") as fp:
         json_data = json.load(fp)
-    st.code(json_data)
+    
+    symptoms = [
+        Symptom.from_dict(symptom_data)
+        for symptom_data in json_data["symptoms"]
+    ]
+    diseases = [
+        Disease.from_dict(disease_data)
+        for disease_data in json_data["diseases"]
+    ]
 
-    for section_data in json_data["sections"]:
-        for symptom_data in section_data["symptoms"]:
-            symptom = Symptom(
-                name=symptom_data["name"],
-                properties=[
-                    BinarySymptomProperty(
-                        name=symptom_property["name"],
-                        description="Contoh deskripsi",
-                    ) for symptom_property in symptom_data.get("properties", [])
-                ],
-                section=section_data["name"]
-            )
-            asked_symptoms.append(symptom)
-
-    state = DoctorState(symptoms=asked_symptoms, diseases=[Disease(name="Covid", symptom_infos=[])])
+    state = DoctorState(symptoms=symptoms, diseases=diseases)
     st.session_state["state"] = state
     st.rerun()
 
