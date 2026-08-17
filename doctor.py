@@ -51,12 +51,12 @@ class DoctorState:
         return self.get_action_for_giving_prediction()
 
     def get_action_for_giving_prediction(self):
-        print(self.diseases)
-        chosen_prediction = self.diseases[0]
+        results = self.diseases.copy()
+        results.sort(key=lambda x: x.give_score(self.patient_state), reverse=True)
         return GivePrediction([DiseasePrediction(
-            name=chosen_prediction.name,
-            predicate="(TBA)"
-        )])
+            name=disease.name,
+            predicate=f"{disease.give_score(self.patient_state)}"
+        ) for disease in results])
     
     def act(self) -> Action:
         action = self.act_based_on_flowchart()
