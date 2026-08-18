@@ -35,16 +35,16 @@ class DiseaseSymptomInfo:
 
     def get_frequency_score(self):
         if self.frequency is None:
-            return 2
+            return 10
 
         if self.frequency == "Jarang":
-            return -3
+            return 1
 
         if self.frequency == "Kadang":
-            return 1
+            return 5
         
         if self.frequency == "Sering":
-            return 3
+            return 15
         
         raise NotImplementedError(f"Unknown frequency score for {self.frequency}")
 
