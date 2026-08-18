@@ -1,3 +1,5 @@
+import math
+
 from disease import Disease
 from patient import PatientState
 from symptom import Symptom, SymptomProperty
@@ -23,7 +25,6 @@ class DoctorState:
             need_ask_other_section: bool = True,
     ):
         self.history: list[Symptom] = []
-        self.done = False
 
         self.symptoms = symptoms
         self.diseases = [] if diseases is None else diseases
@@ -51,12 +52,30 @@ class DoctorState:
         return self.get_action_for_giving_prediction()
 
     def get_action_for_giving_prediction(self):
-        results = self.diseases.copy()
-        results.sort(key=lambda x: x.give_score(self.patient_state), reverse=True)
+        results, scores = self.get_results_and_scores_of_prediction()
+
+        predicates: list[str] = []
+        for x in scores:
+            if x <= 1/3:
+                predicates.append("Rendah")
+            elif x <= 2/3:
+                predicates.append("Sedang")
+            else:
+                predicates.append("Tinggi")
+        
         return GivePrediction([DiseasePrediction(
             name=disease.name,
-            predicate=f"{disease.give_score(self.patient_state)}"
-        ) for disease in results])
+            predicate=pred
+        ) for disease, pred in zip(results, predicates)])
+
+    def get_results_and_scores_of_prediction(self):
+        results = self.diseases.copy()
+        results.sort(key=lambda x: x.give_score(self.patient_state), reverse=True)
+
+        scores = [x.give_score(self.patient_state) for x in results]
+        scores = [math.exp(x / 10) for x in scores]
+        scores = [x / (sum(scores) + 1) for x in scores]
+        return results,scores
     
     def act(self) -> Action:
         action = self.act_based_on_flowchart()
@@ -110,7 +129,8 @@ class DoctorState:
         return None
 
     def is_prediction_enough(self):
-        return self.done
+        _, scores = self.get_results_and_scores_of_prediction()
+        return max(scores) >= 0.95
 
     def copy(self):
         return DoctorState(
