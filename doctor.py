@@ -73,7 +73,7 @@ class DoctorState:
         results.sort(key=lambda x: x.give_score(self.patient_state), reverse=True)
 
         scores = [x.give_score(self.patient_state) for x in results]
-        scores = [math.exp(x / 10) for x in scores]
+        scores = [math.exp(x / 5) for x in scores]
         scores = [x / (sum(scores) + 1) for x in scores]
         return results,scores
     
