@@ -296,6 +296,882 @@
                     "frequency": "Jarang"
                 }
             ]
+        },
+        {
+            "name": "Bronkitis Akut",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Kadang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Sangat sering"
+                        }
+                    ]
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Suara serak",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "properties": [
+                        {
+                            "name": "Kekentalan",
+                            "value": "Kental"
+                        },
+                        {
+                            "name": "Warna",
+                            "value": "Kuning kehijauan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Sering",
+                    "properties": [
+                        {
+                            "name": "Keparahan",
+                            "value": "Ringan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Mata gatal",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Sering",
+                    "properties": [
+                        {
+                            "name": "Keparahan",
+                            "value": "Ringan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Nyeri menelan",
+                    "frequency": "Jarang"
+                }
+            ]
+        },
+        {
+            "name": "Rhinitis Alergi",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "> 7 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Sangat sering"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Kadang"
+                        }
+                    ]
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "properties": [
+                        {
+                            "name": "Kekentalan",
+                            "value": "Cair"
+                        },
+                        {
+                            "name": "Warna",
+                            "value": "Bening"
+                        }
+                    ]
+                },
+                {
+                    "name": "Mata gatal",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Mata berair",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Kadang"
+                }
+            ]
+        },
+        {
+            "name": "Influenza",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Kadang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Kering",
+                            "frequency": "Jarang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Sering"
+                        }
+                    ]
+                },
+                {
+                    "name": "Nyeri tenggorokan",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "properties": [
+                        {
+                            "name": "Kekentalan",
+                            "value": "Cair"
+                        },
+                        {
+                            "name": "Warna",
+                            "value": "Bening"
+                        }
+                    ]
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Sering"
+                }
+            ]
+        },
+        {
+            "name": "Pneumonia",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Kadang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Sering"
+                        }
+                    ]
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Hidung tersumbat",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Hidung berair",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "properties": [
+                        {
+                            "name": "Kekentalan",
+                            "value": "Kental"
+                        },
+                        {
+                            "name": "Warna",
+                            "value": "Kuning kehijauan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Bersin",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Nyeri dada",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Penurunan berat badan",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Keringat malam",
+                    "frequency": "Jarang"
+                }
+            ]
+        },
+        {
+            "name": "Laringitis akut",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Kadang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Kering",
+                            "frequency": "Sering"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Jarang"
+                        }
+                    ]
+                },
+                {
+                    "name": "Suara serak",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Kadang"
+                }
+            ]
+        },
+        {
+            "name": "Tuberculosis",
+            "symptoms": [
+                {
+                    "name": "Batuk",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "> 14 hari"
+                        },
+                        {
+                            "name": "Kekambuhan",
+                            "frequency": "Kadang"
+                        },
+                        {
+                            "name": "Jenis",
+                            "value": "Berdahak",
+                            "frequency": "Sering"
+                        }
+                    ]
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Cairan hidung & tenggorokan",
+                    "properties": [
+                        {
+                            "name": "Kekentalan",
+                            "value": "Kental"
+                        },
+                        {
+                            "name": "Warna",
+                            "value": "Kuning kehijauan"
+                        }
+                    ]
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Nyeri dada",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Penurunan berat badan",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Keringat malam",
+                    "frequency": "Sering"
+                }
+            ]
+        },
+        {
+            "name": "Dyspepsia",
+            "symptoms": [
+                {
+                    "name": "Nyeri ulu hati",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Nyeri memberat setelah makan",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Regurgitasi (Rasa pahit/asam di mulut)",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Sering" 
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Kadang"
+                }
+            ]
+        },
+        {
+            "name": "GERD",
+            "symptoms": [
+                {
+                    "name": "Nyeri ulu hati",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Nyeri memberat setelah makan",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Rasa panas di dada",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Regurgitasi (Rasa pahit/asam di mulut)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Muntah",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Batuk",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Suara serak",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Kadang"
+                }
+            ]
+        },
+        {
+            "name": "Appendicitis Akut",
+            "symptoms": [
+                {
+                    "name": "Nyeri perut kanan bawah",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Nyeri ulu hati",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Nyeri perut kanan atas",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Muntah",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Sering",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        }
+                    ]
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Diare (BAB encer ≥3x/hari)",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Konstipasi",
+                    "frequency": "Jarang"
+                }
+            ]
+        },
+        {
+            "name": "Gastroenteritis Akut",
+            "symptoms": [
+                {
+                    "name": "Nyeri perut (tidak terlokalisir)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Muntah",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Sering",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        }
+                    ]
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Diare (BAB encer ≥3x/hari)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Konstipasi",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Kadang"
+                }
+            ]
+        },
+        {
+            "name": "Demam Tifoid",
+            "symptoms": [
+                {
+                    "name": "Nyeri perut kanan bawah",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri ulu hati",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri perut (tidak terlokalisir)",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Muntah",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Sangat sering",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "> 7 hari"
+                        }
+                    ]
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Diare (BAB encer ≥3x/hari)",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Konstipasi",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Nyeri kepala",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Kadang"
+                }
+            ]
+        },
+        {
+            "name": "Pankreatitis Akut",
+            "symptoms": [
+                {
+                    "name": "Nyeri ulu hati",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Nyeri perut (tidak terlokalisir)",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri memberat setelah makan",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Muntah",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Kadang",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        }
+                    ]
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Diare (BAB encer ≥3x/hari)",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Konstipasi",
+                    "frequency": "Jarang"
+                }
+            ]
+        },
+        {
+            "name": "Cholecystitis",
+            "symptoms": [
+                {
+                    "name": "Nyeri perut (tidak terlokalisir)",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Nyeri perut kanan atas",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Nyeri memberat setelah makan",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Muntah",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Kadang",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        }
+                    ]
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Kekuningan pada Tubuh (mata/badan)",
+                    "frequency": "Sering"
+                }
+            ]
+        },
+        {
+            "name": "Hepatitis",
+            "symptoms": [
+                {
+                    "name": "Nyeri perut kanan atas",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Nyeri memberat setelah makan",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Perut membuncit",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Muntah",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Sesak napas",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Kadang",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        }
+                    ]
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Berat badan menurun",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Myalgia (nyeri tubuh)",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Kekuningan pada Tubuh (mata/badan)",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Pucat (Anemia)",
+                    "frequency": "Jarang"
+                }
+            ]
+        },
+        {
+            "name": "Ascariasis",
+            "symptoms": [
+                {
+                    "name": "Nyeri perut (tidak terlokalisir)",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Perut kembung",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Perut membuncit",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Mual",
+                    "frequency": "Sering"
+                },
+                {
+                    "name": "Muntah",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Demam",
+                    "frequency": "Jarang",
+                    "properties": [
+                        {
+                            "name": "Durasi",
+                            "value": "< 7 hari"
+                        }
+                    ]
+                },
+                {
+                    "name": "Anorexia (hilang nafsu makan)",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Berat badan menurun",
+                    "frequency": "Sangat sering"
+                },
+                {
+                    "name": "Diare (BAB encer ≥3x/hari)",
+                    "frequency": "Jarang"
+                },
+                {
+                    "name": "Konstipasi",
+                    "frequency": "Kadang"
+                },
+                {
+                    "name": "Pucat (Anemia)",
+                    "frequency": "Sangat sering"
+                }
+            ]
         }
     ],
     "symptoms": [
@@ -337,7 +1213,17 @@
             "section": "THT"
         },
         {
-            "name": "Demam"
+            "name": "Demam",
+            "properties": [
+                {
+                    "name": "Durasi",
+                    "possible_answers": [
+                        "< 7 hari",
+                        "> 7 hari",
+                        "> 14 hari"
+                    ]
+                }
+            ]
         },
         {
             "name": "Hidung tersumbat",
@@ -424,6 +1310,67 @@
         {
             "name": "Nyeri menelan",
             "section": "THT"
+        },
+        {
+            "name": "Nyeri perut kanan bawah",
+            "section": "Perut"
+        },
+        {
+            "name": "Nyeri ulu hati",
+            "section": "Perut"
+        },
+        {
+            "name": "Nyeri perut (tidak terlokalisir)",
+            "section": "Perut"
+        },
+        {
+            "name": "Nyeri perut kanan atas",
+            "section": "Perut"
+        },
+        {
+            "name": "Nyeri memberat setelah makan",
+            "section": "Perut"
+        },
+        {
+            "name": "Rasa panas di dada",
+            "section": "Dada"
+        },
+        {
+            "name": "Regurgitasi (Rasa pahit/asam di mulut)",
+            "section": "Perut"
+        },
+        {
+            "name": "Perut kembung",
+            "section": "Perut"
+        },
+        {
+            "name": "Perut membuncit",
+            "section": "Perut"
+        },
+        {
+            "name": "Mual",
+            "section": "Perut"
+        },
+        {
+            "name": "Muntah",
+            "section": "Perut"
+        },
+        {
+            "name": "Anorexia (hilang nafsu makan)"
+        },
+        {
+            "name": "Diare (BAB encer ≥3x/hari)",
+            "section": "Perut"
+        },
+        {
+            "name": "Konstipasi",
+            "section": "Perut"
+        },
+        {
+            "name": "Kekuningan pada Tubuh (mata/badan)"
+        },
+        {
+            "name": "Pucat (Anemia)"
         }
     ]
 }

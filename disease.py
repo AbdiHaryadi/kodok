@@ -45,6 +45,9 @@ class DiseaseSymptomInfo:
         
         if self.frequency == "Sering":
             return 15
+
+        if self.frequency == "Sangat sering":
+            return 25
         
         raise NotImplementedError(f"Unknown frequency score for {self.frequency}")
 
